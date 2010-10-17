@@ -1,0 +1,10 @@
+import arepa
+
+Import( "pE" )
+Import( "c_fileIntactC" )
+
+c_strID				= arepa.dir( pE )
+c_strFileIDTXT		= c_strID + ".txt" 
+c_strProgC2ID		= arepa.c_strSource + "c2id.py"
+
+arepa.pipe( pE, c_fileIntactC, c_strProgC2ID, c_strFileIDTXT, [[False, c_strID]] )
