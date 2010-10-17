@@ -1,13 +1,13 @@
 import arepa
 import os
+import sys
 
-Import( "c_fileTaxa" )
-Import( "pE" )
-
+pE = Environment( )
+c_strInputTaxa				= "../" + arepa.c_strFileTaxids
 c_strFileExperiments		= arepa.c_strTmp + "experiments"
 c_strFileIDsTXT				= arepa.c_strTmp + "ids.txt"
 c_strProgExperiments2IDs	= arepa.c_strSource + "experiments2ids.py"
-c_strSConscriptExp			= "SConscript.exp"
+c_strSConstructExp			= "SConstruct.exp"
 c_strDir					= arepa.dir( pE )
 
 pE.Dir( arepa.c_strTmp )
@@ -17,15 +17,11 @@ pE.Dir( arepa.c_strTmp )
 pE.NoClean( c_strFileExperiments )
 
 arepa.pipe( pE, c_strFileExperiments, c_strProgExperiments2IDs, c_strFileIDsTXT,
-	[[True, c_fileTaxa]] )
+	[[True, c_strInputTaxa]] )
 
-def funcIDs( pE, strIDs ):
-	for strLine in open( strIDs ):
-		strID = strLine.strip( ).split( "\t" )[0]
-		pE.SConscript( c_strSConscriptExp, variant_dir = strID, duplicate = 0 )
 def funcArrayExpressTMP( target, source, env ):
 	strT, astrSs = arepa.ts( target, source )
-	return funcIDs( env, astrSs[0] )
+	for strLine in open( astrSs[0] ):
+		strID = strLine.strip( ).split( "\t" )[0]
+		arepa.sconstruct( env, arepa.c_strData + strID, c_strSConstructExp )
 pE.Command( "ae.tmp", c_strFileIDsTXT, funcArrayExpressTMP )
-if os.path.isfile( c_strFileIDsTXT ):
-	funcIDs( pE, c_strFileIDsTXT )

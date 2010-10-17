@@ -2,14 +2,13 @@ import arepa
 import os
 import sys
 
-Import( "pE" )
-
+pE = Environment( )
 c_strID				= arepa.dir( pE )
-c_strDir			= arepa.dir( pE, False )
+#c_strDir			= arepa.dir( pE, False )
 c_strType			= c_strID[2:6]
 c_strFileIDZIP		= c_strID + ".processed.1.zip"
-c_strSConscriptDat	= "SConscript.dat"
-c_strSConscriptDas	= "SConscript.das"
+c_strSConstructDat	= arepa.path_repo( pE ) + "SConstruct.dat"
+c_strSConstructDas	= arepa.path_repo( pE ) + "SConstruct.das"
 c_strProcessedData	= "-processed-data-"
 c_strTXT			= ".txt"
 
@@ -18,20 +17,16 @@ arepa.download( pE, c_strFileIDZIP,
 		"/" + c_strID + "/" + c_strFileIDZIP )
 pE.NoClean( c_strFileIDZIP )
 
-def funcID( pE, strZIP ):
-	arepa.ex( " ".join( ("unzip", "-f", "-d", c_strDir, strZIP) ) )
+def funcIDTMP( target, source, env ):
+	strT, astrSs = arepa.ts( target, source )
+	arepa.ex( " ".join( ("unzip", "-u", astrSs[0]) ) )
 	afileProcs = Glob( "*" + c_strProcessedData + "*" )
 	if afileProcs:
 		for fileProc in afileProcs:
 			strID = str(fileProc).replace( c_strProcessedData, "_" ).replace( c_strTXT, "" )
-			pE.SConscript( c_strSConscriptDat, duplicate = 0 )
+			arepa.sconstruct( env, strID, c_strSConstructDat )
 		return
 	afileSamples = Glob( "*sample_table*" )
 	if afileSamples:
-		pE.SConscript( c_strSConscriptDas, duplicate = 0, exports = "afileSamples" )
-def funcIDTMP( target, source, env ):
-	strT, astrSs = arepa.ts( target, source )
-	return funcID( env, astrSs[0] )
+		arepa.sconstruct( env, c_strID + "_GSM", c_strSConstructDas )
 pE.Command( c_strID + ".tmp", c_strFileIDZIP, funcIDTMP )
-if os.path.isfile( c_strFileIDZIP ):
-	funcID( pE, c_strFileIDZIP )

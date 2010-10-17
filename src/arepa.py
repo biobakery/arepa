@@ -5,12 +5,14 @@ import re
 import subprocess
 import sys
 
+c_strData		= "data/"
 c_strEtc		= "etc/"
 c_strSource		= "src/"
 c_strTmp		= "tmp/"
+c_strFileTaxids	= c_strTmp + "taxids"
 c_astrExclude	= [strCur[:-1] for strCur in (c_strEtc, c_strSource, c_strTmp)] + [
 #	"ArrayExpress"
-	"IntAct"
+#	"IntAct"
 ]
 
 def ex( strCmd, strOut = None ):
@@ -24,7 +26,8 @@ def ex( strCmd, strOut = None ):
 		return 1
 	strLine = pProc.stdout.readline( )
 	if not strLine:
-		return 1
+		pProc.communicate( )
+		return pProc.wait( )
 	with open( strOut, "w" ) as fileOut:
 		fileOut.write( strLine )
 		for strLine in pProc.stdout:
@@ -73,11 +76,11 @@ def regs( strRE, strString, aiGroups ):
 	return ( astrRet if ( not aiGroups or ( len( aiGroups ) > 1 ) ) else astrRet[0] )
 
 def dir( pE, fBase = True ):
-	
+
 	strRet = pE.Dir( "." ).get_abspath( )
 	if fBase:
 		strRet = os.path.basename( strRet )
-	return strRet
+		return strRet
 
 def aset( a, i, p, fSet = True ):
 	
@@ -95,3 +98,36 @@ def taxa( strTaxids, fNames = False ):
 			strID, strName = strLine.strip( ).split( "\t" )
 			setRet.add( strName if fNames else strID )
 	return setRet
+
+def path_arepa( ):
+	
+	return ( os.path.abspath( os.path.dirname( __file__ ) + "/../" ) + "/" )
+
+def path_repo( pE ):
+	
+	strRet = os.path.abspath( pE.Dir( "." ).get_abspath( ) )
+	strRet = strRet[len( path_arepa( ) ):]
+	while True:
+		strHead, strTail = os.path.split( strRet )
+		if not strHead:
+			strRet = path_arepa( ) + strRet
+			break
+		strRet = strHead
+	return ( strRet + "/" )
+
+def sconstruct( pE, fileDir, strSConstruct = None ):
+
+	pE.Dir( fileDir )
+	strDir = str(fileDir)
+	if strSConstruct:
+		def funcDir( target, source, env ):
+			strT, astrSs = ts( target, source )
+			return ex( "ln -fs " + astrSs[0] + " " + strT )
+		pE.Command( strDir + "/SConstruct", strSConstruct, funcDir )
+
+	def funcSConstruct( target, source, env, strDir = strDir ):
+		return ex( "scons -C " + strDir )
+	pE.Default( pE.Command( strDir + ".tmp", strDir + "/SConstruct", funcSConstruct ) )
+
+if __name__ == "__main__":
+	pass

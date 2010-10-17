@@ -1,21 +1,19 @@
 import arepa
 import os
+import sys
 
 c_iMinimum			= 10
 
 #------------------------------------------------------------------------------ 
 
-Import( "c_fileTaxa" )
-Import( "pE" )
-
+pE = Environment( )
+c_strInputTaxa		= arepa.path_arepa( ) + arepa.c_strFileTaxids
 c_strFileIntactZIP	= arepa.c_strTmp + "intact.zip"
 c_strFileIntactTXT	= arepa.c_strTmp + "intact.txt"
-c_fileIntactC		= File( arepa.c_strTmp + "intactc" )
+c_strFileIntactC	= arepa.c_strTmp + "intactc"
 c_strProgIntact2C	= arepa.c_strSource + "intact2c.py"
-c_strSConscriptID	= "SConscript.id"
+c_strSConstructID	= "SConstruct.id"
 c_strTXT			= ".txt"
-c_strDir			= arepa.dir( pE )
-Export( "c_fileIntactC" )
 
 pE.Dir( arepa.c_strTmp )
 
@@ -24,20 +22,19 @@ arepa.download( pE, c_strFileIntactZIP,
 pE.NoClean( c_strFileIntactZIP )
 
 def funcIntactTXT( target, source, env ):
-	
 	strT, astrSs = arepa.ts( target, source )
 	strBase = os.path.basename( strT )
 	strDir = "psimitab/"
 	return arepa.ex( " ".join( ("unzip", "-p", astrSs[0], strDir + strBase) ), strT )
 pE.Command( c_strFileIntactTXT, c_strFileIntactZIP, funcIntactTXT )
 
-arepa.pipe( pE, c_strFileIntactTXT, c_strProgIntact2C, c_fileIntactC,
-	[[False, c_iMinimum], [True, c_fileTaxa]] )
+arepa.pipe( pE, c_strFileIntactTXT, c_strProgIntact2C, c_strFileIntactC,
+	[[False, c_iMinimum], [True, c_strInputTaxa]] )
 
 def funcIntactTMP( target, source, env ):
 	strT, astrSs = arepa.ts( target, source )
 	for strLine in open( astrSs[0] ):
 		if strLine.startswith( ">" ):
-			env.SConscript( c_strDir + "/" + c_strSConscriptID,
-				variant_dir = c_strDir + "/" + strLine[1:].strip( ), duplicate = 0 )
-pE.Command( "intact.tmp", c_fileIntactC, funcIntactTMP )
+			strDir = arepa.c_strData + strLine[1:].strip( )
+			arepa.sconstruct( env, strDir, c_strSConstructID )
+pE.Command( "intact.tmp", c_strFileIntactC, funcIntactTMP )
