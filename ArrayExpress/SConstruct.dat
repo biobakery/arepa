@@ -1,4 +1,0 @@
-import arepa
-
-pE = Environment( )
-c_strID	= arepa.dir( pE )

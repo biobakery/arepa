@@ -1,4 +1,11 @@
+#!/usr/bin/env python
+
 import arepa
+import sys
+
+if __name__ == "__main__":
+	iLevel, strTo, strFrom = arepa.scons_args( sys.argv )
+	sys.exit( 0 if ( iLevel == 1 ) else 1 )
 
 pE = Environment( )
 c_strID				= arepa.dir( pE )

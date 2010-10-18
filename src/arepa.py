@@ -15,6 +15,64 @@ c_astrExclude	= [strCur[:-1] for strCur in (c_strEtc, c_strSource, c_strTmp)] + 
 #	"IntAct"
 ]
 
+#===============================================================================
+# Basic global utilities
+#===============================================================================
+
+def regs( strRE, strString, aiGroups ):
+
+	try:
+		iter( aiGroups )
+	except TypeError:
+		aiGroups = (aiGroups,)
+	mtch = re.search( strRE, strString )
+	astrRet = [mtch.group( i ) for i in aiGroups] if mtch else \
+		( [""] * len( aiGroups ) )
+	return ( astrRet if ( not aiGroups or ( len( aiGroups ) > 1 ) ) else astrRet[0] )
+
+def aset( a, i, p, fSet = True ):
+	
+	if len( a ) <= i:
+		a.extend( [None] * ( 1 + i - len( a ) ) )
+	if fSet:
+		a[i] = p
+	return a[i]
+
+def entable( fileIn, afuncCols ):
+	
+	aiCols = [None] * len( afuncCols )
+	aastrRet = []
+	for strLine in fileIn:
+		astrLine = [strCur.strip( ) for strCur in strLine.split( "\t" )]
+		if all( ( i != None ) for i in aiCols ):
+			if len( astrLine ) > max( aiCols ):
+				aastrRet.append( [astrLine[i] for i in aiCols] )
+		for i in range( len( astrLine ) ):
+			for j in range( len( afuncCols ) ):
+				if afuncCols[j]( astrLine[i] ):
+					aiCols[j] = i
+	return aastrRet
+
+def readcomment( fileIn ):
+	
+	astrRet = []
+	for strLine in fileIn:
+		strLine = strLine.strip( )
+		if ( not strLine ) or ( strLine[0] == "#" ):
+			continue
+		astrRet.append( strLine )
+
+	return astrRet
+
+def check_output( strCmd ):
+	
+	proc = subprocess.Popen( strCmd, shell = True, stdout = subprocess.PIPE )
+	return proc.communicate( )[0]
+
+#===============================================================================
+# SCons utilities
+#===============================================================================
+
 def ex( strCmd, strOut = None ):
 	
 	sys.stdout.write( "%s" % strCmd )
@@ -34,9 +92,13 @@ def ex( strCmd, strOut = None ):
 			fileOut.write( strLine )
 	return pProc.wait( )
 
-def ts( astrTargets, astrSources ):
+def ts( afileTargets, afileSources ):
 
-	return (str(astrTargets[0]), [pF.get_abspath( ) for pF in astrSources])
+	return (str(afileTargets[0]), [fileCur.get_abspath( ) for fileCur in afileSources])
+
+#===============================================================================
+# Command execution
+#===============================================================================
 
 def download( pE, strT, strURL ):
 	def funcDownload( target, source, env, strURL = strURL ):
@@ -62,18 +124,19 @@ def pipe( pE, strFrom, strProg, strTo, aaArgs = [] ):
 		astrFiles, funcPipe )
 
 def cmd( pE, strProg, strTo, aaArgs = [] ):
+
 	return pipe( pE, None, strProg, strTo, aaArgs )
 
-def regs( strRE, strString, aiGroups ):
+def spipe( pE, strFrom, strCmd, strTo ):
+	def funcPipe( target, source, env, strCmd = strCmd ):
+		strT, astrSs = ts( target, source )
+		return ex( " ".join( [strCmd] + ( ["<", strFrom] if strFrom else [] ) ),
+			strT )
+	return pE.Command( strTo, strFrom if strFrom else None, funcPipe )
 
-	try:
-		iter( aiGroups )
-	except TypeError:
-		aiGroups = (aiGroups,)
-	mtch = re.search( strRE, strString )
-	astrRet = [mtch.group( i ) for i in aiGroups] if mtch else \
-		( [""] * len( aiGroups ) )
-	return ( astrRet if ( not aiGroups or ( len( aiGroups ) > 1 ) ) else astrRet[0] )
+#===============================================================================
+# ARepA structural metadata
+#===============================================================================
 
 def dir( pE, fBase = True ):
 
@@ -81,14 +144,6 @@ def dir( pE, fBase = True ):
 	if fBase:
 		strRet = os.path.basename( strRet )
 		return strRet
-
-def aset( a, i, p, fSet = True ):
-	
-	if len( a ) <= i:
-		a.extend( [None] * ( 1 + i - len( a ) ) )
-	if fSet:
-		a[i] = p
-	return a[i]
 
 def taxa( strTaxids, fNames = False ):
 	
@@ -115,19 +170,50 @@ def path_repo( pE ):
 		strRet = strHead
 	return ( strRet + "/" )
 
-def sconstruct( pE, fileDir, strSConstruct = None ):
+def level( pE, fileDir ):
+	
+	strPath = path_repo( pE )
+	strPath = fileDir.get_abspath( )[len( strPath ):]
+	iRet = 0
+	while True:
+		strHead, strTail = os.path.split( strPath )
+		if not strHead:
+			break
+		iRet += 1
+		strPath = strHead
+	return iRet
 
-	pE.Dir( fileDir )
+#===============================================================================
+# SConstruct helper functions
+#===============================================================================
+
+def scons_args( astrArgs ):
+	
+	iLevel = 0 if ( len( astrArgs ) <= 1 ) else int(astrArgs[1])
+	strTo = "" if ( len( astrArgs ) <= 2 ) else astrArgs[2]
+	strFrom = "" if ( len( astrArgs ) <= 3 ) else astrArgs[3]
+	
+	return (iLevel, strTo, strFrom)
+
+def sconstruct( pE, fileDir, fileSource = None ):
+
+	fileDir = pE.Dir( fileDir )
 	strDir = str(fileDir)
-	if strSConstruct:
+	strSConstruct = strDir + "/SConstruct"
+	for fileSConstruct in pE.Glob( path_repo( pE ) + c_strSource + "SConstruct*.py" ):
+		astrArgs = [str(p) for p in ( [level( pE, fileDir ), fileDir] + \
+			( [fileSource] if fileSource else [] ) )]
+		if subprocess.call( " ".join( [str(fileSConstruct)] + astrArgs ),
+			shell = True ):
+			continue 
 		def funcDir( target, source, env ):
 			strT, astrSs = ts( target, source )
 			return ex( "ln -fs " + astrSs[0] + " " + strT )
-		pE.Command( strDir + "/SConstruct", strSConstruct, funcDir )
+		pE.Command( strSConstruct, fileSConstruct, funcDir )
 
 	def funcSConstruct( target, source, env, strDir = strDir ):
 		return ex( "scons -C " + strDir )
-	pE.Default( pE.Command( strDir + ".tmp", strDir + "/SConstruct", funcSConstruct ) )
+	pE.Default( pE.Command( strDir + ".tmp", strSConstruct, funcSConstruct ) )
 
 if __name__ == "__main__":
 	pass
