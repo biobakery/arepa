@@ -5,12 +5,12 @@ import re
 import subprocess
 import sys
 
-c_strData		= "data/"
-c_strEtc		= "etc/"
-c_strSource		= "src/"
-c_strTmp		= "tmp/"
-c_strFileTaxids	= c_strTmp + "taxids"
-c_astrExclude	= [strCur[:-1] for strCur in (c_strEtc, c_strSource, c_strTmp)] + [
+c_strDirData	= "data/"
+c_strDirEtc		= "etc/"
+c_strDirSrc		= "src/"
+c_strDirTmp		= "tmp/"
+c_strFileTaxids	= c_strDirTmp + "taxids"
+c_astrExclude	= [strCur[:-1] for strCur in (c_strDirEtc, c_strDirSrc, c_strDirTmp)] + [
 #	"ArrayExpress"
 #	"IntAct"
 ]
@@ -69,6 +69,10 @@ def check_output( strCmd ):
 	proc = subprocess.Popen( strCmd, shell = True, stdout = subprocess.PIPE )
 	return proc.communicate( )[0]
 
+def d( strDir, strFile ):
+	
+	return ( strDir + "/" + strFile )
+
 #===============================================================================
 # SCons utilities
 #===============================================================================
@@ -100,22 +104,32 @@ def ts( afileTargets, afileSources ):
 # Command execution
 #===============================================================================
 
-def download( pE, strT, strURL ):
+def download( pE, strURL, strT = None, fSSL = False ):
+
+	if not strT:
+		strT = re.sub( '^.*\/', "", strURL )
+
 	def funcDownload( target, source, env, strURL = strURL ):
 		strT, astrSs = ts( target, source )
-		iRet = ex( " ".join( ("curl", "-f", "-z", strT, strURL) ), strT )
+		iRet = ex( " ".join( ("curl", "--ftp-ssl -k" if fSSL else "", "-f", "-z", strT, strURL) ), strT )
 # 19 is curl's document-not-found code
 		return ( iRet if ( iRet != 19 ) else 0 )
 	return pE.Command( strT, None, funcDownload )
 
-def pipe( pE, strFrom, strProg, strTo, aaArgs = [] ):
+def _pipeargs( aaArgs ):
+
 	astrFiles = []
 	astrArgs = []
 	for aArg in aaArgs:
 		fFile, strArg = aArg[0], str(aArg[1])
 		if fFile:
 			astrFiles.append( strArg )
+			strArg = "\"" + strArg + "\""
 		astrArgs.append( strArg )
+	return (astrFiles, astrArgs)
+
+def pipe( pE, strFrom, strProg, strTo, aaArgs = [] ):
+	astrFiles, astrArgs = _pipeargs( aaArgs )
 	def funcPipe( target, source, env, strFrom = strFrom, astrArgs = astrArgs ):
 		strT, astrSs = ts( target, source )
 		return ex( " ".join( [astrSs[0]] + astrArgs +
@@ -127,12 +141,17 @@ def cmd( pE, strProg, strTo, aaArgs = [] ):
 
 	return pipe( pE, None, strProg, strTo, aaArgs )
 
-def spipe( pE, strFrom, strCmd, strTo ):
-	def funcPipe( target, source, env, strCmd = strCmd ):
+def spipe( pE, strFrom, strCmd, strTo, aaArgs = [] ):
+	astrFiles, astrArgs = _pipeargs( aaArgs )
+	def funcPipe( target, source, env, strCmd = strCmd, strFrom = strFrom, astrArgs = astrArgs ):
 		strT, astrSs = ts( target, source )
-		return ex( " ".join( [strCmd] + ( ["<", strFrom] if strFrom else [] ) ),
+		return ex( " ".join( [strCmd] + astrArgs + ( ["<", strFrom] if strFrom else [] ) ),
 			strT )
-	return pE.Command( strTo, strFrom if strFrom else None, funcPipe )
+	return pE.Command( strTo, ( [strFrom] if strFrom else [] ) + astrFiles, funcPipe )
+
+def scmd( pE, strCmd, strTo, aaArgs = [] ):
+
+	return spipe( pE, None, strCmd, strTo, aaArgs )
 
 #===============================================================================
 # ARepA structural metadata
@@ -200,7 +219,7 @@ def sconstruct( pE, fileDir, fileSource = None ):
 	fileDir = pE.Dir( fileDir )
 	strDir = str(fileDir)
 	strSConstruct = strDir + "/SConstruct"
-	for fileSConstruct in pE.Glob( path_repo( pE ) + c_strSource + "SConstruct*.py" ):
+	for fileSConstruct in pE.Glob( path_repo( pE ) + c_strDirSrc + "SConstruct*.py" ):
 		astrArgs = [str(p) for p in ( [level( pE, fileDir ), fileDir] + \
 			( [fileSource] if fileSource else [] ) )]
 		if subprocess.call( " ".join( [str(fileSConstruct)] + astrArgs ),
@@ -217,3 +236,52 @@ def sconstruct( pE, fileDir, fileSource = None ):
 
 if __name__ == "__main__":
 	pass
+
+#===============================================================================
+# CProcessor
+#===============================================================================
+
+class CProcessor:
+
+	def __init__( self, strFrom, strTo, strID, strProcessor,
+		astrArgs = [], strDir = None, fPipe = True ):
+
+		self.m_strDir = strDir
+		self.m_strFrom = strFrom
+		self.m_strTo = strTo
+		self.m_strID = strID
+		self.m_strProcessor = strProcessor
+		self.m_astrArgs = astrArgs
+		self.m_fPipe = fPipe
+
+#	def dependencies( self ):
+
+#		return ( [self.m_strProcessor] + filter( None, map( lambda a: a[1] if a[0] else None, self.m_astrArgs ) ) )
+
+	def in2out( self, strIn, strDir = c_strDirData, strSuffix = None ):
+
+		if not strSuffix:
+			mtch = re.search( '(\.[^.]+)$', strIn )
+			strSuffix = mtch.group( 1 ) if mtch else ""
+		if self.m_strDir:
+			strIn = re.sub( '^.*' + self.m_strDir + '/', strDir + "/", strIn )
+		return re.sub( ( self.m_strFrom + '()$' ) if self.m_strDir else
+			( '_' + self.m_strFrom + '(-.*)' + strSuffix + '$' ),
+			"_" + self.m_strTo + "\\1-" + self.m_strID + strSuffix, strIn )
+
+	def out2in( self, strOut ):
+
+		if self.m_strDir:
+			strOut = re.sub( '^.*/', self.m_strDir + "/", re.sub(
+				'\.[^.]+$', pSelf.m_strFrom, strOut ) )
+		return re.sub( '_' + pSelf.m_strTo + '(.*)-' + pSelf.m_strID,
+			( "_" + pSelf.m_strFrom + "\\1" ) if pSelf.m_strFrom else "",
+			strOut )
+
+	def ex( self, pE, strIn, strDir = c_strDirData, strSuffix = None ):
+		
+		strOut = self.in2out( strIn, strDir, strSuffix )
+		if not strOut:
+			return None
+		return ( pipe( pE, strIn, self.m_strProcessor, strOut, self.m_astrArgs ) if self.m_fPipe else
+			cmd( pE, self.m_strProcessor, strOut, [[True, strIn]] + self.m_astrArgs ) )
