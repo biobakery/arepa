@@ -1,18 +1,19 @@
 #!/usr/bin/env python
 
+import glob
 import os
 import re
 import subprocess
 import sys
+import urllib
 
 c_strDirData	= "data/"
 c_strDirEtc		= "etc/"
 c_strDirSrc		= "src/"
 c_strDirTmp		= "tmp/"
-c_strFileTaxids	= c_strDirTmp + "taxids"
 c_astrExclude	= [strCur[:-1] for strCur in (c_strDirEtc, c_strDirSrc, c_strDirTmp)] + [
-#	"ArrayExpress"
-#	"IntAct"
+	"ArrayExpress",
+#	"IntAct",
 ]
 
 #===============================================================================
@@ -69,9 +70,9 @@ def check_output( strCmd ):
 	proc = subprocess.Popen( strCmd, shell = True, stdout = subprocess.PIPE )
 	return proc.communicate( )[0]
 
-def d( strDir, strFile ):
+def d( *astrArgs ):
 	
-	return ( strDir + "/" + strFile )
+	return "/".join( astrArgs )
 
 #===============================================================================
 # SCons utilities
@@ -133,7 +134,7 @@ def pipe( pE, strFrom, strProg, strTo, aaArgs = [] ):
 	def funcPipe( target, source, env, strFrom = strFrom, astrArgs = astrArgs ):
 		strT, astrSs = ts( target, source )
 		return ex( " ".join( [astrSs[0]] + astrArgs +
-			( ["<", strFrom] if strFrom else [] ) ), strT )
+			( ["<", str(strFrom)] if strFrom else [] ) ), strT )
 	return pE.Command( strTo, [strProg] + ( [strFrom] if strFrom else [] ) +
 		astrFiles, funcPipe )
 
@@ -157,12 +158,9 @@ def scmd( pE, strCmd, strTo, aaArgs = [] ):
 # ARepA structural metadata
 #===============================================================================
 
-def dir( pE, fBase = True ):
+def dir( ):
 
-	strRet = pE.Dir( "." ).get_abspath( )
-	if fBase:
-		strRet = os.path.basename( strRet )
-		return strRet
+	return os.path.basename( os.getcwd( ) )
 
 def taxa( strTaxids, fNames = False ):
 	
@@ -177,9 +175,9 @@ def path_arepa( ):
 	
 	return ( os.path.abspath( os.path.dirname( __file__ ) + "/../" ) + "/" )
 
-def path_repo( pE ):
+def path_repo( ):
 	
-	strRet = os.path.abspath( pE.Dir( "." ).get_abspath( ) )
+	strRet = os.getcwd( )
 	strRet = strRet[len( path_arepa( ) ):]
 	while True:
 		strHead, strTail = os.path.split( strRet )
@@ -214,6 +212,7 @@ def scons_args( astrArgs ):
 	
 	return (iLevel, strTo, strFrom)
 
+"""
 def sconstruct( pE, fileDir, fileSource = None ):
 
 	fileDir = pE.Dir( fileDir )
@@ -233,9 +232,115 @@ def sconstruct( pE, fileDir, fileSource = None ):
 	def funcSConstruct( target, source, env, strDir = strDir ):
 		return ex( "scons -C " + strDir )
 	pE.Default( pE.Command( strDir + ".tmp", strSConstruct, funcSConstruct ) )
+"""
 
-if __name__ == "__main__":
-	pass
+def scons_child( pE, fileDir, hashExport = {}, fileSConscript = None ):
+
+	strDir, strSConscript = (( ( os.path.abspath( f ) if ( type( f ) == str ) else f.get_abspath( ) ) if f else None )
+		for f in (fileDir, fileSConscript))
+	astrExport = []
+	for strKey, pValue in hashExport.items( ):
+		if ( strKey not in locals( ) ) and ( strKey.find( " " ) < 0 ):
+			astrExport.append( strKey )
+			globals( )[strKey] = pValue
+	if fileSConscript:
+		try:
+			os.makedirs( strDir )
+		except os.error:
+			pass
+		subprocess.call( ["ln", "-f", "-s", strSConscript, d( strDir, "SConscript" )] )
+	pE.SConscript( dirs = [strDir], exports = "pE " + " ".join( astrExport ) )
+
+def scons_children( pE, hashExport = {} ):
+
+	for fileCur in pE.Glob( "*" ):
+		if ( type( fileCur ) == type( pE.Dir( "." ) ) ) and \
+			( str(fileCur) not in c_astrExclude ):
+			scons_child( pE, fileCur, hashExport )
+
+#------------------------------------------------------------------------------ 
+# Helper functions for SConscript subdirectories auto-generated from a scanned
+# input file during the build process.  Extremely complex; intended usage is:
+# def funcScanner( target, source, env ):
+#	for fileSource in source:
+#		for strLine in open( str(fileSource) ):
+#			if strLine.startswith( ">" ):
+#				env["sconscript_child"]( target, fileSource, env, strLine[1:].strip( ) )
+# arepa.sconscript_children( pE, afileIntactC, funcScanner, 1, globals( ) )
+#------------------------------------------------------------------------------ 
+
+def sconscript_child( target, source, env, strID, iLevel, hashExport = {} ):
+
+	fileTarget = target[0] if ( type( target ) == list ) else target
+	os.chdir( os.path.dirname( str(fileTarget) ) )
+	strSource = source
+	if type( strSource ) == list:
+		strSource = source[0]
+	if type( strSource ) != str:
+		strSource = strSource.get_abspath( )
+	for fileSConscript in glob.glob( arepa.d( arepa.c_strDirSrc, "SConscript*" ) ):
+		if not subprocess.call( " ".join( [str(fileSConscript), str(iLevel), strID, strSource] ), shell = True ):
+			scons_child( env, arepa.d( arepa.c_strDirData, strID ), hashExport, fileSConscript )
+			break
+
+def sconscript_scanner( target, source, env, funcScanner ):
+	strDir = os.getcwd( )
+	funcScanner( target, source, env )
+	os.chdir( strDir )
+
+def sconscript_children( pE, afileSources, funcScanner, iLevel, hashExport = {} ):
+
+	pE.Append( BUILDERS = {"SConsChildren" : Builder(
+		action = lambda target, source, env, funcScanner = funcScanner: sconscript_scanner( target, source, env, funcScanner ) )} )
+	afileSubdirs = pE.SConsChildren( "dummy", afileSources,
+		sconscript_child = lambda target, source, env, strID, iLevel = iLevel, hashExport = hashExport: sconscript_child( target, source, env, strID, iLevel, hashExport ) )
+	pE.AlwaysBuild( afileSubdirs )
+
+#===============================================================================
+# Gene ID conversion
+#===============================================================================
+
+def geneid( strIn, strTaxID, strTarget = "Entrez Gene", strURLBase = "http://localhost:8183" ):
+	
+# BUGBUG: This is one of the worst things I've ever done
+	hashTaxIDs = globals( ).get( "hashTaxIDs", {} )
+	strTaxon = hashTaxIDs.get( strTaxID )
+	if not strTaxon:
+		strTaxIDs = d( path_arepa( ), c_strDirTmp, "taxids" )
+		try:
+			for strLine in open( strTaxIDs ):
+				strFrom, strTo = strLine.strip( ).split( "\t" )
+				if strFrom == strTaxID:
+					strTaxon = " ".join( strTo.split( " " )[:2] )
+					break
+		except IOError:
+			pass
+	if not strTaxon:
+		return strIn
+	strTaxon = urllib.quote( strTaxon ).replace( "/", "%2F" )
+
+	strURL = strURLBase + "/" + strTaxon + "/search/" + urllib.quote( strIn )
+	astrData = urllib.urlopen( strURL ).read( ).splitlines( )
+	strID = strSource = None
+	for strLine in astrData:
+		astrLine = strLine.strip( ).split( "\t" )
+		if astrLine[0] == strIn:
+			strID, strSource = astrLine
+			break
+	if not ( strID and strSource ):
+		return strIn
+	strSource = urllib.quote( strSource ).replace( "/", "%2F" )
+
+	strURL = strURLBase + "/" + strTaxon + "/xrefs/" + strSource + "/" + urllib.quote( strID )
+	astrData = urllib.urlopen( strURL ).read( ).splitlines( )
+	for strLine in astrData:
+		if strLine == "<html>":
+			break
+		strID, strSource = strLine.strip( ).split( "\t" )
+		if strSource == strTarget:
+			return strID
+
+	return strIn
 
 #===============================================================================
 # CProcessor
@@ -253,10 +358,6 @@ class CProcessor:
 		self.m_strProcessor = strProcessor
 		self.m_astrArgs = astrArgs
 		self.m_fPipe = fPipe
-
-#	def dependencies( self ):
-
-#		return ( [self.m_strProcessor] + filter( None, map( lambda a: a[1] if a[0] else None, self.m_astrArgs ) ) )
 
 	def in2out( self, strIn, strDir = c_strDirData, strSuffix = None ):
 
@@ -285,3 +386,8 @@ class CProcessor:
 			return None
 		return ( pipe( pE, strIn, self.m_strProcessor, strOut, self.m_astrArgs ) if self.m_fPipe else
 			cmd( pE, self.m_strProcessor, strOut, [[True, strIn]] + self.m_astrArgs ) )
+
+#------------------------------------------------------------------------------ 
+
+if __name__ == "__main__":
+	pass
