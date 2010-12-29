@@ -1,7 +1,5 @@
 import arepa
 import os
-import re
-import subprocess
 import sys
 
 c_iMinimum			= 10
@@ -14,8 +12,8 @@ c_fileIntactC		= File( arepa.d( arepa.c_strDirTmp, "intactc" ) )
 c_fileProgIntact2C	= File( arepa.d( arepa.c_strDirSrc, "intact2c.py" ) )
 c_strTXT			= ".txt"
 
-Import( "c_fileTaxIDs" )
 Import( "pE" )
+pE.Import( "c_fileTaxIDs" )
 pE.Dir( arepa.c_strDirTmp )
 
 #===============================================================================

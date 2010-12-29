@@ -10,7 +10,7 @@ def isgene( strToken ):
 	return ( strToken.find( "GENE" ) >= 0 )
 
 def istable( strToken ):
-	return ( strToken == "Derived Array Data File" )
+	return ( strToken in ["Derived Array Data File", "Derived Array Data Matrix File"] )
 
 def issource( strToken ):
 	return ( strToken == "Source Name" )
@@ -18,6 +18,8 @@ def issource( strToken ):
 def isdesc( strToken ):
 	return ( strToken.find( "escription" ) >= 0 )
 
+if len( sys.argv ) < 3:
+	raise Exception( "Usage: samples2pcl.py <sdrf.txt> <adf.txt>+" )
 strSDRF, astrADFs = sys.argv[1], sys.argv[2:]
 
 hashSDRF = {}
@@ -42,6 +44,8 @@ for strLine in sys.stdin:
 	if fFirst:
 		for i in range( len( astrData ) ):
 			astrTo = hashSDRF.get( astrData[i] )
+			if not astrTo:
+				raise Exception( "Data file not found in %s: %s\n" % (strSDRF, astrData[i]) )
 			astrData[i] = astrTo[0] + ( ( ": " + astrTo[1] ) if astrTo[1] else "" )
 		astrData.insert( 0, "NAME" )
 		astrData.insert( 1, "GWEIGHT" )

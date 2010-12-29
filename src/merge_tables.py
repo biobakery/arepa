@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 import re
 import sys
 
@@ -23,7 +24,7 @@ for iTable in range( len( astrTables ) ):
 
 sys.stdout.write( "ID" )
 for iTable in range( len( astrTables ) ):
-	astrHeaders = [astrTables[iTable]] + aastrHeaders[iTable][1:]
+	astrHeaders = [os.path.basename( astrTables[iTable] )] + aastrHeaders[iTable][1:]
 	sys.stdout.write( "\t" + "\t".join( astrHeaders ) )
 print( "" )
 

@@ -12,7 +12,7 @@ c_strDirEtc		= "etc/"
 c_strDirSrc		= "src/"
 c_strDirTmp		= "tmp/"
 c_astrExclude	= [strCur[:-1] for strCur in (c_strDirEtc, c_strDirSrc, c_strDirTmp)] + [
-	"ArrayExpress",
+#	"ArrayExpress",
 #	"IntAct",
 ]
 
@@ -117,20 +117,26 @@ def download( pE, strURL, strT = None, fSSL = False ):
 		return ( iRet if ( iRet != 19 ) else 0 )
 	return pE.Command( strT, None, funcDownload )
 
-def _pipeargs( aaArgs ):
+def _pipefile( pFile ):
+	
+	return ( ( pFile.get_abspath( ) if ( "get_abspath" in dir( pFile ) ) else str(pFile) )
+		if pFile else None )
+
+def _pipeargs( strFrom, strTo, aaArgs ):
 
 	astrFiles = []
 	astrArgs = []
 	for aArg in aaArgs:
-		fFile, strArg = aArg[0], str(aArg[1])
+		fFile, strArg = aArg[0], aArg[1]
 		if fFile:
+			strArg = _pipefile( strArg )
 			astrFiles.append( strArg )
 			strArg = "\"" + strArg + "\""
-		astrArgs.append( strArg )
-	return (astrFiles, astrArgs)
+		astrArgs.append( str(strArg) )
+	return ( [_pipefile( s ) for s in (strFrom, strTo)] + [astrFiles, astrArgs] )
 
 def pipe( pE, strFrom, strProg, strTo, aaArgs = [] ):
-	astrFiles, astrArgs = _pipeargs( aaArgs )
+	strFrom, strTo, astrFiles, astrArgs = _pipeargs( strFrom, strTo, aaArgs )
 	def funcPipe( target, source, env, strFrom = strFrom, astrArgs = astrArgs ):
 		strT, astrSs = ts( target, source )
 		return ex( " ".join( [astrSs[0]] + astrArgs +
@@ -143,7 +149,7 @@ def cmd( pE, strProg, strTo, aaArgs = [] ):
 	return pipe( pE, None, strProg, strTo, aaArgs )
 
 def spipe( pE, strFrom, strCmd, strTo, aaArgs = [] ):
-	astrFiles, astrArgs = _pipeargs( aaArgs )
+	strFrom, strTo, astrFiles, astrArgs = _pipeargs( strFrom, strTo, aaArgs )
 	def funcPipe( target, source, env, strCmd = strCmd, strFrom = strFrom, astrArgs = astrArgs ):
 		strT, astrSs = ts( target, source )
 		return ex( " ".join( [strCmd] + astrArgs + ( ["<", strFrom] if strFrom else [] ) ),
@@ -158,7 +164,7 @@ def scmd( pE, strCmd, strTo, aaArgs = [] ):
 # ARepA structural metadata
 #===============================================================================
 
-def dir( ):
+def cwd( ):
 
 	return os.path.basename( os.getcwd( ) )
 
@@ -175,9 +181,9 @@ def path_arepa( ):
 	
 	return ( os.path.abspath( os.path.dirname( __file__ ) + "/../" ) + "/" )
 
-def path_repo( ):
+def path_repo( pE ):
 	
-	strRet = os.getcwd( )
+	strRet = pE.GetLaunchDir( )
 	strRet = strRet[len( path_arepa( ) ):]
 	while True:
 		strHead, strTail = os.path.split( strRet )
@@ -187,6 +193,7 @@ def path_repo( ):
 		strRet = strHead
 	return ( strRet + "/" )
 
+"""
 def level( pE, fileDir ):
 	
 	strPath = path_repo( pE )
@@ -199,11 +206,13 @@ def level( pE, fileDir ):
 		iRet += 1
 		strPath = strHead
 	return iRet
+"""
 
 #===============================================================================
 # SConstruct helper functions
 #===============================================================================
 
+"""
 def scons_args( astrArgs ):
 	
 	iLevel = 0 if ( len( astrArgs ) <= 1 ) else int(astrArgs[1])
@@ -212,7 +221,6 @@ def scons_args( astrArgs ):
 	
 	return (iLevel, strTo, strFrom)
 
-"""
 def sconstruct( pE, fileDir, fileSource = None ):
 
 	fileDir = pE.Dir( fileDir )
@@ -238,18 +246,16 @@ def scons_child( pE, fileDir, hashExport = {}, fileSConscript = None ):
 
 	strDir, strSConscript = (( ( os.path.abspath( f ) if ( type( f ) == str ) else f.get_abspath( ) ) if f else None )
 		for f in (fileDir, fileSConscript))
-	astrExport = []
-	for strKey, pValue in hashExport.items( ):
-		if ( strKey not in locals( ) ) and ( strKey.find( " " ) < 0 ):
-			astrExport.append( strKey )
-			globals( )[strKey] = pValue
+	if os.path.commonprefix( (pE.GetLaunchDir( ), strDir) ) not in [strDir, pE.GetLaunchDir( )]:
+		return
 	if fileSConscript:
 		try:
 			os.makedirs( strDir )
 		except os.error:
 			pass
 		subprocess.call( ["ln", "-f", "-s", strSConscript, d( strDir, "SConscript" )] )
-	pE.SConscript( dirs = [strDir], exports = "pE " + " ".join( astrExport ) )
+	sys.stderr.write( "ONE: %s\n" % [pE, hashExport.get( "c_fileIDSDRF" )] )
+	pE.SConscript( dirs = [strDir], exports = hashExport )
 
 def scons_children( pE, hashExport = {} ):
 
@@ -261,39 +267,48 @@ def scons_children( pE, hashExport = {} ):
 #------------------------------------------------------------------------------ 
 # Helper functions for SConscript subdirectories auto-generated from a scanned
 # input file during the build process.  Extremely complex; intended usage is:
+#
 # def funcScanner( target, source, env ):
 #	for fileSource in source:
 #		for strLine in open( str(fileSource) ):
 #			if strLine.startswith( ">" ):
 #				env["sconscript_child"]( target, fileSource, env, strLine[1:].strip( ) )
 # arepa.sconscript_children( pE, afileIntactC, funcScanner, 1, globals( ) )
+#
+# Based on documentation at:
+# http://www.scons.org/wiki/DynamicSourceGenerator
 #------------------------------------------------------------------------------ 
 
-def sconscript_child( target, source, env, strID, iLevel, hashExport = {} ):
+def sconscript_child( target, source, env, strID, pArgs = None, iLevel = 1, strDir = ".", hashExport = {} ):
 
 	fileTarget = target[0] if ( type( target ) == list ) else target
-	os.chdir( os.path.dirname( str(fileTarget) ) )
+	strDir = strDir if ( type( strDir ) == str ) else strDir.get_abspath( )
+	strDir = d( strDir, c_strDirData if ( iLevel == 1 ) else "", strID )
+	astrFiles = [os.path.abspath( str(s) ) for s in glob.glob( d( path_repo( env ), c_strDirSrc, "SConscript*" ) )]
 	strSource = source
 	if type( strSource ) == list:
 		strSource = source[0]
 	if type( strSource ) != str:
 		strSource = strSource.get_abspath( )
-	for fileSConscript in glob.glob( arepa.d( arepa.c_strDirSrc, "SConscript*" ) ):
-		if not subprocess.call( " ".join( [str(fileSConscript), str(iLevel), strID, strSource] ), shell = True ):
-			scons_child( env, arepa.d( arepa.c_strDirData, strID ), hashExport, fileSConscript )
+# I tried very hard to do this using import, but I can't find a way to prematurely
+# halt an import without sys.exit, which kills the entire process.
+	hashEnv = {"test" : lambda *a: False, "testing" : True}
+	for strSConscript in astrFiles:
+		try:
+			execfile( strSConscript, hashEnv )
+		except SystemExit:
+			pass
+		if hashEnv["test"]( iLevel, strID, strSource, pArgs ):
+			scons_child( env, strDir, hashExport, strSConscript )
 			break
 
-def sconscript_scanner( target, source, env, funcScanner ):
-	strDir = os.getcwd( )
-	funcScanner( target, source, env )
-	os.chdir( strDir )
-
 def sconscript_children( pE, afileSources, funcScanner, iLevel, hashExport = {} ):
-
-	pE.Append( BUILDERS = {"SConsChildren" : Builder(
-		action = lambda target, source, env, funcScanner = funcScanner: sconscript_scanner( target, source, env, funcScanner ) )} )
-	afileSubdirs = pE.SConsChildren( "dummy", afileSources,
-		sconscript_child = lambda target, source, env, strID, iLevel = iLevel, hashExport = hashExport: sconscript_child( target, source, env, strID, iLevel, hashExport ) )
+	
+	def funcTmp( target, source, env, strID, pArgs = None, iLevel = iLevel, strDir = pE.Dir( "." ), hashExport = hashExport ):
+		return sconscript_child( target, source, env, strID, pArgs, iLevel, strDir, hashExport )
+	pE.Append( BUILDERS = {"SConsChildren" : pE.Builder( action = funcScanner )} )
+	strID = ":".join( ["dummy", str(iLevel)] + [os.path.basename( str(f) ) for f in afileSources] )
+	afileSubdirs = pE.SConsChildren( d( pE.GetLaunchDir( ), strID ), afileSources, sconscript_child = funcTmp )
 	pE.AlwaysBuild( afileSubdirs )
 
 #===============================================================================

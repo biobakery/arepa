@@ -1,0 +1,41 @@
+import arepa
+import os
+import sys
+
+c_fileInputExclude			= File( arepa.d( arepa.c_strDirEtc, "exclude" ) )
+c_fileExperiments			= File( arepa.d( arepa.c_strDirTmp, "experiments" ) )
+c_fileIDsTXT				= File( arepa.d( arepa.c_strDirTmp, "ids.txt" ) )
+c_fileProgExperiments2IDs	= File( arepa.d( arepa.c_strDirSrc, "experiments2ids.py" ) )
+c_strTXT					= ".txt"
+
+Import( "pE" )
+pE.Import( "c_fileTaxIDs" )
+pE.Dir( arepa.c_strDirTmp )
+
+#===============================================================================
+# Download the experiments source file
+#===============================================================================
+
+arepa.download( pE, "http://www.ebi.ac.uk/microarray-as/ae/xml/experiments",
+	c_fileExperiments )
+pE.NoClean( c_fileExperiments )
+
+#===============================================================================
+# Process experiments into the more compact ids.txt
+#===============================================================================
+
+afileIDsTXT = arepa.pipe( pE, c_fileExperiments, c_fileProgExperiments2IDs, c_fileIDsTXT,
+	[[True, c_fileTaxIDs]] )
+
+#===============================================================================
+# Pass the IDs from intactc to child directories
+#===============================================================================
+
+setExclude = set(arepa.readcomment( open( str(c_fileInputExclude) ) ))
+def funcScanner( target, source, env, setExclude = setExclude ):
+	for fileSource in source:
+		for strLine in open( str(fileSource) ):
+			astrLine = strLine.strip( ).split( "\t" )
+			if astrLine[0] not in setExclude:
+				env["sconscript_child"]( target, fileSource, env, astrLine[0] )
+arepa.sconscript_children( pE, afileIDsTXT, funcScanner, 1, globals( ) )
