@@ -1,14 +1,14 @@
 import arepa
 import sys
 
-c_fileInputTaxa			= File( arepa.d( arepa.c_strDirEtc, "taxa" ) )
-c_fileTaxIDs			= File( arepa.d( arepa.c_strDirTmp, "taxids" ) )
-c_fileTaxdumpTXT		= File( arepa.d( arepa.c_strDirTmp, "taxdump.txt" ) )
-c_fileTaxdumpTARGZ		= File( arepa.d( arepa.c_strDirTmp, "taxdump.tar.gz" ) )
-c_fileProgTaxdump2TXT	= File( arepa.d( arepa.c_strDirSrc, "taxdump2txt.py" ) )
-c_fileProgTaxdump2Taxa	= File( arepa.d( arepa.c_strDirSrc, "taxdump2taxa.py" ) )
+pE = DefaultEnvironment( )
+c_fileInputTaxa			= pE.File( arepa.d( arepa.c_strDirEtc, "taxa" ) )
+c_fileTaxIDs			= pE.File( arepa.d( arepa.c_strDirTmp, "taxids" ) )
+c_fileTaxdumpTXT		= pE.File( arepa.d( arepa.c_strDirTmp, "taxdump.txt" ) )
+c_fileTaxdumpTARGZ		= pE.File( arepa.d( arepa.c_strDirTmp, "taxdump.tar.gz" ) )
+c_fileProgTaxdump2TXT	= pE.File( arepa.d( arepa.c_strDirSrc, "taxdump2txt.py" ) )
+c_fileProgTaxdump2Taxa	= pE.File( arepa.d( arepa.c_strDirSrc, "taxdump2taxa.py" ) )
 
-pE = Environment( )
 pE.Dir( arepa.c_strDirTmp )
 
 #===============================================================================
@@ -32,4 +32,4 @@ arepa.pipe( pE, c_fileTaxdumpTXT, c_fileProgTaxdump2Taxa, c_fileTaxIDs,
 # Main SConscript on subdirectories
 #===============================================================================
 
-arepa.scons_children( pE, globals( ) )
+arepa.scons_children( pE, locals( ) )

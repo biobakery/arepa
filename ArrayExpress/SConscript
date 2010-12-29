@@ -2,14 +2,15 @@ import arepa
 import os
 import sys
 
-c_fileInputExclude			= File( arepa.d( arepa.c_strDirEtc, "exclude" ) )
-c_fileExperiments			= File( arepa.d( arepa.c_strDirTmp, "experiments" ) )
-c_fileIDsTXT				= File( arepa.d( arepa.c_strDirTmp, "ids.txt" ) )
-c_fileProgExperiments2IDs	= File( arepa.d( arepa.c_strDirSrc, "experiments2ids.py" ) )
-c_strTXT					= ".txt"
-
 Import( "pE" )
 pE.Import( "c_fileTaxIDs" )
+c_fileInputInclude			= pE.File( arepa.d( arepa.c_strDirEtc, "include" ) )
+c_fileInputExclude			= pE.File( arepa.d( arepa.c_strDirEtc, "exclude" ) )
+c_fileExperiments			= pE.File( arepa.d( arepa.c_strDirTmp, "experiments" ) )
+c_fileIDsTXT				= pE.File( arepa.d( arepa.c_strDirTmp, "ids.txt" ) )
+c_fileProgExperiments2IDs	= pE.File( arepa.d( arepa.c_strDirSrc, "experiments2ids.py" ) )
+c_strTXT					= ".txt"
+
 pE.Dir( arepa.c_strDirTmp )
 
 #===============================================================================
@@ -31,11 +32,14 @@ afileIDsTXT = arepa.pipe( pE, c_fileExperiments, c_fileProgExperiments2IDs, c_fi
 # Pass the IDs from intactc to child directories
 #===============================================================================
 
-setExclude = set(arepa.readcomment( open( str(c_fileInputExclude) ) ))
-def funcScanner( target, source, env, setExclude = setExclude ):
+setInclude = set(arepa.readcomment( c_fileInputInclude ))
+setExclude = set(arepa.readcomment( c_fileInputExclude ))
+def funcScanner( target, source, env, setInclude = setInclude, setExclude = setExclude ):
 	for fileSource in source:
 		for strLine in open( str(fileSource) ):
 			astrLine = strLine.strip( ).split( "\t" )
-			if astrLine[0] not in setExclude:
-				env["sconscript_child"]( target, fileSource, env, astrLine[0] )
-arepa.sconscript_children( pE, afileIDsTXT, funcScanner, 1, globals( ) )
+			strID = astrLine[0]
+			if ( setInclude and ( strID not in setInclude ) ) or ( strID in setExclude ):
+				continue
+			env["sconscript_child"]( target, fileSource, env, strID )
+arepa.sconscript_children( pE, afileIDsTXT, funcScanner, 1, locals( ) )

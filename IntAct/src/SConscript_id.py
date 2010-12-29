@@ -10,13 +10,12 @@ if locals( ).has_key( "testing" ):
 	sys.exit( )
 
 Import( "pE" )
-c_strID				= arepa.cwd( )
-c_fileIDTXT			= File( c_strID + ".txt" )
-c_fileIDDAB			= File( c_strID + ".dab" )
-c_fileProgC2TXT		= File( arepa.d( arepa.path_repo( pE ), arepa.c_strDirSrc, "c2txt.py" ) )
-c_fileProgC2DAT		= File( arepa.d( arepa.path_repo( pE ), arepa.c_strDirSrc, "c2dat.py" ) )
-
 pE.Import( "c_fileIntactC" )
+c_strID				= arepa.cwd( )
+c_fileIDTXT			= pE.File( c_strID + ".txt" )
+c_fileIDDAB			= pE.File( c_strID + ".dab" )
+c_fileProgC2TXT		= pE.File( arepa.d( arepa.path_repo( pE ), arepa.c_strDirSrc, "c2txt.py" ) )
+c_fileProgC2DAT		= pE.File( arepa.d( arepa.path_repo( pE ), arepa.c_strDirSrc, "c2dat.py" ) )
 
 afileIDTXT = arepa.pipe( pE, c_fileIntactC, c_fileProgC2TXT, c_fileIDTXT, [[False, c_strID]] )
 pE.Default( afileIDTXT )

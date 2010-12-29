@@ -6,14 +6,14 @@ c_iMinimum			= 10
 
 #------------------------------------------------------------------------------ 
 
-c_fileIntactZIP		= File( arepa.d( arepa.c_strDirTmp, "intact-clustered.zip" ) )
-c_fileIntactTXT		= File( arepa.d( arepa.c_strDirTmp, "intact.txt" ) )
-c_fileIntactC		= File( arepa.d( arepa.c_strDirTmp, "intactc" ) )
-c_fileProgIntact2C	= File( arepa.d( arepa.c_strDirSrc, "intact2c.py" ) )
-c_strTXT			= ".txt"
-
 Import( "pE" )
 pE.Import( "c_fileTaxIDs" )
+c_fileIntactZIP		= pE.File( arepa.d( arepa.c_strDirTmp, "intact-clustered.zip" ) )
+c_fileIntactTXT		= pE.File( arepa.d( arepa.c_strDirTmp, "intact.txt" ) )
+c_fileIntactC		= pE.File( arepa.d( arepa.c_strDirTmp, "intactc" ) )
+c_fileProgIntact2C	= pE.File( arepa.d( arepa.c_strDirSrc, "intact2c.py" ) )
+c_strTXT			= ".txt"
+
 pE.Dir( arepa.c_strDirTmp )
 
 #===============================================================================
@@ -49,4 +49,4 @@ def funcScanner( target, source, env ):
 		for strLine in open( str(fileSource) ):
 			if strLine.startswith( ">" ):
 				env["sconscript_child"]( target, fileSource, env, strLine[1:].strip( ) )
-arepa.sconscript_children( pE, afileIntactC, funcScanner, 1, globals( ) )
+arepa.sconscript_children( pE, afileIntactC, funcScanner, 1, locals( ) )

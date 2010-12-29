@@ -56,6 +56,11 @@ def entable( fileIn, afuncCols ):
 
 def readcomment( fileIn ):
 	
+	if not isinstance( fileIn, file ):
+		try:
+			fileIn = open( str(fileIn) )
+		except IOException:
+			return []
 	astrRet = []
 	for strLine in fileIn:
 		strLine = strLine.strip( )
@@ -254,7 +259,6 @@ def scons_child( pE, fileDir, hashExport = {}, fileSConscript = None ):
 		except os.error:
 			pass
 		subprocess.call( ["ln", "-f", "-s", strSConscript, d( strDir, "SConscript" )] )
-	sys.stderr.write( "ONE: %s\n" % [pE, hashExport.get( "c_fileIDSDRF" )] )
 	pE.SConscript( dirs = [strDir], exports = hashExport )
 
 def scons_children( pE, hashExport = {} ):
@@ -273,7 +277,7 @@ def scons_children( pE, hashExport = {} ):
 #		for strLine in open( str(fileSource) ):
 #			if strLine.startswith( ">" ):
 #				env["sconscript_child"]( target, fileSource, env, strLine[1:].strip( ) )
-# arepa.sconscript_children( pE, afileIntactC, funcScanner, 1, globals( ) )
+# arepa.sconscript_children( pE, afileIntactC, funcScanner, 1, locals( ) )
 #
 # Based on documentation at:
 # http://www.scons.org/wiki/DynamicSourceGenerator
@@ -306,9 +310,10 @@ def sconscript_children( pE, afileSources, funcScanner, iLevel, hashExport = {} 
 	
 	def funcTmp( target, source, env, strID, pArgs = None, iLevel = iLevel, strDir = pE.Dir( "." ), hashExport = hashExport ):
 		return sconscript_child( target, source, env, strID, pArgs, iLevel, strDir, hashExport )
-	pE.Append( BUILDERS = {"SConsChildren" : pE.Builder( action = funcScanner )} )
 	strID = ":".join( ["dummy", str(iLevel)] + [os.path.basename( str(f) ) for f in afileSources] )
-	afileSubdirs = pE.SConsChildren( d( pE.GetLaunchDir( ), strID ), afileSources, sconscript_child = funcTmp )
+	pBuilder = pE.Builder( action = funcScanner )
+	pE.Append( BUILDERS = {strID : pBuilder} )
+	afileSubdirs = getattr( pE, strID )( d( pE.GetLaunchDir( ), strID ), afileSources, sconscript_child = funcTmp )
 	pE.AlwaysBuild( afileSubdirs )
 
 #===============================================================================
