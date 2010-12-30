@@ -34,11 +34,10 @@ afileIDsTXT = arepa.pipe( pE, c_strFileExperiments, c_strProgExperiments2IDs,
 setInclude = set(arepa.readcomment( c_strInputInclude ))
 setExclude = set(arepa.readcomment( c_strInputExclude ))
 def funcScanner( target, source, env, setInclude = setInclude, setExclude = setExclude ):
-	for fileSource in source:
-		for strLine in open( str(fileSource) ):
-			astrLine = strLine.strip( ).split( "\t" )
-			strID = astrLine[0]
-			if ( setInclude and ( strID not in setInclude ) ) or ( strID in setExclude ):
-				continue
-			env["sconscript_child"]( target, fileSource, env, strID )
+	for strLine in open( str(source[0]) ):
+		astrLine = strLine.strip( ).split( "\t" )
+		strID = astrLine[0]
+		if ( setInclude and ( strID not in setInclude ) ) or ( strID in setExclude ):
+			continue
+		env["sconscript_child"]( target, source[0], env, strID )
 arepa.sconscript_children( pE, afileIDsTXT, funcScanner, 1 )

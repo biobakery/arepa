@@ -44,8 +44,7 @@ afileIntactC = arepa.pipe( pE, c_strFileIntactTXT, c_strProgIntact2C,
 #===============================================================================
 
 def funcScanner( target, source, env ):
-	for fileSource in source:
-		for strLine in open( str(fileSource) ):
-			if strLine.startswith( ">" ):
-				env["sconscript_child"]( target, fileSource, env, strLine[1:].strip( ) )
+	for strLine in open( str(source[0]) ):
+		if strLine.startswith( ">" ):
+			env["sconscript_child"]( target, source[0], env, strLine[1:].strip( ) )
 arepa.sconscript_children( pE, afileIntactC, funcScanner, 1 )

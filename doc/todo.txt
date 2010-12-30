@@ -1,0 +1,2 @@
+Consolidate metadata management into a single shared class (ISA?)
+Make sure SConscript overrides are working as expected

@@ -1,14 +1,13 @@
 import arepa
 import sys
 
+pE = Environment( )
 c_strInputTaxa			= arepa.d( arepa.c_strDirEtc, "taxa" )
 c_strFileTaxIDs			= arepa.d( arepa.c_strDirTmp, "taxids" )
 c_strFileTaxdumpTXT		= arepa.d( arepa.c_strDirTmp, "taxdump.txt" )
 c_strFileTaxdumpTARGZ	= arepa.d( arepa.c_strDirTmp, "taxdump.tar.gz" )
 c_strProgTaxdump2TXT	= arepa.d( arepa.c_strDirSrc, "taxdump2txt.py" )
 c_strProgTaxdump2Taxa	= arepa.d( arepa.c_strDirSrc, "taxdump2taxa.py" )
-
-pE = Environment( )
 
 #===============================================================================
 # Shared data setup: NCBI taxonomy

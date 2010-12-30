@@ -8,10 +8,11 @@ import sys
 import urllib
 
 c_strDirData	= "data/"
+c_strDirDoc		= "doc/"
 c_strDirEtc		= "etc/"
 c_strDirSrc		= "src/"
 c_strDirTmp		= "tmp/"
-c_astrExclude	= [strCur[:-1] for strCur in (c_strDirEtc, c_strDirSrc, c_strDirTmp)] + [
+c_astrExclude	= [strCur[:-1] for strCur in (c_strDirEtc, c_strDirSrc, c_strDirTmp, c_strDirDoc)] + [
 #	"ArrayExpress",
 #	"IntAct",
 ]
@@ -186,7 +187,7 @@ def path_arepa( ):
 	
 	return ( os.path.abspath( os.path.dirname( __file__ ) + "/../" ) + "/" )
 
-def path_repo( pE ):
+def path_repo( ):
 	
 	strRet = os.getcwd( )
 	strRet = strRet[len( path_arepa( ) ):]
@@ -198,10 +199,10 @@ def path_repo( pE ):
 		strRet = strHead
 	return ( strRet + "/" )
 
-def level( pE ):
+def level( ):
 
-	strPath = path_repo( pE )
-	strPath = pE.Dir( "." ).get_abspath( )[len( strPath ):]
+	strPath = path_repo( )
+	strPath = os.getcwd( )[len( strPath ):]
 	iRet = 0
 	while True:
 		strHead, strTail = os.path.split( strPath )
@@ -215,7 +216,7 @@ def level( pE ):
 # SConstruct helper functions
 #===============================================================================
 
-def scons_child( pE, fileDir, hashArgs = None, fileSConstruct = None ):
+def scons_child( pE, fileDir, hashArgs = None, fileSConstruct = None, afileDeps = None ):
 
 	def funcTmp( target, source, env, fileDir = fileDir, fileSConstruct = fileSConstruct ):
 		strDir, strSConstruct = (( ( os.path.abspath( f ) if ( type( f ) == str ) else f.get_abspath( ) ) if f else None )
@@ -232,10 +233,10 @@ def scons_child( pE, fileDir, hashArgs = None, fileSConstruct = None ):
 			with open( d( strDir, "SConscript" ), "w" ) as fileOut:
 				fileOut.write( "hashArgs = {\n" )
 				for strKey, strValue in hashArgs.items( ):
-					fileOut.write( "	\"%s\"	: \"%s\",\n" % (strKey, strValue) )
+					fileOut.write( "	\"%s\"	: %s,\n" % (strKey, repr( strValue )) )
 				fileOut.write( "}\nExport( \"hashArgs\" )\n" )
 		return subprocess.call( ["scons"] + sys.argv[1:] + ["-C", strDir] )
-	pE.Command( "dummy:" + os.path.basename( str(fileDir) ), None, funcTmp )
+	pE.Command( "dummy:" + os.path.basename( str(fileDir) ), afileDeps, funcTmp )
 
 def scons_children( pE ):
 
@@ -249,32 +250,37 @@ def scons_children( pE ):
 # input file during the build process.  Extremely complex; intended usage is:
 #
 # def funcScanner( target, source, env ):
-#	for fileSource in source:
-#		for strLine in open( str(fileSource) ):
-#			if strLine.startswith( ">" ):
-#				env["sconscript_child"]( target, fileSource, env, strLine[1:].strip( ) )
-# arepa.sconscript_children( pE, afileIntactC, funcScanner, 1, locals( ) )
+# 	for strLine in open( str(source[0]) ):
+# 		if strLine.startswith( ">" ):
+# 			env["sconscript_child"]( target, source[0], env, strLine[1:].strip( ) )
+# arepa.sconscript_children( pE, afileIntactC, funcScanner, 1 )
 #
 # Based on documentation at:
 # http://www.scons.org/wiki/DynamicSourceGenerator
 #------------------------------------------------------------------------------ 
 
-def sconscript_child( target, source, env, strID, hashArgs = None, iLevel = 1, strDir = "." ):
+def sconscript_child( target, source, env, strID, hashArgs = None, afileDeps = None, iLevel = 1, strDir = "." ):
 
 	fileTarget = target[0] if ( type( target ) == list ) else target
 	strDir = strDir if ( type( strDir ) == str ) else strDir.get_abspath( )
 	strDir = d( strDir, c_strDirData if ( iLevel == 1 ) else "", strID )
-	return scons_child( env, strDir, hashArgs, d( path_arepa( ), c_strDirSrc, "SConstruct.py" ) )
+	return scons_child( env, strDir, hashArgs, d( path_arepa( ), c_strDirSrc, "SConstruct.py" ), afileDeps )
 
-def sconscript_children( pE, afileSources, funcScanner, iLevel ):
+def sconscript_children( pE, afileSources, funcScanner, iLevel, funcAction = None ):
 	
-	def funcTmp( target, source, env, strID, hashArgs = None, iLevel = iLevel, strDir = pE.Dir( "." ) ):
-		return sconscript_child( target, source, env, strID, hashArgs, iLevel, strDir )
+	if not getattr( afileSources, "__iter__", False ):
+		afileSources = [afileSources]
+	def funcTmp( target, source, env, strID, hashArgs = None, afileDeps = None, iLevel = iLevel, strDir = pE.Dir( "." ) ):
+		return sconscript_child( target, source, env, strID, hashArgs, afileDeps, iLevel, strDir )
+	if not funcAction:
+		funcAction = funcTmp
+	
 	strID = ":".join( ["dummy", str(iLevel)] + [os.path.basename( str(f) ) for f in afileSources] )
 	pBuilder = pE.Builder( action = funcScanner )
 	pE.Append( BUILDERS = {strID : pBuilder} )
-	afileSubdirs = getattr( pE, strID )( strID, afileSources, sconscript_child = funcTmp )
+	afileSubdirs = getattr( pE, strID )( strID, afileSources, sconscript_child = funcAction )
 	pE.AlwaysBuild( afileSubdirs )
+	return afileSubdirs
 
 #===============================================================================
 # Gene ID conversion

@@ -3,7 +3,6 @@
 import arepa
 import os
 import re
-import subprocess
 import sys
 import zipfile
 
@@ -20,32 +19,19 @@ if locals( ).has_key( "testing" ):
 	sys.exit( )
 
 Import( "pE" )
+Import( "hashArgs" )
 c_strID					= arepa.cwd( )
 c_strType				= c_strID[2:6]
-c_fileInputIDSDRF		= Glob( "../*.sdrf.txt" )[0]
-c_strFileIDTXT			= c_strID + ".txt"
+c_strInputIDSDRF		= hashArgs["strFileIDSDRF"]
+c_astrInputADFs			= hashArgs["astrFileADFs"]
 c_strFileIDRawTXT		= c_strID + "_00raw.txt"
 c_strFileIDRawPCL		= c_strID + "_01raw.pcl"
 c_strFileIDNormPCL		= c_strID + "_02norm.pcl"
 c_strFileIDPCL			= c_strID + ".pcl"
 c_strFileIDDAB			= c_strID + ".dab"
 c_strProgMergeTables	= arepa.d( arepa.path_arepa( ), arepa.c_strDirSrc, "merge_tables.py" ) 
-c_strProgSamples2PCL	= arepa.d( arepa.path_repo( pE ), arepa.c_strDirSrc, "samples2pcl.py" )
+c_strProgSamples2PCL	= arepa.d( arepa.path_repo( ), arepa.c_strDirSrc, "samples2pcl.py" )
 c_afileInputsSamples	= Glob( "../*sample_table*" )
-c_strURL				= "ftp://ftp.ebi.ac.uk/pub/databases/microarray/data/array/"
-
-#===============================================================================
-# Parse ADF IDs from SDRF and download
-#===============================================================================
-
-aastrSDRF = arepa.entable( open( c_fileInputIDSDRF.get_abspath( ) ), [lambda s: s == "Array Design REF"] )
-setArrays = set(astrLine[0] for astrLine in aastrSDRF)
-afileADFs = []
-for strArray in setArrays:
-	if not strArray:
-		continue
-	strFile = strArray + ".adf.txt"
-	afileADFs.extend( arepa.download( pE, c_strURL + c_strType + "/" + strArray + "/" + strFile ) )
 
 #===============================================================================
 # Clip sample tables to first two columns
@@ -72,7 +58,7 @@ arepa.cmd( pE, c_strProgMergeTables, c_strFileIDRawTXT,
 
 #- Map probe IDs and add PCL formatting
 arepa.pipe( pE, c_strFileIDRawTXT, c_strProgSamples2PCL, c_strFileIDRawPCL,
-	[[True, fileCur] for fileCur in ( [c_fileInputIDSDRF] + afileADFs )] )
+	[[True, s] for s in ( [c_strInputIDSDRF] + c_astrInputADFs )] )
 
 #- Normalize
 c_iMaxLines = 100000
