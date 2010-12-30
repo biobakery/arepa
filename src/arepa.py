@@ -198,11 +198,24 @@ def path_repo( pE ):
 		strRet = strHead
 	return ( strRet + "/" )
 
+def level( pE ):
+
+	strPath = path_repo( pE )
+	strPath = pE.Dir( "." ).get_abspath( )[len( strPath ):]
+	iRet = 0
+	while True:
+		strHead, strTail = os.path.split( strPath )
+		if not strHead:
+			break
+		iRet += 1
+		strPath = strHead
+	return iRet
+
 #===============================================================================
 # SConstruct helper functions
 #===============================================================================
 
-def scons_child( pE, fileDir, fileSConstruct = None ):
+def scons_child( pE, fileDir, hashArgs = None, fileSConstruct = None ):
 
 	def funcTmp( target, source, env, fileDir = fileDir, fileSConstruct = fileSConstruct ):
 		strDir, strSConstruct = (( ( os.path.abspath( f ) if ( type( f ) == str ) else f.get_abspath( ) ) if f else None )
@@ -215,6 +228,12 @@ def scons_child( pE, fileDir, fileSConstruct = None ):
 			except os.error:
 				pass
 			subprocess.call( ["ln", "-f", "-s", strSConstruct, d( strDir, "SConstruct" )] )
+		if hashArgs:
+			with open( d( strDir, "SConscript" ), "w" ) as fileOut:
+				fileOut.write( "hashArgs = {\n" )
+				for strKey, strValue in hashArgs.items( ):
+					fileOut.write( "	\"%s\"	: \"%s\",\n" % (strKey, strValue) )
+				fileOut.write( "}\nExport( \"hashArgs\" )\n" )
 		return subprocess.call( ["scons"] + sys.argv[1:] + ["-C", strDir] )
 	pE.Command( "dummy:" + os.path.basename( str(fileDir) ), None, funcTmp )
 
@@ -240,32 +259,17 @@ def scons_children( pE ):
 # http://www.scons.org/wiki/DynamicSourceGenerator
 #------------------------------------------------------------------------------ 
 
-def sconscript_child( target, source, env, strID, pArgs = None, iLevel = 1, strDir = "." ):
+def sconscript_child( target, source, env, strID, hashArgs = None, iLevel = 1, strDir = "." ):
 
 	fileTarget = target[0] if ( type( target ) == list ) else target
 	strDir = strDir if ( type( strDir ) == str ) else strDir.get_abspath( )
 	strDir = d( strDir, c_strDirData if ( iLevel == 1 ) else "", strID )
-	astrFiles = [os.path.abspath( str(s) ) for s in glob.glob( d( path_repo( env ), c_strDirSrc, "SConstruct*" ) )]
-	strSource = source
-	if type( strSource ) == list:
-		strSource = source[0]
-	if type( strSource ) != str:
-		strSource = strSource.get_abspath( )
-# I tried very hard to do this using import, but I can't find a way to prematurely
-# halt an import without sys.exit, which kills the entire process.
-	hashEnv = {"test" : lambda *a: False, "testing" : True}
-	for strSConstruct in astrFiles:
-		try:
-			execfile( strSConstruct, hashEnv )
-		except SystemExit:
-			pass
-		if hashEnv["test"]( iLevel, strID, strSource, pArgs ):
-			return scons_child( env, strDir, strSConstruct )
+	return scons_child( env, strDir, hashArgs, d( path_arepa( ), c_strDirSrc, "SConstruct.py" ) )
 
 def sconscript_children( pE, afileSources, funcScanner, iLevel ):
 	
-	def funcTmp( target, source, env, strID, pArgs = None, iLevel = iLevel, strDir = pE.Dir( "." ) ):
-		return sconscript_child( target, source, env, strID, pArgs, iLevel, strDir )
+	def funcTmp( target, source, env, strID, hashArgs = None, iLevel = iLevel, strDir = pE.Dir( "." ) ):
+		return sconscript_child( target, source, env, strID, hashArgs, iLevel, strDir )
 	strID = ":".join( ["dummy", str(iLevel)] + [os.path.basename( str(f) ) for f in afileSources] )
 	pBuilder = pE.Builder( action = funcScanner )
 	pE.Append( BUILDERS = {strID : pBuilder} )

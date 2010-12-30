@@ -4,12 +4,12 @@ import arepa
 import os
 import sys
 
-def test( iLevel, strTo, strFrom, pArgs ):
+def test( iLevel, strID, hashArgs ):
 	return ( iLevel == 1 )
 if locals( ).has_key( "testing" ):
 	sys.exit( )
 
-pE = Environment( )
+Import( "pE" )
 c_strID				= arepa.cwd( )
 c_strInputIntactC	= arepa.d( arepa.path_repo( pE ), arepa.c_strDirTmp, "intactc" )
 c_strFileIDTXT		= c_strID + ".txt"

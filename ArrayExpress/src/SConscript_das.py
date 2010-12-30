@@ -7,8 +7,8 @@ import subprocess
 import sys
 import zipfile
 
-def test( iLevel, strTo, strFrom, pArgs ):
-	strZIP = str(pArgs)
+def test( iLevel, strID, hashArgs ):
+	strZIP = hashArgs.get( "strFileZIP", "" )
 	if ( iLevel != 2 ) or ( not re.search( r'\.zip$', strZIP ) ):
 		return False
 	pZIP = zipfile.ZipFile( strZIP )
@@ -19,7 +19,7 @@ def test( iLevel, strTo, strFrom, pArgs ):
 if locals( ).has_key( "testing" ):
 	sys.exit( )
 
-pE = Environment( )
+Import( "pE" )
 c_strID					= arepa.cwd( )
 c_strType				= c_strID[2:6]
 c_fileInputIDSDRF		= Glob( "../*.sdrf.txt" )[0]

@@ -4,11 +4,12 @@ import arepa
 import os
 import sys
 
-def test( iLevel, strTo, strFrom, pArgs ):
+def test( iLevel, strID, hashArgs ):
 	return ( iLevel == 1 )
 if locals( ).has_key( "testing" ):
 	sys.exit( )
 
+Import( "pE" )
 c_strID				= arepa.cwd( )
 c_strType			= c_strID[2:6]
 c_strFileIDZIP		= c_strID + ".processed.1.zip"
@@ -16,8 +17,6 @@ c_strFileIDSDRF		= c_strID + ".sdrf.txt"
 c_strProcessedData	= "-processed-data-"
 c_strURL			= "ftp://ftp.ebi.ac.uk/pub/databases/microarray/data/experiment/"
 c_strTXT			= ".txt"
-
-pE = Environment( )
 
 arepa.download( pE, c_strURL + c_strType + "/" + c_strID + "/" + os.path.basename( c_strFileIDZIP ),
 	c_strFileIDZIP )
@@ -47,5 +46,6 @@ afileIDsTXT = Command( c_strID + c_strTXT, c_strFileIDZIP, funcIDsTXT )
 def funcScanner( target, source, env, strFileZIP = c_strFileIDZIP ):
 	for fileSource in source:
 		for strLine in open( str(fileSource) ):
-			env["sconscript_child"]( target, fileSource, env, strLine.strip( ), strFileZIP )
+			env["sconscript_child"]( target, fileSource, env, strLine.strip( ),
+				{"strFileZIP" : os.path.abspath( strFileZIP )} )
 arepa.sconscript_children( pE, afileIDsTXT, funcScanner, 2 )
