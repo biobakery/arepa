@@ -107,6 +107,22 @@ def ts( afileTargets, afileSources ):
 
 	return (str(afileTargets[0]), [fileCur.get_abspath( ) for fileCur in afileSources])
 
+def override( pE, pFile ):
+
+# This is so not kosher, but I can't find any other way to allow multiple rules for
+# the same target or over types of overrides.  The SCons interface allows _adding_
+# children, but not removing or resetting them except directly like this
+# (_children_reset doesn't actually remove the list of children!)
+	pFile = pE.File( pFile )
+	pFile._children_reset( )
+	pFile.sources = []
+	pFile.depends = []
+	pFile.implicit = []
+	pFile.sources_set = set()
+	pFile.depends_set = set()
+	pFile.implicit_set = set()
+	pFile.env = None
+
 #===============================================================================
 # Command execution
 #===============================================================================

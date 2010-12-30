@@ -11,7 +11,6 @@ if locals( ).has_key( "testing" ):
 Import( "pE" )
 Import( "hashArgs" )
 c_strID					= arepa.cwd( )
-c_strType				= c_strID[2:6]
 c_strInputIDSDRF		= hashArgs["strFileIDSDRF"]
 c_strInputIDIDF			= hashArgs["strFileIDIDF"]
 c_strInputTaxdumpTXT	= arepa.d( arepa.path_arepa( ), arepa.c_strDirTmp, "taxdump.txt" )

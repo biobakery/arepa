@@ -2,11 +2,10 @@
 
 import arepa
 import os
-import subprocess
 import sys
 
 pE = Environment( )
-c_afileSConscripts	= Glob( arepa.d( arepa.path_repo( ), arepa.c_strDirSrc, "SConscript*" ) )
+c_afileSConscripts	= sorted( Glob( arepa.d( arepa.path_repo( ), arepa.c_strDirSrc, "SConscript*" ) ) )
 
 if os.path.isfile( "SConscript" ):
 	SConscript( "SConscript" )
