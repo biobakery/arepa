@@ -2,38 +2,37 @@ import arepa
 import os
 import sys
 
-Import( "pE" )
-pE.Import( "c_fileTaxIDs" )
-c_fileInputInclude			= pE.File( arepa.d( arepa.c_strDirEtc, "include" ) )
-c_fileInputExclude			= pE.File( arepa.d( arepa.c_strDirEtc, "exclude" ) )
-c_fileExperiments			= pE.File( arepa.d( arepa.c_strDirTmp, "experiments" ) )
-c_fileIDsTXT				= pE.File( arepa.d( arepa.c_strDirTmp, "ids.txt" ) )
-c_fileProgExperiments2IDs	= pE.File( arepa.d( arepa.c_strDirSrc, "experiments2ids.py" ) )
+c_strInputInclude			= arepa.d( arepa.c_strDirEtc, "include" )
+c_strInputExclude			= arepa.d( arepa.c_strDirEtc, "exclude" )
+c_strInputTaxIDs			= arepa.d( arepa.path_arepa( ), arepa.c_strDirTmp, "taxids" )
+c_strFileExperiments		= arepa.d( arepa.c_strDirTmp, "experiments" )
+c_strFileIDsTXT				= arepa.d( arepa.c_strDirTmp, "ids.txt" )
+c_strProgExperiments2IDs	= arepa.d( arepa.c_strDirSrc, "experiments2ids.py" )
 c_strTXT					= ".txt"
 
-pE.Dir( arepa.c_strDirTmp )
+pE = Environment( )
 
 #===============================================================================
 # Download the experiments source file
 #===============================================================================
 
 arepa.download( pE, "http://www.ebi.ac.uk/microarray-as/ae/xml/experiments",
-	c_fileExperiments )
-pE.NoClean( c_fileExperiments )
+	c_strFileExperiments )
+NoClean( c_strFileExperiments )
 
 #===============================================================================
 # Process experiments into the more compact ids.txt
 #===============================================================================
 
-afileIDsTXT = arepa.pipe( pE, c_fileExperiments, c_fileProgExperiments2IDs, c_fileIDsTXT,
-	[[True, c_fileTaxIDs]] )
+afileIDsTXT = arepa.pipe( pE, c_strFileExperiments, c_strProgExperiments2IDs,
+	c_strFileIDsTXT, [[True, c_strInputTaxIDs]] )
 
 #===============================================================================
 # Pass the IDs from intactc to child directories
 #===============================================================================
 
-setInclude = set(arepa.readcomment( c_fileInputInclude ))
-setExclude = set(arepa.readcomment( c_fileInputExclude ))
+setInclude = set(arepa.readcomment( c_strInputInclude ))
+setExclude = set(arepa.readcomment( c_strInputExclude ))
 def funcScanner( target, source, env, setInclude = setInclude, setExclude = setExclude ):
 	for fileSource in source:
 		for strLine in open( str(fileSource) ):
@@ -42,4 +41,4 @@ def funcScanner( target, source, env, setInclude = setInclude, setExclude = setE
 			if ( setInclude and ( strID not in setInclude ) ) or ( strID in setExclude ):
 				continue
 			env["sconscript_child"]( target, fileSource, env, strID )
-arepa.sconscript_children( pE, afileIDsTXT, funcScanner, 1, locals( ) )
+arepa.sconscript_children( pE, afileIDsTXT, funcScanner, 1 )
