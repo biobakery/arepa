@@ -8,3 +8,4 @@ Gene ID conversion is currently disabled
   Its heart is in the right place, but it's not really capable
 Downloads are randomly rejected sometimes
   Presumably from too many threads, need to make e.g. a single-retryer?
+Fix the naming of child directories so they build right from the command line
