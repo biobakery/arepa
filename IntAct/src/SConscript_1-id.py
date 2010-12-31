@@ -9,7 +9,7 @@ def test( iLevel, strID, hashArgs ):
 if locals( ).has_key( "testing" ):
 	sys.exit( )
 
-Import( "pE" )
+#Import( "pE" )
 c_strID				= arepa.cwd( )
 c_strInputIntactC	= arepa.d( arepa.path_repo( ), arepa.c_strDirTmp, "intactc" )
 c_strFileIDTXT		= c_strID + ".txt"

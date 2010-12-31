@@ -1,2 +1,8 @@
 Consolidate metadata management into a single shared class (ISA?)
-Make sure SConscript overrides are working as expected
+Need real MAGE-TAB parsers for idf/sdrf/adf files
+  The heuristic in use right now fails.  A lot.
+soft2pcl is a bit iffy, although not nearly so bad as MAGE-TAB
+  SOFT parser is solid, question is exactly how to go to PCL from there
+Gene ID conversion is currently disabled
+  BridgeDB is too incomplete and WAY too slow to be useful
+  Its heart is in the right place, but it's not really capable

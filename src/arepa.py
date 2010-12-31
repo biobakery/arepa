@@ -5,6 +5,7 @@ import os
 import re
 import subprocess
 import sys
+import threading
 import urllib
 
 c_strDirData	= "data/"
@@ -14,6 +15,7 @@ c_strDirSrc		= "src/"
 c_strDirTmp		= "tmp/"
 c_astrExclude	= [strCur[:-1] for strCur in (c_strDirEtc, c_strDirSrc, c_strDirTmp, c_strDirDoc)] + [
 #	"ArrayExpress",
+#	"GEO",
 #	"IntAct",
 ]
 
@@ -46,13 +48,17 @@ def entable( fileIn, afuncCols ):
 	aastrRet = []
 	for strLine in fileIn:
 		astrLine = [strCur.strip( ) for strCur in strLine.split( "\t" )]
-		if all( ( i != None ) for i in aiCols ):
+		if any( ( i != None ) for i in aiCols ):
 			if len( astrLine ) > max( aiCols ):
-				aastrRet.append( [astrLine[i] for i in aiCols] )
+				aastrRet.append( [( None if ( i == None ) else astrLine[i] ) for i in aiCols] )
+			continue
+		if len( astrLine ) < len( afuncCols ):
+			continue
 		for i in range( len( astrLine ) ):
 			for j in range( len( afuncCols ) ):
-				if afuncCols[j]( astrLine[i] ):
+				if ( aiCols[j] == None ) and afuncCols[j]( astrLine[i] ):
 					aiCols[j] = i
+					break
 	return aastrRet
 
 def readcomment( fileIn ):
@@ -60,7 +66,7 @@ def readcomment( fileIn ):
 	if not isinstance( fileIn, file ):
 		try:
 			fileIn = open( str(fileIn) )
-		except IOException:
+		except IOError:
 			return []
 	astrRet = []
 	for strLine in fileIn:
@@ -79,7 +85,6 @@ def check_output( strCmd ):
 def d( *astrArgs ):
 	
 	return "/".join( astrArgs )
-
 #===============================================================================
 # SCons utilities
 #===============================================================================
@@ -127,14 +132,15 @@ def override( pE, pFile ):
 # Command execution
 #===============================================================================
 
-def download( pE, strURL, strT = None, fSSL = False ):
+def download( pE, strURL, strT = None, fSSL = False, fGlob = True ):
 
 	if not strT:
 		strT = re.sub( '^.*\/', "", strURL )
 
 	def funcDownload( target, source, env, strURL = strURL ):
 		strT, astrSs = ts( target, source )
-		iRet = ex( " ".join( ("curl", "--ftp-ssl -k" if fSSL else "", "-f", "-z", strT, strURL) ), strT )
+		iRet = ex( " ".join( ("curl", "--ftp-ssl -k" if fSSL else "",
+			"" if fGlob else "-g", "-f", "-z", strT, "'" + strURL + "'") ), strT )
 # 19 is curl's document-not-found code
 		return ( iRet if ( iRet != 19 ) else 0 )
 	return pE.Command( strT, None, funcDownload )
@@ -252,14 +258,16 @@ def scons_child( pE, fileDir, hashArgs = None, fileSConstruct = None, afileDeps 
 					fileOut.write( "	\"%s\"	: %s,\n" % (strKey, repr( strValue )) )
 				fileOut.write( "}\nExport( \"hashArgs\" )\n" )
 		return subprocess.call( ["scons"] + sys.argv[1:] + ["-C", strDir] )
-	pE.Command( "dummy:" + os.path.basename( str(fileDir) ), afileDeps, funcTmp )
+	return pE.Command( "dummy:" + os.path.basename( str(fileDir) ), afileDeps, funcTmp )
 
 def scons_children( pE ):
 
+	afileRet = []
 	for fileCur in pE.Glob( "*" ):
 		if ( type( fileCur ) == type( pE.Dir( "." ) ) ) and \
 			( os.path.basename( str(fileCur) ) not in c_astrExclude ):
-			scons_child( pE, fileCur )
+			afileRet.extend( scons_child( pE, fileCur ) )
+	return afileRet
 
 #------------------------------------------------------------------------------ 
 # Helper functions for SConscript subdirectories auto-generated from a scanned
@@ -302,23 +310,48 @@ def sconscript_children( pE, afileSources, funcScanner, iLevel, funcAction = Non
 # Gene ID conversion
 #===============================================================================
 
-def geneid( strIn, strTaxID, strTarget = "Entrez Gene", strURLBase = "http://localhost:8183" ):
-	
-# BUGBUG: This is one of the worst things I've ever done
-	hashTaxIDs = globals( ).get( "hashTaxIDs", {} )
-	strTaxon = hashTaxIDs.get( strTaxID )
-	if not strTaxon:
-		strTaxIDs = d( path_arepa( ), c_strDirTmp, "taxids" )
+s_lockTaxdump	= threading.Lock( )
+s_hashTaxID2Org	= None
+s_hashOrg2TaxID	= None
+def _taxdump( ):
+	global	s_lockTaxdump, s_hashTaxID2Org, s_hashOrg2TaxID
+
+	s_lockTaxdump.acquire( )
+	if ( s_hashTaxID2Org == None ) or ( s_hashOrg2TaxID == None ):
+		s_hashTaxID2Org = {}
+		s_hashOrg2TaxID = {}
+		strTaxIDs = d( path_arepa( ), c_strDirTmp, "taxdump.txt" )
 		try:
 			for strLine in open( strTaxIDs ):
-				strFrom, strTo = strLine.strip( ).split( "\t" )
-				if strFrom == strTaxID:
-					strTaxon = " ".join( strTo.split( " " )[:2] )
-					break
+				strOrg, strID = strLine.strip( ).split( "\t" )
+				s_hashTaxID2Org[strID] = strOrg
+				s_hashOrg2TaxID[strOrg] = strID
 		except IOError:
 			pass
+	s_lockTaxdump.release( )
+	
+	return (s_hashTaxID2Org, s_hashOrg2TaxID)
+
+def taxid2org( strTaxID ):
+
+	hashTaxID2Org, hashOrg2TaxID = _taxdump( )
+	return hashTaxID2Org.get( strTaxID )
+
+def org2taxid( strOrg ):
+
+	hashTaxID2Org, hashOrg2TaxID = _taxdump( )
+	return hashOrg2TaxID.get( strOrg )
+
+def geneid( strIn, strTaxID, strTarget = "Entrez Gene", strURLBase = "http://localhost:8183" ):
+	
+# BUGBUG: Currently disabled due to BridgeDB's inadequate coverage and performance
+# It's way-crazy slow, and it doesn't have sufficient DB coverage when it does work
+	return None
+# BUGBUG: This is one of the worst things I've ever done
+	strTaxon = taxid2org( strTaxID )
 	if not strTaxon:
-		return strIn
+		return None
+	strTaxon = " ".join( strTaxon.split( " " )[:2] )
 	strTaxon = urllib.quote( strTaxon ).replace( "/", "%2F" )
 
 	strURL = strURLBase + "/" + strTaxon + "/search/" + urllib.quote( strIn )
@@ -330,7 +363,7 @@ def geneid( strIn, strTaxID, strTarget = "Entrez Gene", strURLBase = "http://loc
 			strID, strSource = astrLine
 			break
 	if not ( strID and strSource ):
-		return strIn
+		return None
 	strSource = urllib.quote( strSource ).replace( "/", "%2F" )
 
 	strURL = strURLBase + "/" + strTaxon + "/xrefs/" + strSource + "/" + urllib.quote( strID )
@@ -341,8 +374,7 @@ def geneid( strIn, strTaxID, strTarget = "Entrez Gene", strURLBase = "http://loc
 		strID, strSource = strLine.strip( ).split( "\t" )
 		if strSource == strTarget:
 			return strID
-
-	return strIn
+	return None
 
 #===============================================================================
 # CProcessor

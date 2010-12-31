@@ -9,7 +9,7 @@ def test( iLevel, strID, hashArgs ):
 if locals( ).has_key( "testing" ):
 	sys.exit( )
 
-Import( "pE" )
+#Import( "pE" )
 c_strID				= arepa.cwd( )
 c_strType			= c_strID[2:6]
 c_strFileIDZIP		= c_strID + ".processed.1.zip"
@@ -46,10 +46,11 @@ def funcADFsTXT( target, source, env ):
 	return None
 afileADFsTXT = Command( c_strFileADFsTXT, c_strFileIDSDRF, funcADFsTXT )
 
-def funcScannerADFs( target, source, env, strURL = c_strURLArray + c_strType + "/" ):
+def funcScannerADFs( target, source, env, strURL = c_strURLArray ):
 	for strLine in open( str(source[0]) ):
 		strArray = strLine.strip( )
-		afileADF = arepa.download( env, strURL + strArray + "/" + strArray + ".adf.txt" )
+		strType = strArray[2:6]
+		afileADF = arepa.download( env, "/".join( (strURL, strType, strArray, strArray + ".adf.txt") ) )
 		pE.Dictionary( ).setdefault( "adfs", [] ).extend( afileADF )
 afileADFs = arepa.sconscript_children( pE, afileADFsTXT, funcScannerADFs, 2, funcADFsTXT )
 

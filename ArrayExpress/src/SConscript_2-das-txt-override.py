@@ -2,7 +2,6 @@
 
 import arepa
 import os
-import SCons
 import sys
 
 def test( iLevel, strID, hashArgs ):
@@ -10,8 +9,8 @@ def test( iLevel, strID, hashArgs ):
 if locals( ).has_key( "testing" ):
 	sys.exit( )
 
-Import( "pE" )
-Import( "hashArgs" )
+#Import( "pE" )
+#Import( "hashArgs" )
 c_strID					= arepa.cwd( )
 c_strFileIDTXT			= c_strID + ".txt"
 

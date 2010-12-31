@@ -8,7 +8,7 @@ import sys
 def callback( aArgs, strAs, strBs, strAltAs, strAltBs, strSynAs, strSynBs, strMethods, strAuthors, strPMIDs,
 	strTaxAs, strTaxBs, strTypes, strDBs, strIDs, strConfs ):
 
-	setPairs, strTaxID = aArgs
+	setPairs, strTaxID, hashCache = aArgs
 	astrAB = []
 	for astrCur in ([strAs, strAltAs, strSynAs], [strBs, strAltBs, strSynBs]):
 		astrTokens = []
@@ -17,7 +17,9 @@ def callback( aArgs, strAs, strBs, strAltAs, strAltBs, strSynAs, strSynBs, strMe
 		strGene = None
 		for strToken in astrTokens:
 			strType, strID, strGloss = intact.split( strToken )
-			strCur = arepa.geneid( strID, strTaxID )
+			strCur = hashCache.get( strID )
+			if strCur == None:
+				strCur = hashCache[strID] = ( arepa.geneid( strID, strTaxID ) or strID )
 			if strCur:
 				strGene = strCur
 				break
@@ -34,6 +36,6 @@ if not mtch:
 strTaxID = mtch.group( 1 )
 
 setPairs = set()
-intact.read( sys.stdin, strTarget, callback, [setPairs, strTaxID] )
+intact.read( sys.stdin, strTarget, callback, [setPairs, strTaxID, {}] )
 for astrGenes in setPairs:
 	print( "\t".join( list(astrGenes) + ["1"] ) )

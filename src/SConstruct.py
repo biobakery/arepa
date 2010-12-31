@@ -8,8 +8,7 @@ pE = Environment( )
 c_afileSConscripts	= sorted( Glob( arepa.d( arepa.path_repo( ), arepa.c_strDirSrc, "SConscript*" ) ) )
 
 if os.path.isfile( "SConscript" ):
-	SConscript( "SConscript" )
-	Import( "hashArgs" )
+	execfile( "SConscript" )
 else:
 	hashArgs = {}
 
@@ -23,4 +22,4 @@ for fileSConscript in c_afileSConscripts:
 	except SystemExit:
 		pass
 	if hashEnv["test"]( arepa.level( ), arepa.cwd( ), hashArgs ):
-		SConscript( strSConscript, exports = locals( ), variant_dir = ".", duplicate = False )
+		execfile( strSConscript )

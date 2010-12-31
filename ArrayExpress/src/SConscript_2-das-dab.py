@@ -18,12 +18,13 @@ def test( iLevel, strID, hashArgs ):
 if locals( ).has_key( "testing" ):
 	sys.exit( )
 
-Import( "pE" )
-Import( "hashArgs" )
+#Import( "pE" )
+#Import( "hashArgs" )
 c_strID					= arepa.cwd( )
 c_strType				= c_strID[2:6]
 c_strInputIDSDRF		= hashArgs["strFileIDSDRF"]
 c_astrInputADFs			= hashArgs["astrFileADFs"]
+c_strInputSConscript	= arepa.d( arepa.path_arepa( ), arepa.c_strDirSrc, "SConscript_pcl-dab.py" )
 c_strFileIDRawTXT		= c_strID + "_00raw.txt"
 c_strFileIDRawPCL		= c_strID + "_01raw.pcl"
 c_strFileIDNormPCL		= c_strID + "_02norm.pcl"
@@ -31,14 +32,14 @@ c_strFileIDPCL			= c_strID + ".pcl"
 c_strFileIDDAB			= c_strID + ".dab"
 c_strProgMergeTables	= arepa.d( arepa.path_arepa( ), arepa.c_strDirSrc, "merge_tables.py" ) 
 c_strProgSamples2PCL	= arepa.d( arepa.path_repo( ), arepa.c_strDirSrc, "samples2pcl.py" )
-c_afileInputsSamples	= Glob( "../*sample_table*" )
+c_afileInputSamples		= Glob( "../*sample_table*" )
 
 #===============================================================================
 # Clip sample tables to first two columns
 #===============================================================================
 
 afileTables = []
-for fileSample in c_afileInputsSamples:
+for fileSample in c_afileInputSamples:
 	strTable = os.path.basename( str(fileSample) )
 	def funcTable( target, source, env ):
 		strT, astrSs = arepa.ts( target, source )
@@ -60,22 +61,4 @@ arepa.cmd( pE, c_strProgMergeTables, c_strFileIDRawTXT,
 arepa.pipe( pE, c_strFileIDRawTXT, c_strProgSamples2PCL, c_strFileIDRawPCL,
 	[[True, s] for s in ( [c_strInputIDSDRF] + c_astrInputADFs )] )
 
-#- Normalize
-c_iMaxLines = 100000
-def funcIDNormPCL( target, source, env ):
-	strT, astrSs = arepa.ts( target, source )
-	strS = astrSs[0]
-	strWC = arepa.check_output( "wc -l " + strS ).strip( ).split( )[0]
-	return ( arepa.ex( "Normalizer -t pcl -T medmult < " + strS, strT )
-		if ( int(strWC) < c_iMaxLines ) else arepa.ex( " ".join( ("ln -s", strS, strT) ) ) )
-Command( c_strFileIDNormPCL, c_strFileIDRawPCL, funcIDNormPCL )
-
-#- Impute
-arepa.spipe( pE, c_strFileIDNormPCL, "KNNImputer", c_strFileIDPCL )
-
-#- PCL -> DAB
-def funcIDDAB( target, source, env ):
-	strT, astrSs = arepa.ts( target, source )
-	return arepa.ex( "Distancer -o " + strT + " < " + astrSs[0] )
-Command( c_strFileIDDAB, c_strFileIDPCL, funcIDDAB )
-Default( c_strFileIDDAB )
+execfile( c_strInputSConscript )
