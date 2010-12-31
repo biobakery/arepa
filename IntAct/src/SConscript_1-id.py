@@ -14,10 +14,11 @@ c_strID				= arepa.cwd( )
 c_strInputIntactC	= arepa.d( arepa.path_repo( ), arepa.c_strDirTmp, "intactc" )
 c_strFileIDTXT		= c_strID + ".txt"
 c_strFileIDDAB		= c_strID + ".dab"
-c_strProgC2TXT		= arepa.d( arepa.path_repo( ), arepa.c_strDirSrc, "c2txt.py" )
+c_strProgC2Metadata	= arepa.d( arepa.path_repo( ), arepa.c_strDirSrc, "c2metadata.py" )
 c_strProgC2DAT		= arepa.d( arepa.path_repo( ), arepa.c_strDirSrc, "c2dat.py" )
 
-afileIDTXT = arepa.pipe( pE, c_strInputIntactC, c_strProgC2TXT, c_strFileIDTXT, [[False, c_strID]] )
+afileIDTXT = arepa.pipe( pE, c_strInputIntactC, c_strProgC2Metadata, c_strFileIDTXT,
+	[[False, c_strID]] )
 Default( afileIDTXT )
 
 def funcDAB( target, source, env ):

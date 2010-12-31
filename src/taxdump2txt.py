@@ -10,7 +10,8 @@ def print_tree( iID, aaiChildren, astrNames, iDepth ):
 		return
 	print( ( " " * iDepth ) + astrNames[iID] + ( "\t%d" % iID ) )
 	iDepth += 1
-	for iChild in ( aaiChildren[iID] or [] ):
+	aiChildren = aaiChildren[iID] if ( iID < len( aaiChildren ) ) else None
+	for iChild in ( aiChildren or [] ):
 		print_tree( iChild, aaiChildren, astrNames, iDepth )
 
 astrNames = []

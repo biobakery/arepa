@@ -6,3 +6,5 @@ soft2pcl is a bit iffy, although not nearly so bad as MAGE-TAB
 Gene ID conversion is currently disabled
   BridgeDB is too incomplete and WAY too slow to be useful
   Its heart is in the right place, but it's not really capable
+Downloads are randomly rejected sometimes
+  Presumably from too many threads, need to make e.g. a single-retryer?

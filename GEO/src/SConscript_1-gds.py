@@ -21,7 +21,7 @@ c_strFileIDRawPCL		= c_strID + "_00raw.pcl"
 c_strFileIDNormPCL		= c_strID + "_01raw.pcl"
 c_strFileGPLsTXT		= "gpls.txt"
 c_strProgSOFT2PCL		= arepa.d( arepa.path_repo( ), arepa.c_strDirSrc, "soft2pcl.py" )
-c_strProgSOFT2TXT		= arepa.d( arepa.path_repo( ), arepa.c_strDirSrc, "soft2txt.py" )
+c_strProgSOFT2Metadata	= arepa.d( arepa.path_repo( ), arepa.c_strDirSrc, "soft2metadata.py" )
 c_strURL				= "ftp://ftp.ncbi.nih.gov/pub/geo/DATA/"
 c_strURLData			= c_strURL + "SOFT/GDS/"
 c_strURLPlatform		= c_strURL + "annotation/platforms/"
@@ -51,7 +51,7 @@ def funcScannerGPLs( target, source, env ):
 		afileGPL = arepa.download( env, c_strURLPlatform + strLine.strip( ) + ".annot.gz" )
 		afileGPLs.extend( afileGPL )
 # Locate here due to dependency on annotation files
-	Command( c_strFileIDTXT, [c_strProgSOFT2TXT, c_strFileIDSOFTGZ] + afileGPLs, funcSOFT2 )
+	Command( c_strFileIDTXT, [c_strProgSOFT2Metadata, c_strFileIDSOFTGZ] + afileGPLs, funcSOFT2 )
 	Command( c_strFileIDRawPCL, [c_strProgSOFT2PCL, c_strFileIDSOFTGZ] + afileGPLs, funcSOFT2 )
 	execfile( c_strInputSConscript )
 afileGPLs = arepa.sconscript_children( pE, afileGPLsTXT, funcScannerGPLs, 2, funcGPLsTXT )

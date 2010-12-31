@@ -23,11 +23,11 @@ def funcTaxdumpTXT( target, source, env ):
 Command( c_strFileTaxdumpTXT, [c_strProgTaxdump2TXT, c_strFileTaxdumpTARGZ],
 	funcTaxdumpTXT )
 
-arepa.pipe( pE, c_strFileTaxdumpTXT, c_strProgTaxdump2Taxa, c_strFileTaxIDs,
+afileTaxIDs = arepa.pipe( pE, c_strFileTaxdumpTXT, c_strProgTaxdump2Taxa, c_strFileTaxIDs,
 	[[True, c_strInputTaxa]] )
 
 #===============================================================================
 # Main SConscript on subdirectories
 #===============================================================================
 
-arepa.scons_children( pE )
+arepa.scons_children( pE, afileTaxIDs )

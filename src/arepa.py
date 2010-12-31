@@ -82,9 +82,21 @@ def check_output( strCmd ):
 	proc = subprocess.Popen( strCmd, shell = True, stdout = subprocess.PIPE )
 	return proc.communicate( )[0]
 
+def lc( strFile ):
+
+	strWC = check_output( "wc -l " + strFile )
+	if strWC:
+		strWC = strWC.strip( ).split( )[0]
+		try:
+			strWC = int(strWC)
+		except ValueError:
+			strWC = None
+	return strWC
+
 def d( *astrArgs ):
 	
 	return "/".join( astrArgs )
+
 #===============================================================================
 # SCons utilities
 #===============================================================================
@@ -260,13 +272,13 @@ def scons_child( pE, fileDir, hashArgs = None, fileSConstruct = None, afileDeps 
 		return subprocess.call( ["scons"] + sys.argv[1:] + ["-C", strDir] )
 	return pE.Command( "dummy:" + os.path.basename( str(fileDir) ), afileDeps, funcTmp )
 
-def scons_children( pE ):
+def scons_children( pE, afileDeps = None ):
 
 	afileRet = []
 	for fileCur in pE.Glob( "*" ):
 		if ( type( fileCur ) == type( pE.Dir( "." ) ) ) and \
 			( os.path.basename( str(fileCur) ) not in c_astrExclude ):
-			afileRet.extend( scons_child( pE, fileCur ) )
+			afileRet.extend( scons_child( pE, fileCur, None, None, afileDeps ) )
 	return afileRet
 
 #------------------------------------------------------------------------------ 
