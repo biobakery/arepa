@@ -7,7 +7,7 @@ import re
 import sys
 
 def test( iLevel, strID, hashArgs ):
-	return ( iLevel == 1 )
+	return ( iLevel == 1 ) and ( strID.find( "GDS" ) == 0 )
 if locals( ).has_key( "testing" ):
 	sys.exit( )
 
@@ -18,7 +18,7 @@ c_strInputSConscript	= arepa.d( arepa.path_arepa( ), arepa.c_strDirSrc, "SConscr
 c_strFileIDTXT			= c_strID + ".txt"
 c_strFileIDSOFTGZ		= c_strID + ".soft.gz"
 c_strFileIDRawPCL		= c_strID + "_00raw.pcl"
-c_strFileIDNormPCL		= c_strID + "_01raw.pcl"
+c_strFileIDNormPCL		= c_strID + "_01norm.pcl"
 c_strFileGPLsTXT		= "gpls.txt"
 c_strProgSOFT2PCL		= arepa.d( arepa.path_repo( ), arepa.c_strDirSrc, "soft2pcl.py" )
 c_strProgSOFT2Metadata	= arepa.d( arepa.path_repo( ), arepa.c_strDirSrc, "soft2metadata.py" )

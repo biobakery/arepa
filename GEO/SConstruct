@@ -8,26 +8,33 @@ c_strInputExclude			= arepa.d( arepa.c_strDirEtc, "exclude" )
 c_strInputTaxIDs			= arepa.d( arepa.path_arepa( ), arepa.c_strDirTmp, "taxids" )
 c_strFileGDSsXML			= arepa.d( arepa.c_strDirTmp, "gds.xml" )
 c_strFileGDSsTXT			= arepa.d( arepa.c_strDirTmp, "gds.txt" )
+c_strFileGSEsXML			= arepa.d( arepa.c_strDirTmp, "gse.xml" )
+c_strFileGSEsTXT			= arepa.d( arepa.c_strDirTmp, "gse.txt" )
 c_strProgXML2TXT			= arepa.d( arepa.c_strDirSrc, "xml2txt.py" )
 
 pE = Environment( )
 
 #===============================================================================
-# Download the list of GDS IDs
+# Download the lists of GDS and GSE IDs
 #===============================================================================
 
 setOrgs = arepa.taxa( c_strInputTaxIDs, True )
-strURL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gds&term=GDS[ETYP]+AND+(" + \
-	"+OR+".join( map( lambda s: urllib.quote_plus( s ) + "[ORGN]", setOrgs ) ) + \
-	")&retmax=1000000"
-arepa.download( pE, strURL, c_strFileGDSsXML, False, False )
+strURLLeft = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gds&term="
+strURLRight = "[ETYP]+AND+(" + "+OR+".join( map( lambda s: urllib.quote_plus( s ) + \
+	"[ORGN]", setOrgs ) ) + ")&retmax=1000000"
+arepa.download( pE, strURLLeft + "GDS" + strURLRight, c_strFileGDSsXML, False, False )
 NoClean( c_strFileGDSsXML )
+arepa.download( pE, strURLLeft + "GSE" + strURLRight, c_strFileGSEsXML, False, False )
+NoClean( c_strFileGSEsXML )
 
 #===============================================================================
-# Process XML into the more compact gds.txt
+# Process XML into the more compact gds/gse.txt
 #===============================================================================
-afileGDSsTXT = arepa.pipe( pE, c_strFileGDSsXML, c_strProgXML2TXT,
-	c_strFileGDSsTXT )
+
+afileTXTs = arepa.pipe( pE, c_strFileGDSsXML, c_strProgXML2TXT,
+	c_strFileGDSsTXT, [[False, "GDS"]] )
+afileTXTs += arepa.pipe( pE, c_strFileGSEsXML, c_strProgXML2TXT,
+	c_strFileGSEsTXT, [[False, "GSE"]] )
 
 #===============================================================================
 # Pass the IDs from gds.txt to child directories
@@ -36,10 +43,12 @@ afileGDSsTXT = arepa.pipe( pE, c_strFileGDSsXML, c_strProgXML2TXT,
 setInclude = set(arepa.readcomment( c_strInputInclude ))
 setExclude = set(arepa.readcomment( c_strInputExclude ))
 def funcScanner( target, source, env, setInclude = setInclude, setExclude = setExclude ):
-	for strLine in open( str(source[0]) ):
-		astrLine = strLine.strip( ).split( "\t" )
-		strID = astrLine[0]
-		if ( setInclude and ( strID not in setInclude ) ) or ( strID in setExclude ):
-			continue
-		env["sconscript_child"]( target, source[0], env, strID )
-arepa.sconscript_children( pE, afileGDSsTXT, funcScanner, 1 )
+	strT, astrSs = arepa.ts( target, source )
+	for strS in astrSs:
+		for strLine in open( str(strS) ):
+			astrLine = strLine.strip( ).split( "\t" )
+			strID = astrLine[0]
+			if ( setInclude and ( strID not in setInclude ) ) or ( strID in setExclude ):
+				continue
+			env["sconscript_child"]( target, source[0], env, strID )
+arepa.sconscript_children( pE, afileTXTs, funcScanner, 1 )
