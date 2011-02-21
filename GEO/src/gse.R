@@ -20,12 +20,40 @@ if(length(grep("series_matrix",strInputFile))==1){
   seriesmatrix <- strInputFile
 }else{  #then assume it's a GSE accesssion number
   gse <- strInputFile
-  url <- paste("ftp://ftp.ncbi.nih.gov/pub/geo/DATA/SeriesMatrix/",gse,"/",gse,"_series_matrix.txt.gz",sep="")
-  system(paste("wget",url))
-  seriesmatrix <- paste(inputargs[1],"_series_matrix.txt.gz",sep="")
+  url <- paste("ftp://ftp.ncbi.nih.gov/pub/geo/DATA/SeriesMatrix/",gse,sep="")
+  wgetcall <- paste('wget --mirror -nd -r --accept=".txt.gz"',thisurl)
+  system(wgetcall)
+  seriesmatrix <- dir(pattern="^.*\\.txt\\.gz$")
 }
 
-gsedat <- getGEO(filename=seriesmatrix)
+if(identical(length(seriesmatrix)==1,TRUE)){
+  gsedat <- getGEO(filename=seriesmatrix)
+}else{
+  gsedat <- lapply(seriesmatrix,function(x) getGEO(filename=x))
+  exprs.cbind <- do.call(cbind,lapply(gsedat,exprs))
+  pdata <- lapply(gsedat,pData)
+  pdatMerge <- function(pdata.list){
+    output.colnames <- unique(unlist(lapply(pdata.list,colnames)))
+    pdata.matchedcols <- lapply(pdata.list,function(x){
+      for (addcol in output.colnames[!output.colnames %in% colnames(x)]){
+        x[[addcol]] <- NA
+      }
+      x <- x[,match(output.colnames,colnames(x))]
+      return(x)
+    }
+                                )
+    output <- do.call(rbind,pdata.matchedcols)
+    return(output)
+  }
+  pdata.merged <- pdatMerge(pdata)
+  pdata.merged <- pdata.merged[match(colnames(exprs.cbind),rownames(pdata.merged)),]
+  if(identical(all.equal(rownames(pdata.merged),colnames(exprs.cbind)),TRUE)){
+    gsedat <- new("ExpressionSet",
+                  exprs=exprs.cbind,
+                  phenoData=new("AnnotatedDataFrame",data=pdata.merged)
+                  )
+  }else{stop("Could not combine multiple ExpressionSets into one.")}
+}
 
 if(class(gsedat)=="ExpressionSet"){
   ##One platform only
