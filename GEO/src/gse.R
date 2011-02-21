@@ -21,7 +21,7 @@ if(length(grep("series_matrix",strInputFile))==1){
 }else{  #then assume it's a GSE accesssion number
   gse <- strInputFile
   url <- paste("ftp://ftp.ncbi.nih.gov/pub/geo/DATA/SeriesMatrix/",gse,sep="")
-  wgetcall <- paste('wget --mirror -nd -r --accept=".txt.gz"',thisurl)
+  wgetcall <- paste('wget --mirror -nd -r --accept=".txt.gz"',url)
   system(wgetcall)
   seriesmatrix <- dir(pattern="^.*\\.txt\\.gz$")
 }
