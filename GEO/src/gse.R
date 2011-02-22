@@ -20,6 +20,7 @@ strOutputData		<- inputargs[4]
 gse <- strsplit(strInputFile,split="/")[[1]]
 gse <- gse[length(gse)-1]
 gsedat <- getGEO(gse)
+if(class(gsedat)=="list" & length(gsedat)==1) gsedat <- gsedat[[1]]
 
 if(class(gsedat)=="list"){
   exprs.cbind <- do.call(cbind,lapply(gsedat,exprs))
