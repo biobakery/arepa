@@ -1,19 +1,13 @@
-#GDS3717
-#GDS3716
-#GDS3715
-
-# No issues
-GSE7463
-GSE8842
-GSE18520
-GSE14764
-GSE13525
-GSE12470
-# Two files
+#one series matrix file:
+GSE10186
+GSE10140
+GSE10141
+GSE10142
+GSE19977
+#two series matrix files:
 GSE9891
-# Multiple platforms
-GSE19829
+GSE8402
+GSE16560
 GSE13876
-# No series matrix
-GDS2785
-GDS3297
+#two platforms in a single series still causes problems:
+#GSE19829

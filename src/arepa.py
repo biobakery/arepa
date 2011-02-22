@@ -14,9 +14,9 @@ c_strDirEtc		= "etc/"
 c_strDirSrc		= "src/"
 c_strDirTmp		= "tmp/"
 c_astrExclude	= [strCur[:-1] for strCur in (c_strDirEtc, c_strDirSrc, c_strDirTmp, c_strDirDoc)] + [
-#	"ArrayExpress",
+	"ArrayExpress",
 #	"GEO",
-#	"IntAct",
+	"IntAct",
 ]
 
 #===============================================================================

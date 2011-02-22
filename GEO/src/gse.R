@@ -5,6 +5,7 @@
 ##gse with issues: GSE19829,GSE9891,GSE13876
 
 library(GEOquery)
+options(download.file.method="wget")
 
 inputargs <- commandArgs(TRUE)
 print(inputargs)
@@ -15,21 +16,12 @@ strOutputPlatform	<- inputargs[2]
 strOutputMetadata	<- inputargs[3]
 strOutputData		<- inputargs[4]
 
-if(length(grep("series_matrix",strInputFile))==1){
-  ##this is a series, eg: "/home/lwaldron/GEO/GSE10952_series_matrix.txt.gz"
-  seriesmatrix <- strInputFile
-}else{  #then assume it's a GSE accesssion number
-  gse <- strInputFile
-  url <- paste("ftp://ftp.ncbi.nih.gov/pub/geo/DATA/SeriesMatrix/",gse,sep="")
-  wgetcall <- paste('wget --mirror -nd -r --accept=".txt.gz"',url)
-  system(wgetcall)
-  seriesmatrix <- dir(pattern="^.*\\.txt\\.gz$")
-}
+##dirty hack to get just the GSE identifier:
+gse <- strsplit(strInputFile,split="/")[[1]]
+gse <- gse[length(gse)-1]
+gsedat <- getGEO(gse)
 
-if(identical(length(seriesmatrix)==1,TRUE)){
-  gsedat <- getGEO(filename=seriesmatrix)
-}else{
-  gsedat <- lapply(seriesmatrix,function(x) getGEO(filename=x))
+if(class(gsedat)=="list"){
   exprs.cbind <- do.call(cbind,lapply(gsedat,exprs))
   pdata <- lapply(gsedat,pData)
   pdatMerge <- function(pdata.list){
@@ -42,10 +34,12 @@ if(identical(length(seriesmatrix)==1,TRUE)){
       return(x)
     }
                                 )
+    names(pdata.matchedcols) <- NULL  #necessary to maintain rownames in next line
     output <- do.call(rbind,pdata.matchedcols)
     return(output)
   }
   pdata.merged <- pdatMerge(pdata)
+  ##if there are "." in rownames(pdat.merged
   pdata.merged <- pdata.merged[match(colnames(exprs.cbind),rownames(pdata.merged)),]
   if(identical(all.equal(rownames(pdata.merged),colnames(exprs.cbind)),TRUE)){
     gsedat <- new("ExpressionSet",
@@ -63,7 +57,7 @@ if(class(gsedat)=="ExpressionSet"){
   write.csv(origpdat,file=strOutputMetadata)
 #  write.table(pdat,sep="\t",file="default_pdata.txt")
 	mdExprs <- exprs(eset)
-	if( min( mdExprs, na.rm = TRUE ) >= 0 ) {
+	if( min( mdExprs, na.rm = TRUE ) >= 0 & max( mdExprs, na.rm = TRUE ) >= 50 ) {
 		mdExprs <- log(mdExprs, base = 2) }
   write.csv(mdExprs,file=strOutputData)
 #  save(eset,file="default_eset.RData")
