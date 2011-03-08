@@ -1,13 +1,12 @@
 #one series matrix file:
 GSE10186
-GSE10140
-GSE10141
-GSE10142
-GSE19977
-#two series matrix files:
-GSE9891
-GSE8402
-GSE16560
-GSE13876
+#GSE10141
+#GSE10142
+#GSE19977
+#two series matrix files still causes problems with this version:
+#GSE9891
+#GSE8402
+#GSE16560
+#GSE13876
 #two platforms in a single series still causes problems:
 #GSE19829
