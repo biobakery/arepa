@@ -104,7 +104,7 @@ def d( *astrArgs ):
 def ex( strCmd, strOut = None ):
 	
 	sys.stdout.write( "%s" % strCmd )
-	sys.stdout.write( ( ( " > %s" % strOut ) if strOut else "" ) + "\n" )
+	sys.stdout.write( ( ( " > %s" % quote( strOut ) ) if strOut else "" ) + "\n" )
 	if not strOut:
 		return subprocess.call( strCmd, shell = True )
 	pProc = subprocess.Popen( strCmd, shell = True, stdout = subprocess.PIPE )
@@ -162,6 +162,10 @@ def _pipefile( pFile ):
 	return ( ( pFile.get_abspath( ) if ( "get_abspath" in dir( pFile ) ) else str(pFile) )
 		if pFile else None )
 
+def quote( p ):
+
+	return ( "\"" + str(p) + "\"" )
+
 def _pipeargs( strFrom, strTo, aaArgs ):
 
 	astrFiles = []
@@ -171,8 +175,7 @@ def _pipeargs( strFrom, strTo, aaArgs ):
 		if fFile:
 			strArg = _pipefile( strArg )
 			astrFiles.append( strArg )
-			strArg = "\"" + strArg + "\""
-		astrArgs.append( str(strArg) )
+		astrArgs.append( quote( strArg ) )
 	return ( [_pipefile( s ) for s in (strFrom, strTo)] + [astrFiles, astrArgs] )
 
 def pipe( pE, strFrom, strProg, strTo, aaArgs = [] ):
@@ -180,7 +183,7 @@ def pipe( pE, strFrom, strProg, strTo, aaArgs = [] ):
 	def funcPipe( target, source, env, strFrom = strFrom, astrArgs = astrArgs ):
 		strT, astrSs = ts( target, source )
 		return ex( " ".join( [astrSs[0]] + astrArgs +
-			( ["<", str(strFrom)] if strFrom else [] ) ), strT )
+			( ["<", quote( strFrom )] if strFrom else [] ) ), strT )
 	return pE.Command( strTo, [strProg] + ( [strFrom] if strFrom else [] ) +
 		astrFiles, funcPipe )
 
@@ -393,6 +396,19 @@ def geneid( strIn, strTaxID, strTarget = "Entrez Gene", strURLBase = "http://loc
 #===============================================================================
 
 class CProcessor:
+
+	@staticmethod
+	def pipeline( pE, apPipeline, afileIn, strDir = c_strDirData, strSuffix = None ):
+		
+		for apProc in apPipeline:
+			if type( apProc ) != list:
+				apProc = [apProc]
+			afileOut = []
+			for pProc in apProc:
+				for fileIn in afileIn:
+					afileOut.extend( pProc.ex( pE, str(fileIn), strDir, strSuffix ) )
+			afileIn = afileOut
+		return afileIn
 
 	def __init__( self, strFrom, strTo, strID, strProcessor,
 		astrArgs = [], strDir = None, fPipe = True ):
