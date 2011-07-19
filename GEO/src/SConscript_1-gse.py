@@ -52,3 +52,10 @@ Command( [c_strFileRDataTXT, c_strFileRMetadataTXT, c_strFileRPlatformTXT],
 arepa.pipe( pE, c_strFileRDataTXT, c_strProgSeries2PCL, c_strFileIDRawPCL,
 	[[True, c_strFileRMetadataTXT], [True, c_strFileRPlatformTXT]] )
 execfile( c_strInputSConscript )
+
+# need to insert program to produce GSE*.txt metadata file.
+# maybe I can use a modified version of soft2metadata.py 
+# I need to understand fully the functionality of scons_children
+
+#Joseph Edit 7_18_11
+

@@ -1,3 +1,4 @@
+
 Consolidate metadata management into a single shared class (ISA?)
 Need real MAGE-TAB parsers for idf/sdrf/adf files
   The heuristic in use right now fails.  A lot.

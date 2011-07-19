@@ -10,3 +10,30 @@ GSE10186
 #GSE13876
 #two platforms in a single series still causes problems:
 #GSE19829
+
+#===================================
+#EDIT
+#===================================
+
+#GDS3717
+
+#=====================
+# EDIT 7/10/2011
+#=====================
+
+# I need to add three more 'nice' data sets that will be downloaded via the GEO module of ARepA. 
+
+#GSE8842
+#GSE14764
+#GSE6008
+
+# Some two-platform ones to try out later:
+# The end of the file (GPL*) specifies different platforms used in 
+# the experiment.  
+
+#GSE19829-GPL570
+#GSE19829-GPL8300
+#GSE20565-GPL570
+
+
+GDS2785
