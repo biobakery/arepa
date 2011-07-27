@@ -1,5 +1,5 @@
 #one series matrix file:
-GSE10186
+#GSE10186
 #GSE10141
 #GSE10142
 #GSE19977
@@ -23,7 +23,7 @@ GSE10186
 
 # I need to add three more 'nice' data sets that will be downloaded via the GEO module of ARepA. 
 
-#GSE8842
+GSE8842
 #GSE14764
 #GSE6008
 
@@ -36,4 +36,4 @@ GSE10186
 #GSE20565-GPL570
 
 
-GDS2785
+#GDS2785
