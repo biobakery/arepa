@@ -1,5 +1,5 @@
 ##$REXEC CMD BATCH --vanilla "--args GSE12418 $DATAHOME" $SRCHOME/gse_PROCESSED.R $LOG/GSE8402_downloadPROCESSED.log
-inputargs <- c("GSE25220","../DATA")
+##inputargs <- c("GSE25220","../DATA")
 ##gds: GDS2785,GDS3297
 ##gse with no issues: GSE7463,GSE8842,GSE18520,GSE14764,GSE13525,GSE12470
 ##gse with issues: GSE19829,GSE9891,GSE13876
@@ -18,7 +18,7 @@ strOutputPlatform	<- inputargs[2]
 strOutputMetadata	<- inputargs[3]
 strOutputData		<- inputargs[4]
 
-##dirty hack to get just the GSE identifier:
+##dirty hack to get just the GSE identifier from the data directory:
 gsegpl <- strsplit(strInputFile,split="/")[[1]]
 gsegpl <- gsegpl[length(gsegpl)-1]
 
@@ -31,15 +31,13 @@ if(grepl("-",gsegpl)){  #if there is a "-"
 
 ##strBaseDir <- inputargs[2]
 
-if(!exists(strPlatform)){
+if(!exists("strPlatform")){
   gsedat <- getGEO(strInputAccession)
 }else{
   URLPrefix <- paste("ftp://ftp.ncbi.nih.gov/pub/geo/DATA/SeriesMatrix/",strInputAccession,sep="")
-  DestFileName <- paste(strInputAccession,"-",strPlatform,"_series_matrix.txt.gz",sep="")
-  SeriesMatrixURL <- paste(URLPrefix,"/",DestFileName,sep="")
-  download.file(SeriesMatrixURL,destfile=DestFileName)
-  gsedat <- getGEO(filename=DestFileName)
-  unlink(DestFileName)
+  SeriesMatrixURL <- paste(URLPrefix,"/",gsegpl,"_series_matrix.txt.gz",sep="")
+  download.file(SeriesMatrixURL,destfile=strInputFile)
+  gsedat <- getGEO(filename=strInputFile)
 }
 
 if(class(gsedat)=="list" & length(gsedat) > 1){  ##Try to merge multiple esets if they are from the same platform

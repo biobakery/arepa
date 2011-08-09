@@ -23,7 +23,7 @@
 
 # I need to add three more 'nice' data sets that will be downloaded via the GEO module of ARepA. 
 
-GSE8842
+#GSE8842
 #GSE14764
 #GSE6008
 
@@ -32,8 +32,8 @@ GSE8842
 # the experiment.  
 
 #GSE19829-GPL570
-#GSE19829-GPL8300
-#GSE20565-GPL570
+GSE19829-GPL8300
+GSE20565-GPL570
 
 
 #GDS2785
