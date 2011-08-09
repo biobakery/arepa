@@ -33,7 +33,7 @@ c_strURLPlatform		= c_strURL + "annotation/platforms/"
 # Download series matrix file
 #===============================================================================
 
-arepa.download( pE, c_strURLData + c_strID + "/" + c_strFileIDSeriesTXTGZ )
+arepa.download( pE, c_strURLData + re.findall(r"\w+",c_strID)[0] + "/" + c_strFileIDSeriesTXTGZ )
 NoClean( c_strFileIDSeriesTXTGZ )
 
 #===============================================================================

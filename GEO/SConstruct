@@ -1,6 +1,11 @@
+from ftplib import FTP
+import sets 
+import re
+import sys
+import ftplib
+import subprocess
 import arepa
 import os
-import sys
 import urllib
 
 c_strInputInclude			= arepa.d( arepa.c_strDirEtc, "include" )
@@ -40,8 +45,87 @@ afileTXTs += arepa.pipe( pE, c_strFileGSEsXML, c_strProgXML2TXT,
 # Pass the IDs from gds.txt to child directories
 #===============================================================================
 
-setInclude = set(arepa.readcomment( c_strInputInclude ))
-setExclude = set(arepa.readcomment( c_strInputExclude ))
+#-------------------------------------------------------------------------------
+# Platform functions 
+#-------------------------------------------------------------------------------
+
+def gseOUT( gseID, raw = None, file_list = None ):
+        smURL ='pub/geo/DATA/SeriesMatrix/'
+        #gseID = sys.argv[1]
+        ftp = FTP('ftp.ncbi.nih.gov')
+        ftp.login("anonymous")
+        ftp.cwd(smURL + gseID)
+        if not file_list:
+                file_list = []
+        if not raw:
+                raw = ftp.retrlines('NLST', file_list.append)
+        return file_list
+
+def gplmodify( list, platform_list = None, cast_list = None):
+        if not platform_list:
+                platform_list = []
+        if not cast_list:
+                cast_list = []
+        if list == []:
+                pass
+        elif list != []:
+                for item in list:
+                        platform_list.append(re.findall(r"GSE.*-GPL\d*", item)[0])
+                #for item in platform_list:
+                #       cast_list.append(re.findall(r"\w+", item))
+                #return cast_list 
+                return platform_list
+
+def platformpipe( strID, passID = None ):
+        if not passID:
+                passID = []
+        if len( re.findall( r"\w+", strID ) ) == 2:
+                #for astr in re.findall( r"\w+", strID ):
+                #       passID.append( astr )
+                #passID = [passID]
+                passID.append( strID )
+        if len( re.findall( r"\w+", strID ) ) == 1:
+                if re.search( r"GDS\d+", strID ) !=  None:
+                        passID.append( strID )
+                elif len( gseOUT( strID ) ) == 1:
+                        passID.append( strID )
+                else:
+                        passID = gplmodify( gseOUT( strID ) )
+        return passID
+#--------------------------------------------------------------------------------------
+# pass-check functions 
+#--------------------------------------------------------------------------------------
+#populate dummySets
+
+setDummyInclude = set( arepa.readcomment( c_strInputInclude ) )
+setDummyExclude = set( arepa.readcomment( c_strInputExclude ) )
+
+#populate dictionary 
+def populate_dictionary( dummy, dictionary = None ):
+        if not dictionary:
+                dictionary = {}
+        for element in dummy:
+                dictionary[ re.findall(r"\w+", element)[0] ] = platformpipe( element )
+        return dictionary
+
+#populate checkset
+
+def populate_checkset( dummy, checkset = None ):
+        if not checkset:
+                checkset = set([])
+        for element in dummy:
+                checkset.add( re.findall(r"\w+", element)[0] )
+        return checkset
+
+# Do 
+
+setInclude = populate_checkset( setDummyInclude )
+setExclude = populate_checkset( setDummyExclude )
+dictionary = populate_dictionary( setDummyInclude )
+
+#setInclude = set(arepa.readcomment( c_strInputInclude ))
+#setExclude = set(arepa.readcomment( c_strInputExclude ))
+
 def funcScanner( target, source, env, setInclude = setInclude, setExclude = setExclude ):
 	strT, astrSs = arepa.ts( target, source )
 	for strS in astrSs:
@@ -50,5 +134,7 @@ def funcScanner( target, source, env, setInclude = setInclude, setExclude = setE
 			strID = astrLine[0]
 			if ( setInclude and ( strID not in setInclude ) ) or ( strID in setExclude ):
 				continue
-			env["sconscript_child"]( target, source[0], env, strID )
+			for idplatform in dictionary[strID]:
+				env["sconscript_child"]( target, source[0], env, idplatform ) 
+			#env["sconscript_child"]( target, source[0], env, strID )
 arepa.sconscript_children( pE, afileTXTs, funcScanner, 1 )
