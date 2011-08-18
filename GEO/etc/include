@@ -9,13 +9,13 @@
 #GSE16560
 #GSE13876
 #two platforms in a single series still causes problems:
-#GSE19829
+GSE19829
 
 #===================================
 #EDIT
 #===================================
 
-#GDS3717
+GDS3717
 
 #=====================
 # EDIT 7/10/2011
@@ -23,9 +23,9 @@
 
 # I need to add three more 'nice' data sets that will be downloaded via the GEO module of ARepA. 
 
-#GSE8842
-#GSE14764
-#GSE6008
+GSE8842
+GSE14764
+GSE6008
 
 # Some two-platform ones to try out later:
 # The end of the file (GPL*) specifies different platforms used in 
@@ -37,8 +37,3 @@
 
 
 #GDS2785
-
-#Test Aug 9, 2011
-
-GSE19829
-#GSE6008

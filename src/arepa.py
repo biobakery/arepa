@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from ftplib import FTP
 import glob
 import os
 import re
@@ -143,6 +144,21 @@ def override( pE, pFile ):
 #===============================================================================
 # Command execution
 #===============================================================================
+
+###fetches the number and name of wanted dataset if the number of platforms 
+###is unknown 
+ 
+def ftppeak( DatabaseURL, DatasetURL, ID, raw = None, file_list = None ):
+	
+	ftp = FTP( DatabaseURL )
+        ftp.login("anonymous")
+        ftp.cwd( DatasetURL + ID)
+        if not file_list:
+                file_list = []
+        if not raw:
+                raw = ftp.retrlines('NLST', file_list.append)
+        return file_list
+
 
 def download( pE, strURL, strT = None, fSSL = False, fGlob = True ):
 
