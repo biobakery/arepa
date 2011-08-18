@@ -1,39 +1,30 @@
-#one series matrix file:
-#GSE10186
-#GSE10141
-#GSE10142
-#GSE19977
-#two series matrix files still causes problems with this version:
-#GSE9891
-#GSE8402
-#GSE16560
-#GSE13876
-#two platforms in a single series still causes problems:
+GSE10186
+GSE10141
+GSE10142
+GSE19977
 GSE19829
-
-#===================================
-#EDIT
-#===================================
-
 GDS3717
-
-#=====================
-# EDIT 7/10/2011
-#=====================
-
-# I need to add three more 'nice' data sets that will be downloaded via the GEO module of ARepA. 
-
 GSE8842
 GSE14764
 GSE6008
+GDS2785
 
-# Some two-platform ones to try out later:
-# The end of the file (GPL*) specifies different platforms used in 
-# the experiment.  
+#List of GSE IDs with manually curated components 
+ 
+# GSE12418
+GSE18520
+# GSE6008
+GSE12470
+GSE19829
+# GSE6822
+# GSE13876
+GSE19829
+GSE8842
+GSE14764
+# GSE20565
+# GSE9891
+# GSE17260
+# GSE2109
+GSE18154
+GSE26712
 
-#GSE19829-GPL570
-#GSE19829-GPL8300
-#GSE20565-GPL570
-
-
-#GDS2785

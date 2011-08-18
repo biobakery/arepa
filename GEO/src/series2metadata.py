@@ -5,7 +5,10 @@ import re
 import os
 import arepa 
 
-key = 	{	
+c_strID			= arepa.cwd()
+c_strFileManCurData	= arepa.d( arepa.path_repo( ), arepa.c_strDirEtc, "manual_curation/", "ovarian_cancer_public_datasets.csv" )
+
+key = {	
 	'pubmed_id'	:'pmid',
 	'title'		:'title', 
 	'summary'	:'gloss', 
@@ -15,6 +18,20 @@ key = 	{
 	'sample_taxid'	:'taxid', 
 	'sample_count'	:'conditions'
 	 }
+
+manual_key = {
+	"platform title"	: "platform_title", 
+	"citation"		: "citation", 
+	"sample history"	: "sample_history", 
+	"sample handling"	: "sample_handling", 
+	"sample type"		: "sample_type", 
+	"sample preservation"	: "sample_preservation",
+	"platform_manufacturer"	: "platform_manufacturer", 
+	"platform distribution"	: "platform_distribution", 
+	"platform accession"	: "platform_accession", 
+	"technology type"	: "technology_type", 
+	"geneSigDB signatures"	: "geneSigDB_signatures"
+	} 
 
 catalog = ['title', 'type', 'summary', 'sample_taxid', 'channel_count', 'platform_id', 'pubmed_id', 'sample_count' ] 
 
@@ -56,7 +73,21 @@ def printformat(catalog, key, seriesFile):
 		sys.stdout.write('\t')
 		sys.stdout.write(description)
 		sys.stdout.write('\n')
-	
+	if c_strID in arepa.csvread( c_strFileManCurData ):
+		manref = arepa.csvread( c_strFileManCurData )
+		rev_manual_key = dict((v,k) for k,v in manual_key.items())
+		for item in manual_key.values():
+			sys.stdout.write(rev_manual_key[item])
+			sys.stdout.write('\t')
+			sys.stdout.write(str(manref[c_strID][item]))
+			sys.stdout.write('\n')
+		sys.stdout.write('curation')
+		sys.stdout.write('\t')
+		sys.stdout.write(str(manual_key.keys()))
+		sys.stdout.write('\n')
+	else:
+		pass 		
+			
 ## Execute 
 printformat(catalog, key, sys.stdin.read( ))
 

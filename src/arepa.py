@@ -8,6 +8,7 @@ import subprocess
 import sys
 import threading
 import urllib
+import csv 
 
 c_strDirData	= "data/"
 c_strDirDoc		= "doc/"
@@ -23,6 +24,24 @@ c_astrExclude	= [strCur[:-1] for strCur in (c_strDirEtc, c_strDirSrc, c_strDirTm
 #===============================================================================
 # Basic global utilities
 #===============================================================================
+
+# Added for reading manually curated metadata 
+
+def csvread( file, e_list = None, e_dict = None ):
+        if not e_list:
+                e_list = []
+        if not e_dict:
+                e_dict = {}
+        curfile = open( file, 'rb' )
+        dictR = csv.DictReader(curfile)
+        #put stuff into list
+        for item in dictR:
+                e_list.append(item)
+        #cast to dictionary with Accession ID as key value 
+        for listelement in e_list:
+                e_dict[listelement["Accession ID"]] = listelement
+        return e_dict
+
 
 def regs( strRE, strString, aiGroups ):
 

@@ -1,0 +1,45 @@
+
+
+# BAD because of weird naming convention in GEO:
+# There are more than 1 platform, but GEO does not specify name of platform in file name,
+# causing ARepA to fail. Will fix this later upon consulting with Levi and Curtis.
+# GSE13876
+# GSE16560
+# GSE8402
+# GSE9891
+
+# BAD because Levi's R script is not working for some reason.
+# It does not know how to extract data from the series matrix file.
+# GSE20565
+
+# Normalizer -t pcl -T medmult < /home/ysupmoon/hg/arepa/GEO/data/GSE12418/GSE12418/GSE12418_00raw.pcl > "GSE12418_01norm.pcl"
+#Could not open input: standard input
+# Error in GSE12418, though not a huge problem.
+
+# GSE17260
+# File stored at:
+#/tmp/RtmpvsLCUX/GPL6848.soft
+# Error in `row.names<-.data.frame`(`*tmp*`, value = c("A_24_P475014", "A_24_P456043",  :
+#  missing values in 'row.names' are not allowed
+
+# GSE20565
+# Error in scan(file, what, nmax, sep, dec, quote, skip, nlines, na.strings,  : 
+#  scan() expected 'a real', got 'BB'
+# Calls: getGEO ... parseGSEMatrix -> as.matrix -> read.delim -> read.table -> scan
+# Execution halted
+# scons: *** [GSE20565-GPL2005_rdata.txt] Error 1
+
+# GSE2109
+# 9 Series Matrix Files
+# No mention of platform -> Error
+# platform_list.append(re.findall(r"GSE.*-GPL\d*", item)[0])
+# IndexError: list index out of range
+# scons: building terminated because of errors.
+
+# GSE6822 
+# File "/home/ysupmoon/hg/arepa/GEO/src/series2metadata.py", line 39, in modify
+#    content = re.findall('".+"', _list_[0])
+# IndexError: list index out of range
+# scons: *** [GSE6822.txt] Error 1
+# scons: building terminated because of errors.
+
