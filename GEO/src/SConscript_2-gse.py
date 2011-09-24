@@ -5,6 +5,7 @@ import gzip
 import os
 import re
 import sys
+import subprocess
 
 def test( iLevel, strID, hashArgs ):
 	return ( iLevel == 2 ) and ( strID.find( "GSE" ) == 0 )
@@ -16,7 +17,7 @@ if locals( ).has_key( "testing" ):
 c_strID					= arepa.cwd( )
 c_strInputSConscript	= arepa.d( arepa.path_arepa( ), arepa.c_strDirSrc, "SConscript_pcl-dab.py" )
 c_strInputGSER			= arepa.d( arepa.path_repo( ), arepa.c_strDirSrc, "gse.R" )
-c_strDirManCur			= arepa.d( arepa.path_repo( ), arepa.c_strDirEtc, "manual_curation" )
+c_strDirManCur			= arepa.d( arepa.path_repo( ), arepa.c_strDirEtc, "manual_curation/" )
 c_strFileManCurTXT 		= "manual_curation.txt"
 c_strFileIDTXT			= c_strID + ".txt"
 c_strFileIDPICKLE		= c_strID + ".pkl"
@@ -43,12 +44,33 @@ NoClean( c_strFileIDSeriesTXTGZ )
 #===============================================================================
 # Convert SOFT file with platform info to TXT and PCL
 #===============================================================================
+def get_name_list(f_list = None, raw = None, dummylist = None):
+        if not f_list:
+                f_list = subprocess.check_output(['ls',arepa.d(arepa.path_repo(), arepa.c_strDirEtc, "manual_curation/" ) ])
+                if not raw:
+                        raw = f_list.split('\n')
+        if not dummylist:
+                dummylist = []
+        for item in raw:
+                if not ( item.startswith('GSE') or item.startswith('GDS') ):
+                        pass
+                else:
+                        dummylist.append(item)
+        return dummylist
+
+def meta_decider( strID ):
+	'''Decides if manually curated metadata exists for the ID'''
+	strFile = strID + "_curated_pdata.txt"
+	if strID in get_name_list( ):
+		return arepa.d( c_strDirManCur, strFile ) 
+	else:
+		return None  
 
 def funcMETA2( target, source, env ):
         strT, astrSs = arepa.ts( target, source )
         strProg, strSeriesGZ = astrSs[0], astrSs[1]
-        return arepa.ex( " ".join( ("zcat", strSeriesGZ, "|", strProg)), strT )
-
+        return arepa.ex( " ".join( ("zcat", strSeriesGZ, "|", strProg))#, strT )
+)
 def funcGSER( target, source, env ):
 	astrTs, astrSs = ([f.get_abspath( ) for f in a] for a in (target, source))
 	strData, strMetadata, strPlatform = astrTs
@@ -56,9 +78,9 @@ def funcGSER( target, source, env ):
 	return arepa.ex( " ".join( ("R --no-save --args", strSeriesGZ, strPlatform, strMetadata, strData, "<", strProg) ) )
 Command( [c_strFileRDataTXT, c_strFileRMetadataTXT, c_strFileRPlatformTXT],
 	[c_strInputGSER, c_strFileIDSeriesTXTGZ,], funcGSER )
-IDmetadata = Command( c_strFileIDTXT, [c_strProgSeries2Metadata, c_strFileIDSeriesTXTGZ], funcMETA2 )
-Default(IDmetadata)
-IDpickle = Command( c_strFileIDPICKLE, [c_strProgSeries2Pickle, c_strFileIDSeriesTXTGZ], funcMETA2 )
+#IDmetadata = Command( c_strFileIDTXT, [c_strProgSeries2Metadata, c_strFileIDSeriesTXTGZ], funcMETA2 )
+#Default(IDmetadata)
+IDpickle = Command( c_strFileIDPICKLE, [c_strProgSeries2Pickle, c_strFileIDSeriesTXTGZ ], funcMETA2 )
 Default(IDpickle) 
 
 arepa.pipe( pE, c_strFileRDataTXT, c_strProgSeries2PCL, c_strFileIDRawPCL,
