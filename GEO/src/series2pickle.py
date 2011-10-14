@@ -6,12 +6,15 @@ import re
 import os
 import arepa 
 import csv
-import subprocess
+import glob
 
 c_strID			= arepa.cwd()
 c_strFileManCurData	= arepa.d( arepa.path_repo( ), arepa.c_strDirEtc, "manual_curation/", "ovarian_cancer_public_datasets.csv" )
 c_strOutputPickle 	= c_strID + ".pkl" 
 c_strDirManCur 		= arepa.d( arepa.path_repo( ), arepa.c_strDirEtc, "manual_curation/" )
+c_strKeyCuration	= "curation"
+c_strKeyMCSM		= "manually_curated_sample_metadata"
+
 
 key = {	
 	'pubmed_id'	:'pmid',
@@ -42,25 +45,11 @@ catalog = ['title', 'type', 'summary', 'sample_taxid', 'channel_count', 'platfor
 
 manual_sample_keys = ['sample_name', 'sample_type', 'subtype', 'primarysite', 'arrayedsite', 'summarygrade', 'summarystage', 'T', 'substage', 'G', 'N', 'M']
 
-def get_name_list(f_list = None, raw = None, dummylist = None):
-        if not f_list:
-                f_list = subprocess.check_output(['ls',arepa.d(arepa.path_repo(), arepa.c_strDirEtc, "manual_curation/" ) ])
-                if not raw:
-                        raw = f_list.split('\n')
-        if not dummylist:
-                dummylist = []
-        for item in raw:
-                if not ( item.startswith('GSE') or item.startswith('GDS') ):
-                        pass
-                else:
-                        dummylist.append(item)
-        return dummylist
-
 def meta_decider( strID ):
         '''Decides if manually curated metadata exists for the ID'''
-        strFile = strID + "_curated_pdata.txt"
-        if strFile in get_name_list( ):
-                return arepa.d( c_strDirManCur, strFile )
+	item_list = glob.glob( c_strDirManCur + strID + "*" )
+        if len( item_list ) != 0:
+                return item_list[0]
         else:
                 return None
 
@@ -106,13 +95,22 @@ def printformat(catalog, key, seriesFile, outputDict = None):
 		rev_manual_key = dict((v,k) for k,v in manual_key.items())
 		for item in manual_key.values():
 			outputDict[rev_manual_key[item]] = manref[c_strID][item]
-		outputDict["curation"] = manual_key.keys()
+		outputDict[ c_strKeyCuration ] = manual_key.keys()
 	else:
 		pass 		
 	return outputDict
 
 def grab_sample_curated_data( c_strID, dummylist = None, dummydict = None ):
-        if not dummydict:
+        
+	ManCurDataID = meta_decider( c_strID ) 
+		
+	def populate_manual_sample_keys( ):
+		dictR = csv.DictReader(open( ManCurDataID, 'rb'), delimiter='\t') 
+		for item in dictR:
+			return item.keys()
+			break	
+
+	if not dummydict:
                 dummydict = {}
         
         def adder( dictR, key, dummylist = None ):
@@ -121,10 +119,17 @@ def grab_sample_curated_data( c_strID, dummylist = None, dummydict = None ):
                 for item in dictR:
                         dummylist.append(item[key])
                 return dummylist
-        for key in manual_sample_keys:
-		dictR = csv.DictReader(open( arepa.d(arepa.path_repo(), arepa.c_strDirEtc, "manual_curation/", c_strID + "_curated_pdata.txt"), 'rb'), delimiter='\t')
-                dummydict[key] = adder( dictR, key )
-	dummydict["manually_curated_sample_metadata"] = dummydict.keys()
+     
+	def populate_dummydictR( dummydictR = None ):
+		if not dummydictR:
+			dummydictR = []
+		for item in csv.DictReader(open( ManCurDataID, 'rb'), delimiter='\t'):
+			dummydictR.append(item)
+		return dummydictR
+	dummydictR = populate_dummydictR( )
+	for key in populate_manual_sample_keys( ):
+		dummydict[key] = adder( dummydictR, key )
+	dummydict[ c_strKeyMCSM ] = dummydict.keys()
         return dummydict
 
 
