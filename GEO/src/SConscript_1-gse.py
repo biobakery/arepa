@@ -7,7 +7,7 @@ import re
 import sys
 
 def test( iLevel, strID, hashArgs ):
-	return ( iLevel == 1 ) and ( strID.find( "GSE" ) == 0 )
+	return ( iLevel == 1 ) and ( strID.find( "GSE" ) == 0 ) #and ( hashArgs["raw"] == False )
 if locals( ).has_key( "testing" ):
 	sys.exit( )
 

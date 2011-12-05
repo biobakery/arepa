@@ -1,0 +1,141 @@
+"sample_name"	"alt_sample_name"	"sample_type"	"subtype"	"primarysite"	"arrayedsite"	"summarygrade"	"summarystage"	"T"	"substage"	"G"	"N"	"M"	"age_at_initial_pathologic_diagnosis"	"pltx"	"tax"	"neo"	"days_to_tumor_recurrence"	"recurrence_status"	"days_to_death"	"vital_status"	"os_binary"	"relapse_binary"	"site_of_tumor_first_recurrence"	"primary_therapy_outcome_success"	"chemo_response"	"inferred_chemo_response"	"debulking"	"batch_1"	"batch_2"	"batch_3"
+"GSM516678"	"Ovarian carcinoma_OC01_ARN0001 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"early"	"1"	"b"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516679"	"Ovarian carcinoma_OC01_ARN0002 [HG-U133_Plus_2]"	"tumor"	"endo"	"ov"	NA	"low"	"early"	"2"	"b"	"2"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516680"	"Ovarian carcinoma_OC01_ARN0004 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516681"	"Ovarian carcinoma_OC01_ARN0005 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"4"	NA	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516682"	"Plausible Breast metastasis in the ovary_OC01_ARN0006 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516683"	"Ovarian carcinoma_OC01_ARN0007 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516684"	"Ovarian carcinoma_OC01_ARN0008 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516685"	"Ovarian carcinoma_OC01_ARN0009 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"low"	"late"	"3"	"c"	"2"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516686"	"Ovarian carcinoma_OC01_ARN0010 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	NA	NA	NA	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516687"	"Ovarian carcinoma_OC01_ARN0011 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"low"	"early"	"1"	"b"	"2"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516688"	"Ovarian carcinoma_OC01_ARN0012 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"low"	"early"	"1"	"b"	"1"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516689"	"Ovarian carcinoma_OC01_ARN0013 [HG-U133_Plus_2]"	"tumor"	"mucinous"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516690"	"Plausible Ovarian carcinoma_OC01_ARN0014 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516691"	"Ovarian carcinoma_OC01_ARN0015 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"4"	NA	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516692"	"Breast metastasis in the ovary_OC01_ARN0016 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516693"	"Breast metastasis in the ovary_OC01_ARN0017 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516694"	"Plausible Ovarian carcinoma_OC01_ARN0019 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"early"	"2"	"b"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516695"	"Breast metastasis in the ovary_OC01_ARN0020 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516696"	"Plausible Breast metastasis in the ovary_OC01_ARN0021 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516697"	"Ovarian carcinoma_OC01_ARN0022 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"low"	"early"	"1"	"a"	"2"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516698"	"Ovarian carcinoma_OC01_ARN0023 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"4"	NA	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516699"	"Ovarian carcinoma_OC01_ARN0025 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"4"	NA	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516700"	"Ovarian carcinoma_OC01_ARN0028 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"low"	"late"	"4"	NA	"1"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516701"	"Breast metastasis in the ovary_OC01_ARN0029 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516702"	"Ovarian carcinoma_OC01_ARN0030 [HG-U133_Plus_2]"	"tumor"	"endo"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516703"	"Ovarian carcinoma_OC01_ARN0032 [HG-U133_Plus_2]"	"tumor"	"mucinous"	"ov"	NA	"low"	"early"	"1"	"a"	"2"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516704"	"Ovarian carcinoma_OC01_ARN0034 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516705"	"Breast metastasis in the ovary_OC01_ARN0035 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516706"	"Ovarian carcinoma_OC01_ARN0036 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"low"	"early"	"1"	"c"	"2"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516707"	"Ovarian carcinoma_OC01_ARN0037 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"low"	"late"	"3"	"c"	"2"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516708"	"Ovarian carcinoma_OC01_ARN0038 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516709"	"Ovarian carcinoma_OC01_ARN0039 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516710"	"Plausible Ovarian carcinoma_OC01_ARN0040 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516711"	"Ovarian carcinoma_OC01_ARN0041 [HG-U133_Plus_2]"	"tumor"	"clearcell"	"ov"	NA	"low"	"late"	"3"	"b"	"2"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516712"	"Ovarian carcinoma_OC01_ARN0042 [HG-U133_Plus_2]"	"tumor"	"mucinous"	"ov"	NA	"low"	"early"	"1"	"a"	"1"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516713"	"Ovarian carcinoma_OC01_ARN0045 [HG-U133_Plus_2]"	"tumor"	"other"	"ov"	NA	"high"	"late"	"4"	NA	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516714"	"Breast metastasis in the ovary_OC01_ARN0046 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516715"	"Ovarian carcinoma_OC01_ARN0049 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516716"	"Breast metastasis in the ovary_OC01_ARN0051 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516717"	"Breast metastasis in the ovary_OC01_ARN0053 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516718"	"Breast metastasis in the ovary_OC01_ARN0055 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516719"	"Plausible Breast metastasis in the ovary_OC01_ARN0056 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516720"	"Ovarian carcinoma_OC01_ARN0057 [HG-U133_Plus_2]"	"tumor"	"mucinous"	"ov"	NA	"low"	"early"	"1"	"c"	"2"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516721"	"Ovarian carcinoma_OC01_ARN0058 [HG-U133_Plus_2]"	"tumor"	"clearcell"	"ov"	NA	"high"	"early"	"1"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516722"	"Breast metastasis in the ovary_OC01_ARN0060 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516723"	"Ovarian carcinoma_OC01_ARN0061 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516724"	"Ovarian carcinoma_OC01_ARN0062 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516725"	"Ovarian carcinoma_OC01_ARN0063 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"low"	"late"	"3"	"c"	"2"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516726"	"Ovarian carcinoma_OC01_ARN0064 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"4"	NA	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516727"	"Ovarian carcinoma_OC01_ARN0066 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516728"	"Ovarian carcinoma_OC01_ARN0067 [HG-U133_Plus_2]"	"tumor"	"mucinous"	"ov"	NA	"low"	"early"	"1"	"c"	"2"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516729"	"Breast metastasis in the ovary_OC01_ARN0069 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516730"	"Ovarian carcinoma_OC01_ARN0070 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516731"	"Ovarian carcinoma_OC01_ARN0072 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"low"	"early"	"2"	"b"	"2"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516732"	"Breast metastasis in the ovary_OC01_ARN0073 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516733"	"Plausible Ovarian carcinoma_OC01_ARN0074 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"early"	"1"	"b"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516734"	"Ovarian carcinoma_OC01_ARN0075 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"low"	"late"	"3"	"c"	"2"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516735"	"Ovarian carcinoma_OC01_ARN0076 [HG-U133_Plus_2]"	"tumor"	"other"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516736"	"Breast metastasis in the ovary_OC01_ARN0077 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516737"	"Plausible Ovarian carcinoma_OC01_ARN0078 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	NA	NA	NA	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516738"	"Breast metastasis in the ovary_OC01_ARN0079 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516739"	"Ovarian carcinoma_OC01_ARN0080 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"low"	"late"	"3"	"c"	"2"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516740"	"Breast metastasis in the ovary_OC01_ARN0081 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516741"	"Breast metastasis in the ovary_OC01_ARN0083 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516742"	"Ovarian carcinoma_OC01_ARN0084 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"low"	"late"	"3"	"c"	"2"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516743"	"Ovarian carcinoma_OC01_ARN0085 [HG-U133_Plus_2]"	"tumor"	"clearcell"	"ov"	NA	"low"	"early"	"1"	"a"	"2"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516744"	"Plausible Breast metastasis in the ovary_OC01_ARN0088 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516745"	"Ovarian carcinoma_OC01_ARN0089 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516746"	"Plausible Breast metastasis in the ovary_OC01_ARN0090 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516747"	"Ovarian carcinoma_OC01_ARN0091 [HG-U133_Plus_2]"	"tumor"	"other"	"ov"	NA	"high"	"early"	"2"	"a"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516748"	"Breast metastasis in the ovary_OC01_ARN0092 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516749"	"Ovarian carcinoma_OC01_ARN0093 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516750"	"Ovarian carcinoma_OC01_ARN0095 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"low"	"late"	"3"	"b"	"2"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516751"	"Ovarian carcinoma_OC01_ARN0096 [HG-U133_Plus_2]"	"tumor"	"mucinous"	"ov"	NA	"low"	"late"	"3"	"c"	"1"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516752"	"Breast metastasis in the ovary_OC01_ARN0097 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516753"	"Breast metastasis in the ovary_OC01_ARN0098 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516754"	"Breast metastasis in the ovary_OC01_ARN0099 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516755"	"Ovarian carcinoma_OC01_ARN0100 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"early"	"2"	"b"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516756"	"Ovarian carcinoma_OC01_ARN0101 [HG-U133_Plus_2]"	"tumor"	"clearcell"	"ov"	NA	"high"	"late"	"4"	NA	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516757"	"Breast metastasis in the ovary_OC01_ARN0102 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516758"	"Ovarian carcinoma_OC01_ARN0103 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516759"	"Breast metastasis in the ovary_OC01_ARN0104 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516760"	"Ovarian carcinoma_OC01_ARN0105 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516761"	"Ovarian carcinoma_OC01_ARN0106 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516762"	"Ovarian carcinoma_OC01_ARN0107 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"low"	"late"	"3"	"c"	"2"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516763"	"Ovarian carcinoma_OC01_ARN0108 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516764"	"Ovarian carcinoma_OC01_ARN0109 [HG-U133_Plus_2]"	"tumor"	"clearcell"	"ov"	NA	"low"	"early"	"2"	"a"	"2"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516765"	"Ovarian carcinoma_OC01_ARN0111 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516766"	"Breast metastasis in the ovary_OC01_ARN0112 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516767"	"Ovarian carcinoma_OC01_ARN0113 [HG-U133_Plus_2]"	"tumor"	"endo"	"ov"	NA	"low"	"early"	"2"	"a"	"1"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516768"	"Ovarian carcinoma_OC01_ARN0114 [HG-U133_Plus_2]"	"tumor"	"other"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516769"	"Ovarian carcinoma_OC01_ARN0115 [HG-U133_Plus_2]"	"tumor"	"endo"	"ov"	NA	"low"	"early"	"1"	"a"	"2"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516770"	"Ovarian carcinoma_OC01_ARN0116 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"low"	"late"	"4"	NA	"2"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516771"	"Ovarian carcinoma_OC01_ARN0118 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"low"	"late"	"3"	"a"	"2"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516772"	"Ovarian carcinoma_OC01_ARN0119 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516773"	"Breast metastasis in the ovary_OC01_ARN0120 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516774"	"Breast metastasis in the ovary_OC01_ARN0121 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516775"	"Breast metastasis in the ovary_OC01_ARN0123 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516776"	"Ovarian carcinoma_OC01_ARN0124 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516777"	"Ovarian carcinoma_OC01_ARN0125 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516778"	"Breast metastasis in the ovary_OC01_ARN0126 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516779"	"Ovarian carcinoma_OC01_ARN0127 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"4"	NA	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516780"	"Ovarian carcinoma_OC01_ARN0128 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"early"	"1"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516781"	"Ovarian carcinoma_OC01_ARN0129 [HG-U133_Plus_2]"	"tumor"	"endo"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516782"	"Ovarian carcinoma_OC01_ARN0130 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516783"	"Ovarian carcinoma_OC01_ARN0132 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516784"	"Ovarian carcinoma_OC01_ARN0133 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516785"	"Ovarian carcinoma_OC01_ARN0134 [HG-U133_Plus_2]"	"tumor"	"clearcell"	"ov"	NA	"low"	"early"	"1"	"a"	"2"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516786"	"Ovarian carcinoma_OC01_ARN0135 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516787"	"Ovarian carcinoma_OC01_ARN0136 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"3"	"a"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516788"	"Ovarian carcinoma_OC01_ARN0137 [HG-U133_Plus_2]"	"tumor"	"mucinous"	"ov"	NA	"low"	"late"	"3"	"c"	"2"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516789"	"Ovarian carcinoma_OC01_ARN0138 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"early"	"2"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516790"	"Breast metastasis in the ovary_OC01_ARN0141 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516791"	"Breast metastasis in the ovary_OC01_ARN0142 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516792"	"Breast metastasis in the ovary_OC01_ARN0143 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516793"	"Breast metastasis in the ovary_OC01_ARN0145 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516794"	"Breast metastasis in the ovary_OC01_ARN0146 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516795"	"Ovarian carcinoma_OC01_ARN0147 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516796"	"Ovarian carcinoma_OC01_ARN0148 [HG-U133_Plus_2]"	"tumor"	"other"	"ov"	NA	"low"	"late"	"4"	NA	"2"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516797"	"Ovarian carcinoma_OC01_ARN0149 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516798"	"Ovarian carcinoma_OC01_ARN0151 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516799"	"Ovarian carcinoma_OC01_ARN0152 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"4"	NA	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516800"	"Breast metastasis in the ovary_OC01_ARN0153 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516801"	"Ovarian carcinoma_OC01_ARN0154 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"4"	NA	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516802"	"Ovarian carcinoma_OC01_ARN0155 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"low"	"late"	"3"	"c"	"2"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516803"	"Ovarian carcinoma_OC01_ARN0156 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516804"	"Ovarian carcinoma_OC01_ARN0157 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"4"	NA	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516805"	"Ovarian carcinoma_OC01_ARN0158 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"low"	"early"	"1"	"a"	"1"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516806"	"Ovarian carcinoma_OC01_ARN0159 [HG-U133_Plus_2]"	"tumor"	"endo"	"ov"	NA	"low"	"early"	"1"	"a"	"2"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516807"	"Plausible Breast metastasis in the ovary_OC01_ARN0160 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516808"	"Ovarian carcinoma_OC01_ARN0161 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"4"	NA	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516809"	"Breast metastasis in the ovary_OC01_ARN0162 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516810"	"Breast metastasis in the ovary_OC01_ARN0201 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516811"	"Ovarian carcinoma_OC01_ARN0204 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"early"	"2"	"a"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516812"	"Plausible Breast metastasis in the ovary_OC01_ARN0205 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516813"	"Plausible Ovarian carcinoma_OC01_ARN0206 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"early"	"1"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516814"	"Ovarian Carcinoma_OC01_ARN0207 [HG-U133_Plus_2]"	"tumor"	"ser"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516815"	"Plausible Breast metastasis in the ovary_OC01_ARN0208 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516816"	"Plausible Breast metastasis in the ovary_OC01_ARN0209 [HG-U133_Plus_2]"	"tumor"	NA	"other"	NA	NA	NA	NA	NA	NA	NA	"1"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA
+"GSM516817"	"Ovarian carcinoma_OC01_ARN0210 [HG-U133_Plus_2]"	"tumor"	"other"	"ov"	NA	"high"	"late"	"3"	"c"	"3"	NA	"0"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"unknown"	NA	NA	NA

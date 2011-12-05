@@ -15,6 +15,8 @@ class CParser(xml.sax.handler.ContentHandler):
 		
 		if ( self.m_strType == "GSE" ) and ( strToken.find( "2" ) == 0 ):
 			strToken = str(int(strToken[1:]))
+		if ( self.m_strType == "GPL" ) and ( strToken.find( "1" ) == 0 ):
+			strToken = str(int(strToken[1:]))
 		return strToken
 
 	def startElement( self, strName, hashAttrs ):

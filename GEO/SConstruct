@@ -10,12 +10,16 @@ c_strFileGDSsXML			= arepa.d( arepa.c_strDirTmp, "gds.xml" )
 c_strFileGDSsTXT			= arepa.d( arepa.c_strDirTmp, "gds.txt" )
 c_strFileGSEsXML			= arepa.d( arepa.c_strDirTmp, "gse.xml" )
 c_strFileGSEsTXT			= arepa.d( arepa.c_strDirTmp, "gse.txt" )
+c_strFileGPLsXML			= arepa.d( arepa.c_strDirTmp, "gpl.xml" )
+c_strFileGPLsTXT			= arepa.d( arepa.c_strDirTmp, "gpl.txt" )
 c_strProgXML2TXT			= arepa.d( arepa.c_strDirSrc, "xml2txt.py" )
+# c_hashArgsRaw				= { "raw": True }
+# c_hashArgsProcessed			= { "raw": False }
 
 pE = Environment( )
 
 #===============================================================================
-# Download the lists of GDS and GSE IDs
+# Download the lists of GDS, GSE, and GPL IDs
 #===============================================================================
 
 setOrgs = arepa.taxa( c_strInputTaxIDs, True )
@@ -26,18 +30,21 @@ arepa.download( pE, strURLLeft + "GDS" + strURLRight, c_strFileGDSsXML, False, F
 NoClean( c_strFileGDSsXML )
 arepa.download( pE, strURLLeft + "GSE" + strURLRight, c_strFileGSEsXML, False, False )
 NoClean( c_strFileGSEsXML )
+arepa.download( pE, strURLLeft + "GPL+NOT+GSE+NOT+GSM" + strURLRight, c_strFileGPLsXML, False, False )
+NoClean( c_strFileGPLsXML )
 
 #===============================================================================
-# Process XML into the more compact gds/gse.txt
+# Process XML into the more compact gds/gse/gpl.txt
 #===============================================================================
 
 afileTXTs = arepa.pipe( pE, c_strFileGDSsXML, c_strProgXML2TXT,
 	c_strFileGDSsTXT, [[False, "GDS"]] )
 afileTXTs += arepa.pipe( pE, c_strFileGSEsXML, c_strProgXML2TXT,
 	c_strFileGSEsTXT, [[False, "GSE"]] )
-
+afileTXTs += arepa.pipe( pE, c_strFileGPLsXML, c_strProgXML2TXT,
+	c_strFileGPLsTXT, [[False, "GPL"]] )
 #===============================================================================
-# Pass the IDs from gds.txt to child directories
+# Pass the IDs from gds/gse/gpl.txt to child directories
 #===============================================================================
 
 setInclude = set(arepa.readcomment( c_strInputInclude ))
@@ -51,4 +58,6 @@ def funcScanner( target, source, env, setInclude = setInclude, setExclude = setE
 			if ( setInclude and ( strID not in setInclude ) ) or ( strID in setExclude ):
 				continue
 			env["sconscript_child"]( target, source[0], env, strID )
+			#env["sconscript_child"]( target, source[0], env, strID, c_hashArgsProcessed )
+			#env["sconscript_child"]( target, source[0], env, strID + "_raw", c_hashArgsRaw )
 arepa.sconscript_children( pE, afileTXTs, funcScanner, 1 )

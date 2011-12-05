@@ -8,7 +8,7 @@ import sys
 import subprocess
 
 def test( iLevel, strID, hashArgs ):
-	return ( iLevel == 2 ) and ( strID.find( "GSE" ) == 0 )
+	return ( iLevel == 2 ) and ( strID.find( "GSE" ) == 0 ) 
 if locals( ).has_key( "testing" ):
 	sys.exit( )
 
@@ -44,27 +44,28 @@ NoClean( c_strFileIDSeriesTXTGZ )
 #===============================================================================
 # Convert SOFT file with platform info to TXT and PCL
 #===============================================================================
-def get_name_list(f_list = None, raw = None, dummylist = None):
-        if not f_list:
-                f_list = subprocess.check_output(['ls',arepa.d(arepa.path_repo(), arepa.c_strDirEtc, "manual_curation/" ) ])
-                if not raw:
-                        raw = f_list.split('\n')
-        if not dummylist:
-                dummylist = []
-        for item in raw:
-                if not ( item.startswith('GSE') or item.startswith('GDS') ):
-                        pass
-                else:
-                        dummylist.append(item)
-        return dummylist
 
-def meta_decider( strID ):
-	'''Decides if manually curated metadata exists for the ID'''
-	strFile = strID + "_curated_pdata.txt"
-	if strID in get_name_list( ):
-		return arepa.d( c_strDirManCur, strFile ) 
-	else:
-		return None  
+#def get_name_list(f_list = None, raw = None, dummylist = None):
+#        if not f_list:
+#                f_list = subprocess.check_output(['ls',arepa.d(arepa.path_repo(), arepa.c_strDirEtc, "manual_curation/" ) ])
+#                if not raw:
+#                        raw = f_list.split('\n')
+#        if not dummylist:
+#                dummylist = []
+#        for item in raw:
+#                if not ( item.startswith('GSE') or item.startswith('GDS') ):
+#                        pass
+#                else:
+#                        dummylist.append(item)
+#        return dummylist
+#
+#def meta_decider( strID ):
+#	'''Decides if manually curated metadata exists for the ID'''
+#	strFile = strID + "_curated_pdata.txt"
+#	if strID in get_name_list( ):
+#		return arepa.d( c_strDirManCur, strFile ) 
+#	else:
+#		return None  
 
 def funcMETA2( target, source, env ):
         strT, astrSs = arepa.ts( target, source )
