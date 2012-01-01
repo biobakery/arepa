@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
 import arepa
+import csv
 import re
+import sfle
 import sys
 
 c_strTaxid	= "taxid_"
@@ -20,12 +22,11 @@ setTaxa = arepa.taxa( strTaxa )
 
 hashSymbols = {}
 hashhashPMTaxa = {}
-for strLine in sys.stdin:
-	astrLine = [strCur.strip( ) for strCur in strLine.split( "\t" )]
+for astrLine in csv.reader( sys.stdin, csv.excel_tab ):
 	if astrLine and astrLine[0].startswith( "#" ):
 		continue
-	strPMID = arepa.regs( 'pubmed:(\d+)', astrLine[8], 1 )
-	strTax1, strTax2 = (arepa.regs( 'taxid:(\d+)', strCur, 1 ) for strCur in
+	strPMID = sfle.regs( 'pubmed:(\d+)', astrLine[8], 1 )
+	strTax1, strTax2 = (sfle.regs( 'taxid:(\d+)', strCur, 1 ) for strCur in
 		astrLine[9:11])
 	if not strTax1 or ( strTax1 != strTax2 ):
 		strTax1 = "0"

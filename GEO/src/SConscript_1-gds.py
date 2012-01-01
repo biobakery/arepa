@@ -4,6 +4,7 @@ import arepa
 import gzip
 import os
 import re
+import sfle
 import sys
 
 def test( iLevel, strID, hashArgs ):
@@ -11,56 +12,31 @@ def test( iLevel, strID, hashArgs ):
 if locals( ).has_key( "testing" ):
 	sys.exit( )
 
-#Import( "pE" )
-#Import( "hashArgs" )
 c_strID					= arepa.cwd( )
-c_strInputSConscript	= arepa.d( arepa.path_arepa( ), arepa.c_strDirSrc, "SConscript_pcl-dab.py" )
-c_strFileIDTXT			= c_strID + ".txt"
-c_strFileIDSOFTGZ		= c_strID + ".soft.gz"
-c_strFileIDRawPCL		= c_strID + "_00raw.pcl"
-c_strFileIDNormPCL		= c_strID + "_01norm.pcl"
-c_strFileGPLsTXT		= "gpls.txt"
-c_strProgSOFT2PCL		= arepa.d( arepa.path_repo( ), arepa.c_strDirSrc, "soft2pcl.py" )
-c_strProgSOFT2Metadata	= arepa.d( arepa.path_repo( ), arepa.c_strDirSrc, "soft2metadata.py" )
-c_strURL				= "ftp://ftp.ncbi.nih.gov/pub/geo/DATA/"
-c_strURLData			= c_strURL + "SOFT/GDS/"
-c_strURLPlatform		= c_strURL + "annotation/platforms/"
+
+c_fileIDTXT				= File( c_strID + ".txt" )
+c_fileIDSOFTGZ			= File( c_strID + ".soft.gz" )
+
+pE = DefaultEnvironment( )
+Import( "hashArgs" )
 
 #===============================================================================
 # Download SOFT file
 #===============================================================================
 
-arepa.download( pE, c_strURLData + c_strFileIDSOFTGZ )
-NoClean( c_strFileIDSOFTGZ )
+sfle.download( pE, hashArgs["c_strURLGDS"] + os.path.basename( str(c_fileIDSOFTGZ) ) )
+NoClean( c_fileIDSOFTGZ )
 
 def funcGPLsTXT( target, source, env ):
-	strT, astrSs = arepa.ts( target, source )
-	setGPLs = set()
+	strT, astrSs = sfle.ts( target, source )
+	setstrGPLs = set()
 	for strLine in gzip.open( astrSs[0] ):
 		mtch = re.search( r'^!dataset_platform\s*=\s*(\S+)', strLine )
 		if mtch:
-			setGPLs.add( mtch.group( 1 ) )
+			setstrGPLs.add( mtch.group( 1 ) )
 	with open( strT, "w" ) as fileOut:
-		fileOut.write( "%s\n" % "\n".join( setGPLs ) )
+		fileOut.write( "%s\n" % "\n".join( ("-".join( (c_strID, s) ) for s in setstrGPLs) ) )
 	return None
-afileGPLsTXT = Command( c_strFileGPLsTXT, c_strFileIDSOFTGZ, funcGPLsTXT )
+afileGPLsTXT = Command( c_fileIDTXT, c_fileIDSOFTGZ, funcGPLsTXT )
 
-def funcScannerGPLs( target, source, env ):
-	afileGPLs = []
-	for strLine in open( str(source[0]) ):
-		afileGPL = arepa.download( env, c_strURLPlatform + strLine.strip( ) + ".annot.gz" )
-		afileGPLs.extend( afileGPL )
-# Locate here due to dependency on annotation files
-	Command( c_strFileIDTXT, [c_strProgSOFT2Metadata, c_strFileIDSOFTGZ] + afileGPLs, funcSOFT2 )
-	Command( c_strFileIDRawPCL, [c_strProgSOFT2PCL, c_strFileIDSOFTGZ] + afileGPLs, funcSOFT2 )
-	execfile( c_strInputSConscript )
-afileGPLs = arepa.sconscript_children( pE, afileGPLsTXT, funcScannerGPLs, 2, funcGPLsTXT )
-
-#===============================================================================
-# Convert SOFT file with platform info to TXT and PCL
-#===============================================================================
-
-def funcSOFT2( target, source, env ):
-	strT, astrSs = arepa.ts( target, source )
-	strProg, strSOFTGZ, astrGPLGZs = astrSs[0], astrSs[1], astrSs[2:]
-	return arepa.ex( " ".join( ("zcat", strSOFTGZ, "|", strProg, " ".join( astrGPLGZs )) ), strT )
+sfle.sconscript_children( pE, afileGPLsTXT, sfle.scanner( ), 2, arepa.c_strProgSConstruct, hashArgs )

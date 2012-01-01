@@ -13,9 +13,8 @@ class CParser(xml.sax.handler.ContentHandler):
 
 	def _clean( self, strToken ):
 		
-		if ( self.m_strType == "GSE" ) and ( strToken.find( "2" ) == 0 ):
-			strToken = str(int(strToken[1:]))
-		if ( self.m_strType == "GPL" ) and ( strToken.find( "1" ) == 0 ):
+		if ( ( self.m_strType == "GSE" ) and ( strToken.find( "2" ) == 0 ) ) or \
+			( ( self.m_strType == "GPL" ) and ( strToken.find( "1" ) == 0 ) ):
 			strToken = str(int(strToken[1:]))
 		return strToken
 
@@ -37,8 +36,9 @@ class CParser(xml.sax.handler.ContentHandler):
 
 if len( sys.argv ) != 2:
 	raise Exception( "Usage: xml2txt.py <type> < <data.xml>" )
-strType = sys.argv[1]
+strType = sys.argv[1].upper( )
 
 pSAX = xml.sax.make_parser( )
 pSAX.setContentHandler( CParser( strType ) )
 pSAX.parse( sys.stdin )
+print( "" )

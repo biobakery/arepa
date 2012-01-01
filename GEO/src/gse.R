@@ -5,7 +5,7 @@
 ##gse with issues: GSE19829,GSE9891,GSE13876
 
 library(GEOquery)
-options(download.file.method="wget")
+#options(download.file.method="wget")
 
 inputargs <- commandArgs(TRUE)
 print(inputargs)

@@ -1,33 +1,42 @@
 import arepa
+import sfle
 import sys
 
-pE = Environment( )
-c_strInputTaxa			= arepa.d( arepa.c_strDirEtc, "taxa" )
-c_strFileTaxIDs			= arepa.d( arepa.c_strDirTmp, "taxids" )
-c_strFileTaxdumpTXT		= arepa.d( arepa.c_strDirTmp, "taxdump.txt" )
-c_strFileTaxdumpTARGZ	= arepa.d( arepa.c_strDirTmp, "taxdump.tar.gz" )
-c_strProgTaxdump2TXT	= arepa.d( arepa.c_strDirSrc, "taxdump2txt.py" )
-c_strProgTaxdump2Taxa	= arepa.d( arepa.c_strDirSrc, "taxdump2taxa.py" )
+c_strURLTaxonomy		= "ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz"
+c_astrExclude			= [
+	"ArrayExpress",
+	"GEO",
+#	"IntAct",
+]
+
+c_fileInputTaxa			= File( sfle.d( sfle.c_strDirEtc, "taxa" ) )
+c_fileTaxIDs			= File( sfle.d( sfle.c_strDirTmp, "taxids" ) )
+c_fileTaxdumpTXT		= File( sfle.d( sfle.c_strDirTmp, "taxdump.txt" ) )
+c_fileTaxdumpTARGZ		= File( sfle.d( sfle.c_strDirTmp, "taxdump.tar.gz" ) )
+c_fileProgTaxdump2TXT	= File( sfle.d( sfle.c_strDirSrc, "taxdump2txt.py" ) )
+c_fileProgTaxdump2Taxa	= File( sfle.d( sfle.c_strDirSrc, "taxdump2taxa.py" ) )
+
+Decider( "MD5-timestamp" )
+pE = DefaultEnvironment( )
 
 #===============================================================================
 # Shared data setup: NCBI taxonomy
 #===============================================================================
 
-arepa.download( pE, "ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz", c_strFileTaxdumpTARGZ )
-NoClean( c_strFileTaxdumpTARGZ )
+sfle.download( pE, c_strURLTaxonomy, c_fileTaxdumpTARGZ )
+NoClean( c_fileTaxdumpTARGZ )
 
 def funcTaxdumpTXT( target, source, env ):
-	strT, astrSs = arepa.ts( target, source )
-	return arepa.ex( "tar -xzOf " + astrSs[1] + " names.dmp nodes.dmp | " +
-		astrSs[0], strT )
-Command( c_strFileTaxdumpTXT, [c_strProgTaxdump2TXT, c_strFileTaxdumpTARGZ],
-	funcTaxdumpTXT )
+	strT, astrSs = sfle.ts( target, source )
+	strProg, strTARGZ = astrSs[:2]
+	return sfle.ex( ("tar -xzOf", strTARGZ, "names.dmp nodes.dmp |" , strProg), strT )
+Command( c_fileTaxdumpTXT, [c_fileProgTaxdump2TXT, c_fileTaxdumpTARGZ], funcTaxdumpTXT )
 
-afileTaxIDs = arepa.pipe( pE, c_strFileTaxdumpTXT, c_strProgTaxdump2Taxa, c_strFileTaxIDs,
-	[[True, c_strInputTaxa]] )
+afileTaxIDs = sfle.pipe( pE, c_fileTaxdumpTXT, c_fileProgTaxdump2Taxa, c_fileTaxIDs,
+	[[True, c_fileInputTaxa]] )
 
 #===============================================================================
 # Main SConscript on subdirectories
 #===============================================================================
 
-arepa.scons_children( pE, afileTaxIDs )
+sfle.scons_children( pE, ".", afileTaxIDs, c_astrExclude )

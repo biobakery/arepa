@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-import arepa
 import re
+import sfle
 import sys
 
 def print_tree( iID, aaiChildren, astrNames, iDepth ):
@@ -23,13 +23,13 @@ for strLine in sys.stdin:
 		strID, strName, strBlank, strType, strNull = astrLine
 		if strType == "scientific name":
 			iID = int(strID)
-			arepa.aset( astrNames, iID, strName )
+			sfle.aset( astrNames, iID, strName )
 	else:
 		iChild, iParent = (int(strCur) for strCur in astrLine[:2])
 		if iChild == iParent:
 			continue
 		setChildren.add( iChild )
-		aiChildren = arepa.aset( aaiChildren, iParent, None, False )
+		aiChildren = sfle.aset( aaiChildren, iParent, None, False )
 		if aiChildren == None:
 			aaiChildren[iParent] = aiChildren = []
 		aiChildren.append( iChild )

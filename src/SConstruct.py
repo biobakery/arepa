@@ -1,11 +1,9 @@
-#!/usr/bin/env python
-
 import arepa
 import os
+import sfle
 import sys
 
-pE = Environment( )
-c_afileSConscripts	= sorted( Glob( arepa.d( arepa.path_repo( ), arepa.c_strDirSrc, "SConscript*" ) ) )
+c_afileSConscripts	= sorted( Glob( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "SConscript*" ) ) )
 
 if os.path.isfile( "SConscript" ):
 	execfile( "SConscript" )

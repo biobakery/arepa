@@ -2,6 +2,7 @@
 
 import arepa
 import os
+import sfle
 import sys
 
 def test( iLevel, strID, hashArgs ):
@@ -9,21 +10,25 @@ def test( iLevel, strID, hashArgs ):
 if locals( ).has_key( "testing" ):
 	sys.exit( )
 
-#Import( "pE" )
-c_strID				= arepa.cwd( )
-c_strInputIntactC	= arepa.d( arepa.path_repo( ), arepa.c_strDirTmp, "intactc" )
-c_strFileIDTXT		= c_strID + ".txt"
-c_strFileIDDAB		= c_strID + ".dab"
-c_strProgC2Metadata	= arepa.d( arepa.path_repo( ), arepa.c_strDirSrc, "c2metadata.py" )
-c_strProgC2DAT		= arepa.d( arepa.path_repo( ), arepa.c_strDirSrc, "c2dat.py" )
+c_strID					= arepa.cwd( )
 
-afileIDTXT = arepa.pipe( pE, c_strInputIntactC, c_strProgC2Metadata, c_strFileIDTXT,
+c_fileInputIntactC		= File( sfle.d( arepa.path_repo( ), sfle.c_strDirTmp, "intactc" ) )
+
+c_fileIDTXT				= File( c_strID + ".txt" )
+c_fileIDDAB				= File( c_strID + ".dab" )
+
+c_fileProgC2Metadata	= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "c2metadata.py" ) )
+c_fileProgC2DAT			= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "c2dat.py" ) )
+
+pE = DefaultEnvironment( )
+
+afileIDTXT = sfle.pipe( pE, c_fileInputIntactC, c_fileProgC2Metadata, c_fileIDTXT,
 	[[False, c_strID]] )
 Default( afileIDTXT )
 
 def funcDAB( target, source, env ):
-	strT, astrSs = arepa.ts( target, source )
-	strProg, strIn = astrSs
-	return arepa.ex( " ".join( [strProg, c_strID, "<", strIn, "| Dat2Dab -o", strT] ) )
-afileIDDAB = Command( c_strFileIDDAB, [c_strProgC2DAT, c_strInputIntactC], funcDAB )
+	strT, astrSs = sfle.ts( target, source )
+	strProg, strIn = astrSs[:2]
+	return sfle.ex( (sfle.cat( strIn ), "|", strProg, c_strID, "| Dat2Dab -o", strT) )
+afileIDDAB = Command( c_fileIDDAB, [c_fileProgC2DAT, c_fileInputIntactC], funcDAB )
 Default( afileIDDAB )

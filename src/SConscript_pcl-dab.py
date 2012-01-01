@@ -1,40 +1,32 @@
-#!/usr/bin/env python
-
-import arepa
-
-#Import( "pE" )
-#Import( "hashArgs" )
-#Import( "c_strID" )
-#Import( "c_strFileIDRawPCL" )
-#Import( "c_strFileIDNormPCL" )
-c_strFileIDPCL	= c_strID + ".pcl"
-c_strFileIDDAB	= c_strID + ".dab"
+c_fileIDNormPCL		= File( c_strID + "_01norm.pcl" )
+c_fileIDPCL			= File( c_strID + ".pcl" )
+c_fileIDDAB			= File( c_strID + ".dab" )
 
 #- Normalize
 def funcIDNormPCL( target, source, env, iMaxLines = 100000 ):
-	strT, astrSs = arepa.ts( target, source )
+	strT, astrSs = sfle.ts( target, source )
 	strS = astrSs[0]
-	iLC = arepa.lc( strS )
-	return ( arepa.ex( "Normalizer -t pcl -T medmult < " + strS, strT )
-		if ( iLC < iMaxLines ) else arepa.ex( "head -n 3 < " + strS, strT ) )
-Command( c_strFileIDNormPCL, c_strFileIDRawPCL, funcIDNormPCL )
+	iLC = sfle.lc( strS )
+	return ( sfle.ex( "Normalizer -t pcl -T medmult < " + strS, strT )
+		if ( iLC < iMaxLines ) else sfle.ex( "head -n 3 < " + strS, strT ) )
+Command( c_fileIDNormPCL, c_fileIDRawPCL, funcIDNormPCL )
 
 #- Impute
 def funcIDKNNPCL( target, source, env, iMaxLines = 40000 ):
-	strT, astrSs = arepa.ts( target, source )
+	strT, astrSs = sfle.ts( target, source )
 	strS = astrSs[0]
-	iLC = arepa.lc( strS )
-	return ( arepa.ex( "KNNImputer < " + strS, strT )
-		if ( iLC < iMaxLines ) else arepa.ex( "head -n 3 < " + strS, strT ) )
-Command( c_strFileIDPCL, c_strFileIDNormPCL, funcIDKNNPCL )
-Default( c_strFileIDPCL )
+	iLC = sfle.lc( strS )
+	return ( sfle.ex( "KNNImputer < " + strS, strT )
+		if ( iLC < iMaxLines ) else sfle.ex( "head -n 3 < " + strS, strT ) )
+Command( c_fileIDPCL, c_fileIDNormPCL, funcIDKNNPCL )
+Default( c_fileIDPCL )
 
 #- PCL -> DAB
 def funcIDDAB( target, source, env ):
-	strT, astrSs = arepa.ts( target, source )
+	strT, astrSs = sfle.ts( target, source )
 	strS = astrSs[0]
-	iLC = arepa.lc( strS )
-	return ( arepa.ex( " ".join( ("Distancer -o", strT, "<", strS) ) )
+	iLC = sfle.lc( strS )
+	return ( sfle.ex( (sfle.cat( strS ), " | Distancer -o", strT) )
 		if ( iLC > 3 ) else arepa.ex( "echo", strT ) )
-#Command( c_strFileIDDAB, c_strFileIDPCL, funcIDDAB )
-#Default( c_strFileIDDAB )
+#Command( c_fileIDDAB, c_fileIDPCL, funcIDDAB )
+#Default( c_fileIDDAB )

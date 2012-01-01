@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import csv
 import sys
 
 if len( sys.argv ) != 2:
@@ -14,8 +15,8 @@ for strLine in open( strTaxa ):
 	setTaxa.add( strLine )
 
 iHit = None
-for strLine in sys.stdin:
-	strTmp, strID = strLine.rstrip( ).split( "\t" )
+for astrLine in csv.reader( sys.stdin, csv.excel_tab ):
+	strTmp, strID = astrLine[:2]
 	strTaxon = strTmp.strip( )
 	iLevel = len( strTmp ) - len( strTaxon )
 	if iLevel <= iHit:

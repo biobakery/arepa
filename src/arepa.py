@@ -1,47 +1,144 @@
 #!/usr/bin/env python
 
-from ftplib import FTP
-import glob
 import os
+import sfle
+import sys
+import threading
+
+#===============================================================================
+# ARepA structural metadata
+#===============================================================================
+
+def cwd( ):
+
+	return os.path.basename( os.getcwd( ) )
+
+def taxa( strTaxids, fNames = False ):
+	
+	setRet = set()
+	if strTaxids:
+		for strLine in open( strTaxids ):
+			strID, strName = strLine.strip( ).split( "\t" )
+			setRet.add( strName if fNames else strID )
+	return setRet
+
+def path_arepa( ):
+	
+	return sfle.d( os.path.abspath( sfle.d( os.path.dirname( __file__ ), ".." ) ), "" )
+
+def path_repo( ):
+	
+	strRet = os.getcwd( )
+	strRet = strRet[len( path_arepa( ) ):]
+	while True:
+		strHead, strTail = os.path.split( strRet )
+		if not strHead:
+			strRet = path_arepa( ) + strRet
+			break
+		strRet = strHead
+	return sfle.d( strRet, "" )
+
+def level( ):
+
+	strPath = path_repo( )
+	strPath = os.getcwd( )[len( strPath ):]
+	iRet = 0
+	while True:
+		strHead, strTail = os.path.split( strPath )
+		if not strHead:
+			break
+		iRet += 1
+		strPath = strHead
+	return iRet
+
+c_strProgSConstruct		= sfle.d( path_arepa( ), sfle.c_strDirSrc, "SConstruct.py" )
+
+#===============================================================================
+# Gene ID conversion
+#===============================================================================
+
+s_lockTaxdump	= threading.Lock( )
+s_hashTaxID2Org	= None
+s_hashOrg2TaxID	= None
+def _taxdump( ):
+	global	s_lockTaxdump, s_hashTaxID2Org, s_hashOrg2TaxID
+
+	s_lockTaxdump.acquire( )
+	if ( s_hashTaxID2Org == None ) or ( s_hashOrg2TaxID == None ):
+		s_hashTaxID2Org = {}
+		s_hashOrg2TaxID = {}
+		strTaxIDs = sfle.d( path_arepa( ), sfle.c_strDirTmp, "taxdump.txt" )
+		try:
+			for strLine in open( strTaxIDs ):
+				strOrg, strID = strLine.strip( ).split( "\t" )
+				s_hashTaxID2Org[strID] = strOrg
+				s_hashOrg2TaxID[strOrg] = strID
+		except IOError:
+			pass
+	s_lockTaxdump.release( )
+	
+	return (s_hashTaxID2Org, s_hashOrg2TaxID)
+
+def taxid2org( strTaxID ):
+
+	hashTaxID2Org, hashOrg2TaxID = _taxdump( )
+	return hashTaxID2Org.get( strTaxID )
+
+def org2taxid( strOrg ):
+
+	hashTaxID2Org, hashOrg2TaxID = _taxdump( )
+	return hashOrg2TaxID.get( strOrg )
+
+def geneid( strIn, strTaxID, strTarget = "Entrez Gene", strURLBase = "http://localhost:8183" ):
+	
+# BUGBUG: Currently disabled due to BridgeDB's inadequate coverage and performance
+# It's way-crazy slow, and it doesn't have sufficient DB coverage when it does work
+	return None
+# BUGBUG: This is one of the worst things I've ever done
+	strTaxon = taxid2org( strTaxID )
+	if not strTaxon:
+		return None
+	strTaxon = " ".join( strTaxon.split( " " )[:2] )
+	strTaxon = urllib.quote( strTaxon ).replace( "/", "%2F" )
+
+	strURL = strURLBase + "/" + strTaxon + "/search/" + urllib.quote( strIn )
+	astrData = urllib.urlopen( strURL ).read( ).splitlines( )
+	strID = strSource = None
+	for strLine in astrData:
+		astrLine = strLine.strip( ).split( "\t" )
+		if astrLine[0] == strIn:
+			strID, strSource = astrLine
+			break
+	if not ( strID and strSource ):
+		return None
+	strSource = urllib.quote( strSource ).replace( "/", "%2F" )
+
+	strURL = strURLBase + "/" + strTaxon + "/xrefs/" + strSource + "/" + urllib.quote( strID )
+	astrData = urllib.urlopen( strURL ).read( ).splitlines( )
+	for strLine in astrData:
+		if strLine == "<html>":
+			break
+		strID, strSource = strLine.strip( ).split( "\t" )
+		if strSource == strTarget:
+			return strID
+	return None
+
+#------------------------------------------------------------------------------ 
+
+if __name__ == "__main__":
+	pass
+
+"""
+import glob
 import re
 import subprocess
 import sys
 import threading
 import urllib
-import csv 
-
-c_strDirData	= "data/"
-c_strDirDoc		= "doc/"
-c_strDirEtc		= "etc/"
-c_strDirSrc		= "src/"
-c_strDirTmp		= "tmp/"
-c_astrExclude	= [strCur[:-1] for strCur in (c_strDirEtc, c_strDirSrc, c_strDirTmp, c_strDirDoc)] + [
-#	"ArrayExpress",
-#	"GEO",
-#	"IntAct",
-]
 
 #===============================================================================
 # Basic global utilities
 #===============================================================================
-
-# Added for reading manually curated metadata 
-
-def csvread( file, e_list = None, e_dict = None ):
-        if not e_list:
-                e_list = []
-        if not e_dict:
-                e_dict = {}
-        curfile = open( file, 'rb' )
-        dictR = csv.DictReader(curfile)
-        #put stuff into list
-        for item in dictR:
-                e_list.append(item)
-        #cast to dictionary with Accession ID as key value 
-        for listelement in e_list:
-                e_dict[listelement["Accession ID"]] = listelement
-        return e_dict
-
 
 def regs( strRE, strString, aiGroups ):
 
@@ -164,25 +261,10 @@ def override( pE, pFile ):
 # Command execution
 #===============================================================================
 
-###fetches the number and name of wanted dataset if the number of platforms 
-###is unknown 
- 
-def ftppeak( DatabaseURL, DatasetURL, ID, raw = None, file_list = None ):
-	
-	ftp = FTP( DatabaseURL )
-        ftp.login("anonymous")
-        ftp.cwd( DatasetURL + ID)
-        if not file_list:
-                file_list = []
-        if not raw:
-                raw = ftp.retrlines('NLST', file_list.append)
-        return file_list
-
-
 def download( pE, strURL, strT = None, fSSL = False, fGlob = True ):
 
 	if not strT:
-		strT = re.sub( '^.*\/', "", strURL )
+		strT = re.sub( r'^.*\/', "", strURL )
 
 	def funcDownload( target, source, env, strURL = strURL ):
 		strT, astrSs = ts( target, source )
@@ -217,8 +299,8 @@ def pipe( pE, strFrom, strProg, strTo, aaArgs = [] ):
 	strFrom, strTo, astrFiles, astrArgs = _pipeargs( strFrom, strTo, aaArgs )
 	def funcPipe( target, source, env, strFrom = strFrom, astrArgs = astrArgs ):
 		strT, astrSs = ts( target, source )
-		return ex( " ".join( [astrSs[0]] + astrArgs +
-			( ["<", quote( strFrom )] if strFrom else [] ) ), strT )
+		return ex( " ".join( ( ["cat", quote( strFrom ), "|"] if strFrom else [] ) +
+			[astrSs[0]] + astrArgs ), strT )
 	return pE.Command( strTo, [strProg] + ( [strFrom] if strFrom else [] ) +
 		astrFiles, funcPipe )
 
@@ -230,59 +312,15 @@ def spipe( pE, strFrom, strCmd, strTo, aaArgs = [] ):
 	strFrom, strTo, astrFiles, astrArgs = _pipeargs( strFrom, strTo, aaArgs )
 	def funcPipe( target, source, env, strCmd = strCmd, strFrom = strFrom, astrArgs = astrArgs ):
 		strT, astrSs = ts( target, source )
-		return ex( " ".join( [strCmd] + astrArgs + ( ["<", strFrom] if strFrom else [] ) ),
-			strT )
+		return ex( " ".join( ( ["cat", quote( strFrom ), "|"] if strFrom else [] ) +
+			[strCmd] + astrArgs ), strT )
 	return pE.Command( strTo, ( [strFrom] if strFrom else [] ) + astrFiles, funcPipe )
 
 def scmd( pE, strCmd, strTo, aaArgs = [] ):
 
 	return spipe( pE, None, strCmd, strTo, aaArgs )
 
-#===============================================================================
-# ARepA structural metadata
-#===============================================================================
 
-def cwd( ):
-
-	return os.path.basename( os.getcwd( ) )
-
-def taxa( strTaxids, fNames = False ):
-	
-	setRet = set()
-	if strTaxids:
-		for strLine in open( strTaxids ):
-			strID, strName = strLine.strip( ).split( "\t" )
-			setRet.add( strName if fNames else strID )
-	return setRet
-
-def path_arepa( ):
-	
-	return ( os.path.abspath( os.path.dirname( __file__ ) + "/../" ) + "/" )
-
-def path_repo( ):
-	
-	strRet = os.getcwd( )
-	strRet = strRet[len( path_arepa( ) ):]
-	while True:
-		strHead, strTail = os.path.split( strRet )
-		if not strHead:
-			strRet = path_arepa( ) + strRet
-			break
-		strRet = strHead
-	return ( strRet + "/" )
-
-def level( ):
-
-	strPath = path_repo( )
-	strPath = os.getcwd( )[len( strPath ):]
-	iRet = 0
-	while True:
-		strHead, strTail = os.path.split( strPath )
-		if not strHead:
-			break
-		iRet += 1
-		strPath = strHead
-	return iRet
 
 #===============================================================================
 # SConstruct helper functions
@@ -356,75 +394,6 @@ def sconscript_children( pE, afileSources, funcScanner, iLevel, funcAction = Non
 	pE.AlwaysBuild( afileSubdirs )
 	return afileSubdirs
 
-#===============================================================================
-# Gene ID conversion
-#===============================================================================
-
-s_lockTaxdump	= threading.Lock( )
-s_hashTaxID2Org	= None
-s_hashOrg2TaxID	= None
-def _taxdump( ):
-	global	s_lockTaxdump, s_hashTaxID2Org, s_hashOrg2TaxID
-
-	s_lockTaxdump.acquire( )
-	if ( s_hashTaxID2Org == None ) or ( s_hashOrg2TaxID == None ):
-		s_hashTaxID2Org = {}
-		s_hashOrg2TaxID = {}
-		strTaxIDs = d( path_arepa( ), c_strDirTmp, "taxdump.txt" )
-		try:
-			for strLine in open( strTaxIDs ):
-				strOrg, strID = strLine.strip( ).split( "\t" )
-				s_hashTaxID2Org[strID] = strOrg
-				s_hashOrg2TaxID[strOrg] = strID
-		except IOError:
-			pass
-	s_lockTaxdump.release( )
-	
-	return (s_hashTaxID2Org, s_hashOrg2TaxID)
-
-def taxid2org( strTaxID ):
-
-	hashTaxID2Org, hashOrg2TaxID = _taxdump( )
-	return hashTaxID2Org.get( strTaxID )
-
-def org2taxid( strOrg ):
-
-	hashTaxID2Org, hashOrg2TaxID = _taxdump( )
-	return hashOrg2TaxID.get( strOrg )
-
-def geneid( strIn, strTaxID, strTarget = "Entrez Gene", strURLBase = "http://localhost:8183" ):
-	
-# BUGBUG: Currently disabled due to BridgeDB's inadequate coverage and performance
-# It's way-crazy slow, and it doesn't have sufficient DB coverage when it does work
-	return None
-# BUGBUG: This is one of the worst things I've ever done
-	strTaxon = taxid2org( strTaxID )
-	if not strTaxon:
-		return None
-	strTaxon = " ".join( strTaxon.split( " " )[:2] )
-	strTaxon = urllib.quote( strTaxon ).replace( "/", "%2F" )
-
-	strURL = strURLBase + "/" + strTaxon + "/search/" + urllib.quote( strIn )
-	astrData = urllib.urlopen( strURL ).read( ).splitlines( )
-	strID = strSource = None
-	for strLine in astrData:
-		astrLine = strLine.strip( ).split( "\t" )
-		if astrLine[0] == strIn:
-			strID, strSource = astrLine
-			break
-	if not ( strID and strSource ):
-		return None
-	strSource = urllib.quote( strSource ).replace( "/", "%2F" )
-
-	strURL = strURLBase + "/" + strTaxon + "/xrefs/" + strSource + "/" + urllib.quote( strID )
-	astrData = urllib.urlopen( strURL ).read( ).splitlines( )
-	for strLine in astrData:
-		if strLine == "<html>":
-			break
-		strID, strSource = strLine.strip( ).split( "\t" )
-		if strSource == strTarget:
-			return strID
-	return None
 
 #===============================================================================
 # CProcessor
@@ -459,12 +428,12 @@ class CProcessor:
 	def in2out( self, strIn, strDir = c_strDirData, strSuffix = None ):
 
 		if not strSuffix:
-			mtch = re.search( '(\.[^.]+)$', strIn )
+			mtch = re.search( r'(\.[^.]+)$', strIn )
 			strSuffix = mtch.group( 1 ) if mtch else ""
 		if self.m_strDir:
-			strIn = re.sub( '^.*' + self.m_strDir + '/', strDir + "/", strIn )
-		return re.sub( ( self.m_strFrom + '()$' ) if self.m_strDir else
-			( '_' + self.m_strFrom + '(-.*)' + strSuffix + '$' ),
+			strIn = re.sub( r'^.*' + self.m_strDir + '/', strDir + "/", strIn )
+		return re.sub( ( self.m_strFrom + r'()$' ) if self.m_strDir else
+			( r'_' + self.m_strFrom + r'(-.*)' + strSuffix + r'$' ),
 			"_" + self.m_strTo + "\\1-" + self.m_strID + strSuffix, strIn )
 
 	def out2in( self, strOut ):
@@ -478,13 +447,10 @@ class CProcessor:
 
 	def ex( self, pE, strIn, strDir = c_strDirData, strSuffix = None ):
 		
+		strIn = str(strIn)
 		strOut = self.in2out( strIn, strDir, strSuffix )
 		if not strOut:
 			return None
 		return ( pipe( pE, strIn, self.m_strProcessor, strOut, self.m_astrArgs ) if self.m_fPipe else
 			cmd( pE, self.m_strProcessor, strOut, [[True, strIn]] + self.m_astrArgs ) )
-
-#------------------------------------------------------------------------------ 
-
-if __name__ == "__main__":
-	pass
+"""
