@@ -17,7 +17,7 @@ c_strGPL					= astrID[1]
 c_fileInputSConscript		= File( sfle.d( arepa.path_arepa( ), sfle.c_strDirSrc, "SConscript_pcl-dab.py" ) )
 c_fileInputSOFTGZ			= File( "../" + c_strGDS + ".soft.gz" )
 
-c_fileIDTXT					= File( c_strID + ".txt" )
+c_fileIDPKL					= File( c_strID + ".pkl" )
 c_fileGPLTXTGZ				= File( c_strGPL + ".annot.gz" )
 c_fileIDRawPCL				= File( c_strID + "_00raw.pcl" )
 
@@ -33,9 +33,9 @@ Import( "hashArgs" )
 
 sfle.download( pE, hashArgs["c_strURLGPL"] + os.path.basename( str(c_fileGPLTXTGZ) ) )
 
-sfle.pipe( pE, c_fileInputSOFTGZ, c_fileProgSOFT2Metadata, c_fileIDTXT,
+sfle.pipe( pE, c_fileInputSOFTGZ, c_fileProgSOFT2Metadata, c_fileIDPKL,
 	[[True, c_fileGPLTXTGZ]] )
-Default( c_fileIDTXT )
+Default( c_fileIDPKL )
 
 sfle.pipe( pE, c_fileInputSOFTGZ, c_fileProgSOFT2PCL, c_fileIDRawPCL,
 	[[True, c_fileGPLTXTGZ]] )

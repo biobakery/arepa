@@ -14,7 +14,7 @@ c_strID					= arepa.cwd( )
 
 c_fileInputIntactC		= File( sfle.d( arepa.path_repo( ), sfle.c_strDirTmp, "intactc" ) )
 
-c_fileIDTXT				= File( c_strID + ".txt" )
+c_fileIDPKL				= File( c_strID + ".pkl" )
 c_fileIDDAB				= File( c_strID + ".dab" )
 
 c_fileProgC2Metadata	= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "c2metadata.py" ) )
@@ -22,7 +22,7 @@ c_fileProgC2DAT			= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "c2dat.p
 
 pE = DefaultEnvironment( )
 
-afileIDTXT = sfle.pipe( pE, c_fileInputIntactC, c_fileProgC2Metadata, c_fileIDTXT,
+afileIDTXT = sfle.pipe( pE, c_fileInputIntactC, c_fileProgC2Metadata, c_fileIDPKL,
 	[[False, c_strID]] )
 Default( afileIDTXT )
 

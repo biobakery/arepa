@@ -18,7 +18,7 @@ for strGPLGZ in astrGPLGZs:
 	pSOFT.open( gzip.open( strGPLGZ ) )
 pSOFT.open( sys.stdin )
 
-pMetadata = metadata.CMetadata( )
+pMetadata = metadata.open( )
 for pDS in pSOFT.get( "DATASET" ).values( ):
 	pMetadata.pmid( pDS.get_attribute( "dataset_pubmed_id" ) )
 	pMetadata.title( pDS.get_attribute( "dataset_title" ) )

@@ -30,10 +30,10 @@ for astrLine in csv.reader( open( strMetadata ) ):
 	hashMetadata[astrLine[0]] = astrLine[1]
 
 csvw = csv.writer( sys.stdout, csv.excel_tab )
-fFirst = True
+iLines = -1
 for astrLine in csv.reader( sys.stdin ):
-	if fFirst:
-		fFirst = False
+	iLines += 1
+	if not iLines:
 		astrHeader = astrLine[1:]
 		for i in range( len( astrHeader ) ):
 			strCur = hashMetadata.get( astrHeader[i] )
@@ -43,4 +43,6 @@ for astrLine in csv.reader( sys.stdin ):
 		csvw.writerow( ["EWEIGHT", "", ""] + ( [1] * len( astrHeader ) ) )
 		continue
 	strID, strName = hashPlatform.get( astrLine[0] ) or ( [astrLine[0]] * 2 )
-	csvw.writerow( [strID, strName, "1"] + [( "" if ( s == "NA" ) else s ) for s in astrLine[1:]] )
+	csvw.writerow( [strID, strName, 1] + [( "" if ( s == "NA" ) else s ) for s in astrLine[1:]] )
+if not iLines:
+	csvw.writerow( ["NULL", "", 1] + ( [None] * len( astrHeader ) ) )

@@ -25,7 +25,6 @@ c_fileIDRawPCL				= File( c_strID + "_00raw.pcl" )
 
 c_fileProgSeries2PCL		= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "series2pcl.py" ) )
 c_fileProgSeries2Metadata	= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "series2metadata.py" ) )
-c_fileProgSeries2Pickle		= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "series2pickle.py" ) )
 
 pE = DefaultEnvironment( )
 Import( "hashArgs" )
@@ -50,7 +49,7 @@ def funcGSER( target, source, env ):
 Command( [c_fileRDataTXT, c_fileRMetadataTXT, c_fileRPlatformTXT],
 	[c_fileInputGSER, c_fileIDSeriesTXTGZ,], funcGSER )
 
-sfle.pipe( pE, c_fileIDSeriesTXTGZ, c_fileProgSeries2Pickle, c_fileIDPKL,
+sfle.pipe( pE, c_fileIDSeriesTXTGZ, c_fileProgSeries2Metadata, c_fileIDPKL,
 	[[False, c_strID]] + ( [[True, c_fileInputManCurTXT]] if os.path.exists( str(c_fileInputManCurTXT) ) else [] ) )
 Default( c_fileIDPKL )
 

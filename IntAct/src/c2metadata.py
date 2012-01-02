@@ -7,9 +7,11 @@ import sys
 def metadatum( funcMetadata, astrTokens, iIndex ):
 
 	for strTokens in astrTokens:
+		setstrTokens = set()
 		for strToken in strTokens.split( "|" ):
 			astrToken = intact.split( strToken )
-			funcMetadata( astrToken[iIndex] or strToken )
+			setstrTokens.add( astrToken[iIndex] or strToken )
+		funcMetadata( setstrTokens )
 
 def callback( pMetadata, strAs, strBs, strAltAs, strAltBs, strSynAs, strSynBs, strMethods, strAuthors, strPMIDs,
 	strTaxAs, strTaxBs, strTypes, strDBs, strIDs, strConfs ):
@@ -23,6 +25,6 @@ if len( sys.argv ) != 2:
 	raise Exception( "Usage: c2metadata.py <id> < <intactc>" )
 strTarget = sys.argv[1]
 
-pMetadata = metadata.CMetadata( )
+pMetadata = metadata.open( )
 intact.read( sys.stdin, strTarget, callback, pMetadata )
 pMetadata.save( sys.stdout )

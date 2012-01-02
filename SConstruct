@@ -4,8 +4,8 @@ import sys
 
 c_strURLTaxonomy		= "ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz"
 c_astrExclude			= [
-	"ArrayExpress",
-	"GEO",
+#	"ArrayExpress",
+#	"GEO",
 #	"IntAct",
 ]
 
