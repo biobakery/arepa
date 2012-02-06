@@ -35,7 +35,7 @@ for file in (c_fileIDZIP, c_fileIDSDRF, c_fileIDIDF):
 	NoClean( file )
 
 def funcADFsTXT( target, source, env ):
-	strT, astrSs = arepa.ts( target, source )
+	strT, astrSs = sfle.ts( target, source )
 	strIDSDRF = astrSs[0]
 	with open( strT, "w" ) as fileOut:
 		aastrSDRF = sfle.entable( open( strIDSDRF ), [lambda s: s == "Array Design REF"] )
@@ -57,7 +57,7 @@ afileADFs = sfle.sconscript_children( pE, afileADFsTXT, funcScannerADFs, 2, arep
 #===============================================================================
 
 def funcIDsTXT( target, source, env ):
-	strT, astrSs = arepa.ts( target, source )
+	strT, astrSs = sfle.ts( target, source )
 	strDir = os.path.dirname( os.path.abspath( strT ) )
 	sfle.ex( ("unzip", "-d", strDir, "-u", astrSs[0]) )
 	with open( strT, "w" ) as fileOut:

@@ -3,20 +3,22 @@
 import arepa
 import sfle
 import sys
+import csv
+import os 
 
 def test( iLevel, strID, hashArgs ):
 	return ( iLevel == 2 ) and ( strID.find( "GSE" ) == 0 ) 
 if locals( ).has_key( "testing" ):
 	sys.exit( )
 
-c_strID						= arepa.cwd( )
-
+c_strID					= arepa.cwd( )
 c_fileInputSConscript		= File( sfle.d( arepa.path_arepa( ), sfle.c_strDirSrc, "SConscript_pcl-dab.py" ) )
 c_fileInputGSER				= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "gse.R" ) )
 c_fileInputManCurTXT		= File( sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, "manual_curation/",
 								c_strID + "_curated_pdata.txt" ) )
 
 c_fileIDPKL					= File( c_strID + ".pkl" )
+c_fileTXTGSM					= File( "GSM.txt" )
 c_fileIDSeriesTXTGZ			= File( c_strID + "_series_matrix.txt.gz" )
 c_fileRDataTXT				= File( c_strID + "_rdata.txt" )
 c_fileRMetadataTXT			= File( c_strID + "_rmetadata.txt" )
@@ -25,6 +27,7 @@ c_fileIDRawPCL				= File( c_strID + "_00raw.pcl" )
 
 c_fileProgSeries2PCL		= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "series2pcl.py" ) )
 c_fileProgSeries2Metadata	= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "series2metadata.py" ) )
+c_fileProgSeries2GSM		= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "series2gsm.py" ) )
 
 pE = DefaultEnvironment( )
 Import( "hashArgs" )
@@ -41,19 +44,59 @@ NoClean( c_fileIDSeriesTXTGZ )
 # Convert SERIES file with platform info to PKL and PCL
 #===============================================================================
 
+#def funcGSER( target, source, env ):
+#	astrTs, astrSs = ([f.get_abspath( ) for f in a] for a in (target, source))
+#	strSeriesGZ, strData, strMetadata, strPlatform = astrTs[:4]
+#	strProg = astrSs[0]
+#	return sfle.ex( (sfle.cat( strProg ), " | R --no-save --args", strSeriesGZ, strPlatform, strMetadata, strData) )
+#
+#Command( [c_fileIDSeriesTXTGZ, c_fileRDataTXT, c_fileRMetadataTXT, c_fileRPlatformTXT],
+#	[c_fileInputGSER], funcGSER )
+
+
 def funcGSER( target, source, env ):
-	astrTs, astrSs = ([f.get_abspath( ) for f in a] for a in (target, source))
-	strData, strMetadata, strPlatform = astrTs[:3]
-	strProg, strSeriesGZ = astrSs[:2]
-	return sfle.ex( (sfle.cat( strProg ), " | R --no-save --args", strSeriesGZ, strPlatform, strMetadata, strData) )
+        astrTs, astrSs = ([f.get_abspath( ) for f in a] for a in (target, source))
+        strData, strMetadata, strPlatform = astrTs[:3]
+        strProg, strSeriesGZ = astrSs[:2]
+        return sfle.ex( (sfle.cat( strProg ), " | R --no-save --args", strSeriesGZ, strPlatform, strMetadata, strData) )
+
 Command( [c_fileRDataTXT, c_fileRMetadataTXT, c_fileRPlatformTXT],
-	[c_fileInputGSER, c_fileIDSeriesTXTGZ,], funcGSER )
+        [c_fileInputGSER, c_fileIDSeriesTXTGZ,], funcGSER )
 
 sfle.pipe( pE, c_fileIDSeriesTXTGZ, c_fileProgSeries2Metadata, c_fileIDPKL,
 	[[False, c_strID]] + ( [[True, c_fileInputManCurTXT]] if os.path.exists( str(c_fileInputManCurTXT) ) else [] ) )
-Default( c_fileIDPKL )
+	#Default( c_fileIDPKL )
 
 sfle.pipe( pE, c_fileRDataTXT, c_fileProgSeries2PCL, c_fileIDRawPCL,
 	[[True, f] for f in (c_fileRMetadataTXT, c_fileRPlatformTXT)] )
 
-execfile( str(c_fileInputSConscript) )
+#Get list of GSMs
+afileIDsTXT = sfle.pipe( pE, c_fileIDSeriesTXTGZ, c_fileProgSeries2GSM, c_fileTXTGSM ) 
+#Default( c_fileTXTGSM )
+
+#sleipnir features  
+#execfile( str(c_fileInputSConscript) )
+
+def funcScanner( target, source, env ):	
+	#sys.stderr.write( "ASDF\n" )
+	env["sconscript_child"]( target, source[0], env, c_strID + "-RAW" )
+
+def scanner( fileExclude = None, fileInclude = None ):
+
+        setstrExclude = set(readcomment( fileExclude ) if fileExclude else [])
+        setstrInclude = set(readcomment( fileInclude ) if fileInclude else [])
+        def funcRet( target, source, env, setstrInclude = setstrInclude, setstrExclude = setstrExclude ):
+                strT, astrSs = sfle.ts( target, source )
+                for strS in astrSs:
+                        for astrLine in csv.reader( open( strS ), csv.excel_tab ):
+                                if not ( astrLine and astrLine[0] ):
+                                        continue
+                                strID = astrLine[0]
+                                if ( setstrInclude and ( strID not in setstrInclude ) ) or ( strID in setstrExclude ):
+                                        continue
+                                env["sconscript_child"]( target, source[0], env, c_strID + "-RAW" )
+        return funcRet
+
+
+afileIDsRaw = sfle.sconscript_children( pE, afileIDsTXT , scanner( ), 3, arepa.c_strProgSConstruct, hashArgs )
+#Default( afileIDsRaw )

@@ -30,7 +30,10 @@ def funcIDsTXT( target, source, env ):
 		filter( None, (re.search( r'(GSE\d+(?:-GPL\d+)?)', s ) for s in astrFiles) )]
 	with open( strT, "w" ) as fileOut:
 		fileOut.write( "%s\n" % "\n".join( astrFiles ) )
-	return None 
+	return None
+		 
 afileIDsTXT = Command( c_fileIDTXT, None, funcIDsTXT )
+#Default( afileIDsTXT )
 
 sfle.sconscript_children( pE, afileIDsTXT, sfle.scanner( ), 2, arepa.c_strProgSConstruct, hashArgs )
+

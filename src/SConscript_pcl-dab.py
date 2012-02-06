@@ -27,6 +27,6 @@ def funcIDDAB( target, source, env ):
 	strS = astrSs[0]
 	iLC = sfle.lc( strS )
 	return ( sfle.ex( (sfle.cat( strS ), " | Distancer -o", strT) )
-		if ( iLC > 3 ) else arepa.ex( "echo", strT ) )
-#Command( c_fileIDDAB, c_fileIDPCL, funcIDDAB )
-#Default( c_fileIDDAB )
+		if ( iLC > 3 ) else sfle.ex( "echo", strT ) )
+Command( c_fileIDDAB, c_fileIDPCL, funcIDDAB )
+Default( c_fileIDDAB )
