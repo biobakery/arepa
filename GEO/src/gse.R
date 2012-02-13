@@ -39,7 +39,7 @@ if(all(sapply(inputargs,file.exists))){
 
 if(file.exists(strInputFile)){  #get from disk
   print("Using previously downloading series matrix file.")
-  gsedat <- getGEO(strInputFile,destdir=targetdir,AnnotGPL=FALSE)
+  gsedat <- getGEO(filename=strInputFile,destdir=targetdir,AnnotGPL=FALSE)
 }else{  #get from GEO
   print("Downloading series matrix file(s) from GEO.")
   gsedat <- getGEO(strInputAccession,destdir=targetdir,AnnotGPL=FALSE)
