@@ -1,0 +1,60 @@
+import arepa
+import os
+import sys
+import sfle
+import csv
+
+c_iMinimum	= 10
+c_URL		= "http://thebiogrid.org/downloads/archives/Release%20Archive/BIOGRID-3.1.83/BIOGRID-ALL-3.1.83.tab2.zip"
+
+
+#------------------------------------------------------------------------------
+
+c_strInputTaxIDs	= File(sfle.d( arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" ))
+c_strFileBioGridZIP	= File(sfle.d( sfle.c_strDirTmp, os.path.basename(c_URL)))
+c_strFileBioGridTXT     = File(sfle.d( sfle.c_strDirTmp, "biogrid_downloaded.txt" ))
+c_strFileBioGridC	= File(sfle.d( sfle.c_strDirTmp, "biogridc.txt" ))
+c_strProgBioGrid	= sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "biogrid.py" ) 
+c_strProgBioGrid2C      = sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "biogrid2c.py" ) 
+c_strTXT                = sfle.c_strSufTXT
+
+
+pE = DefaultEnvironment()
+
+
+#===============================================================================
+# Download the Biogrid.zip source file
+#===============================================================================
+sfle.download( pE,c_URL,c_strFileBioGridZIP )
+NoClean( c_strFileBioGridZIP )
+
+
+#===============================================================================
+# Extract BIOGRID-ALL-3.1.83.tab2.txt from BIOGRID-ALL-3.1.83.tab2.zip
+#===============================================================================
+def funcBioGridTXT( target, source, env ):
+	strT, astrSs = sfle.ts( target, source )
+	return sfle.ex(( "unzip", "-p", astrSs[0]), strT )
+Command( c_strFileBioGridTXT, c_strFileBioGridZIP, funcBioGridTXT )
+
+
+
+#===============================================================================
+# Reformat text file for easier text parsing
+#===============================================================================
+
+
+afileBioGridC = sfle.pipe( pE, c_strFileBioGridTXT, c_strProgBioGrid2C, c_strFileBioGridC,  [[False, c_iMinimum], [True, c_strInputTaxIDs]] )
+
+
+
+#===============================================================================
+# Pass the IDs  to child directories
+#===============================================================================
+
+def funcScanner( target, source, env ):
+    for strLine in open( str(source[0]) ):
+        if strLine.startswith( ">" ):
+            env["sconscript_child"]( target, source[0], env, strLine[1:].strip( ) )
+sfle.sconscript_children( pE, afileBioGridC, funcScanner, 1, arepa.c_strProgSConstruct )
+
