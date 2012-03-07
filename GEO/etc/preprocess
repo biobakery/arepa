@@ -1,0 +1,5 @@
+#Insert the preprocessing function you want for the RAW pipeline.
+# examples: affy::rma, affy::mas5
+# default value is affy::rma
+
+affy::rma

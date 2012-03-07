@@ -14,57 +14,56 @@ c_strURLGEO					= 'ftp.ncbi.nih.gov'
 c_strURLGEOsupp					= 'pub/geo/DATA/supplementary/samples/'
 c_strURLSupp 					= 'ftp://' + c_strURLGEO + '/' + c_strURLGEOsupp 
 c_strFileGSM					= "../GSM.txt"
-c_strFileCEL                                    = "CEL.txt"
+c_strFilePCL					= "../" + arepa.cwd().replace("-RAW","") + "_00raw.pcl" 
+
+c_listTs					= sfle.readcomment( c_strFileGSM )
+c_fileProgReadCel				= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "readCel.R" ) )
+c_fileProgProcessRaw				= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "preprocessRaw.R" ) )
+c_strInputRData					= arepa.cwd() + ".RData"
+c_strOutputRData				= c_strInputRData.replace("-RAW", "") 
+
+c_filePPfun            				= File( sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, "preprocess"))
+c_strPPfun					= sfle.readcomment( c_filePPfun )[0]
 
 pE = DefaultEnvironment( )
 Import( "hashArgs" )
 
-def nnnModify( strID ):
-	return strID[0:len(strID)-3] + "nnn/"
+#Download CEL files (if they exist)
 
-def funcGetListRAW( GSMfile, dummylist = None ):
-	if not dummylist:
-		dummylist = []
-	listGSM = sfle.readcomment( GSMfile )
-	for GSMid in listGSM:
-			c_strURLGSM		= nnnModify( GSMid ) + GSMid
-			c_strURLGSMftpbase	= c_strURLGEOsupp + c_strURLGSM
-			c_listFiles		= sfle.ftpls( c_strURLGEO, c_strURLGSMftpbase ) 
-			dummylist += filter( ( lambda str: 'CEL' in str ), c_listFiles )
-	return dummylist
-
-#def funcWriteListRAW( target, source, env, dummylist = None ):
-#	if not dummylist:
-#		dummylist = []
-#	CELfile, GSMfile = target[0], source[0] 
-#	listGSM = sfle.readcomment( GSMfile )
-#	for GSMid in listGSM:
-#		c_strURLGSM		= nnnModify( GSMid ) + GSMid
-#		c_strURLGSMftpbase	= c_strURLGEOsupp + c_strURLGSM
-#		c_listFiles		= sfle.ftpls( c_strURLGEO, c_strURLGSMftpbase ) 
-#		dummylist += filter( ( lambda str: 'CEL' in str ), c_listFiles )
-#	with open( str( CELfile ), "w" ) as outputf:
-#		outputf.write( "\n".join( dummylist ) )
-
-#def funcEnvDownloadRAW( target, source, env ):
-#	alistTs = target  
-#	for GSMCEL in alistTs:
-#		GSMid = str( GSMCEL ).split(".")[0]
-#		sfle.download( pE, c_strURLSupp + nnnModify( GSMid ) + GSMid + "/" + str( GSMCEL ) )
-
-def funcDownloadRAW( target ):
-	alistTs = target  
+def funcDownloadRAW( alistTs ):
+	def nnnModify( strID ):
+        	return strID[0:len(strID)-3] + "nnn/"
 	for GSMCEL in alistTs:
 		GSMid = str( GSMCEL ).split(".")[0]
 		sfle.download( pE, c_strURLSupp + nnnModify( GSMid ) + GSMid + "/" + str( GSMCEL ) )
+ 
+
+#Get a single RData input file from the CEL files
+
+def funcRawMap( target, source, env ):
+        astrTs, astrSs = ([f.get_abspath( ) for f in a] for a in (target, source))
+        strOutputRData = astrTs[0]
+	strIn, astrCel = astrSs[0], astrSs[1:]
+        return sfle.ex( [sfle.cat( strIn ), " | R --no-save --args", strOutputRData] + astrCel)
+	
+
+#Take the RData file produced by funcRawMap and process
+
+def funcRawProcess( target, source, env ):
+	strT, astrSs = sfle.ts(target, source)
+	strIn, strRData = astrSs[:2]
+        return sfle.ex( (sfle.cat( strIn ), " | R --no-save --args", strRData, strT, c_strPPfun ) )
 
 
-listCEL = funcGetListRAW( c_strFileGSM )
-print listCEL
-alistRAWfiles = funcDownloadRAW( listCEL )
+#Execute
 
+#if RAW files exist, process
+if c_listTs:
+	funcDownloadRAW( c_listTs )
+	Command( c_strInputRData, [c_fileProgReadCel] + c_listTs , funcRawMap )
+	Command( c_strOutputRData, [c_fileProgProcessRaw,c_strInputRData], funcRawProcess )
+#else use vanilla pcl
+else:
+	Command( c_strOutputRData, [c_fileProgProcessRaw,c_strFilePCL], funcRawProcess )
 
-# Insert RAW pipeline
-
-			
-
+	

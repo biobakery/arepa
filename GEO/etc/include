@@ -10,7 +10,7 @@
 
 #Daniela's List -- Test 
 
-GSE6369
+#GSE6369
 #GSE28403
 #GSE10183
 #GSE16560
@@ -40,9 +40,18 @@ GSE6369
 #GSE17951
 
 #mult files
-##GSE10645
+#GSE10645
 #GSE16560
 #GSE8402
 
-#mult files, one platform
+#New GSE.R script testing 
+#GSE8126
+GSE10183
 GSE13876
+
+#mult files, one platform
+#GSE13876
+#GSE10183
+
+#GDS testing
+#GDS3597

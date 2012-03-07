@@ -33,56 +33,32 @@ pE = DefaultEnvironment( )
 Import( "hashArgs" )
 
 #===============================================================================
-# Download series matrix file
+# Download series matrix file, Convert SERIES file with 
+# platform info to PKL and PCL
 #===============================================================================
-
-sfle.download( pE, hashArgs["c_strURLGSE"] + c_strID.split("-")[0] + "/" +
-	os.path.basename( str(c_fileIDSeriesTXTGZ) ) )
-NoClean( c_fileIDSeriesTXTGZ )
-
-#===============================================================================
-# Convert SERIES file with platform info to PKL and PCL
-#===============================================================================
-
-#def funcGSER( target, source, env ):
-#	astrTs, astrSs = ([f.get_abspath( ) for f in a] for a in (target, source))
-#	strSeriesGZ, strData, strMetadata, strPlatform = astrTs[:4]
-#	strProg = astrSs[0]
-#	return sfle.ex( (sfle.cat( strProg ), " | R --no-save --args", strSeriesGZ, strPlatform, strMetadata, strData) )
-#
-#Command( [c_fileIDSeriesTXTGZ, c_fileRDataTXT, c_fileRMetadataTXT, c_fileRPlatformTXT],
-#	[c_fileInputGSER], funcGSER )
-
 
 def funcGSER( target, source, env ):
-        astrTs, astrSs = ([f.get_abspath( ) for f in a] for a in (target, source))
-        strData, strMetadata, strPlatform = astrTs[:3]
-        strProg, strSeriesGZ = astrSs[:2]
-        return sfle.ex( (sfle.cat( strProg ), " | R --no-save --args", strSeriesGZ, strPlatform, strMetadata, strData) )
+	astrTs, astrSs = ([f.get_abspath( ) for f in a] for a in (target, source))
+	strSeriesGZ, strData, strMetadata, strPlatform = astrTs[:4]
+	strIn = astrSs[0]
+	return sfle.ex( (sfle.cat( strIn ), " | R --no-save --args", strSeriesGZ, strPlatform, strMetadata, strData) )
 
-Command( [c_fileRDataTXT, c_fileRMetadataTXT, c_fileRPlatformTXT],
-        [c_fileInputGSER, c_fileIDSeriesTXTGZ,], funcGSER )
+Command( [c_fileIDSeriesTXTGZ, c_fileRDataTXT, c_fileRMetadataTXT, c_fileRPlatformTXT],
+	[c_fileInputGSER], funcGSER )
 
 sfle.pipe( pE, c_fileIDSeriesTXTGZ, c_fileProgSeries2Metadata, c_fileIDPKL,
 	[[False, c_strID]] + ( [[True, c_fileInputManCurTXT]] if os.path.exists( str(c_fileInputManCurTXT) ) else [] ) )
-	#Default( c_fileIDPKL )
 
 sfle.pipe( pE, c_fileRDataTXT, c_fileProgSeries2PCL, c_fileIDRawPCL,
 	[[True, f] for f in (c_fileRMetadataTXT, c_fileRPlatformTXT)] )
 
 #Get list of GSMs
 afileIDsTXT = sfle.pipe( pE, c_fileIDSeriesTXTGZ, c_fileProgSeries2GSM, c_fileTXTGSM ) 
-#Default( c_fileTXTGSM )
 
-#sleipnir features  
+# Sleipnir features  
 #execfile( str(c_fileInputSConscript) )
 
-def funcScanner( target, source, env ):	
-	#sys.stderr.write( "ASDF\n" )
-	env["sconscript_child"]( target, source[0], env, c_strID + "-RAW" )
-
 def scanner( fileExclude = None, fileInclude = None ):
-
         setstrExclude = set(readcomment( fileExclude ) if fileExclude else [])
         setstrInclude = set(readcomment( fileInclude ) if fileInclude else [])
         def funcRet( target, source, env, setstrInclude = setstrInclude, setstrExclude = setstrExclude ):
@@ -99,4 +75,3 @@ def scanner( fileExclude = None, fileInclude = None ):
 
 
 afileIDsRaw = sfle.sconscript_children( pE, afileIDsTXT , scanner( ), 3, arepa.c_strProgSConstruct, hashArgs )
-#Default( afileIDsRaw )
