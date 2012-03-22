@@ -25,16 +25,14 @@ c_fileProgC2DAT			= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "c2dat.p
 pE = DefaultEnvironment( )
 
 afileIDTXT = sfle.pipe( pE, c_fileInputBioGridC, c_fileProgC2Metadata, c_fileIDPKL, [[False, c_strID]] )
-Default( afileIDTXT )
+#Default( afileIDTXT )
 
 def funcDAB( target, source, env ):
 	strT, astrSs = sfle.ts( target, source )
 	strProg, strIn = astrSs[:2]
 	return sfle.ex( (sfle.cat( strIn ), "|", strProg, c_strID, "| Dat2Dab -o", strT) )
 afileIDDAB = Command( c_fileIDDAB, [c_fileProgC2DAT, c_fileInputBioGridC], funcDAB )
-Default( afileIDDAB )
-#afileIDDAT = Command( c_fileIDDAT, [c_fileProgC2DAT, c_fileInputBioGridC], funcDAB)
-#Default(afileIDDAT)
+#Default( afileIDDAB )
 
 
 def funcDAT(target, source, env):
@@ -42,7 +40,7 @@ def funcDAT(target, source, env):
         strIn = astrSs[0]
         return sfle.ex([" Dat2Dab -o", strT, "-i", strIn]) 
 afileIDDAT = Command( c_fileIDDAT, c_fileIDDAB, funcDAT )
-Default( afileIDDAT )
+#Default( afileIDDAT )
 
 
 
@@ -51,4 +49,4 @@ def funcIDQUANT( target, source, env ):
         strS = astrSs[0]
         return (sfle.ex("echo '0.5\t1.5' >" + strT))
 Command( c_fileIDQUANT, c_fileIDDAB ,funcIDQUANT )
-Default( c_fileIDQUANT )
+#Default( c_fileIDQUANT )

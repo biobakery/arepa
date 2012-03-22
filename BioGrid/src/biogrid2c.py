@@ -54,7 +54,6 @@ for strLine in sys.stdin:
     #sys.stderr.write( strPMID +"\n" )
     #sys.stderr.write( strTax1 +"\n" )
     #sys.stderr.write( strTax2 +"\n" )
-    #sys.stderr.write( strGenes[0] +"\n" )
 
     if not strTax1 or ( strTax1 != strTax2 ):
         strTax1 = "0"
