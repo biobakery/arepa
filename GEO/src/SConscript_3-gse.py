@@ -36,8 +36,7 @@ def funcDownloadRAW( alistTs ):
 	for GSMCEL in alistTs:
 		GSMid = str( GSMCEL ).split(".")[0]
 		sfle.download( pE, c_strURLSupp + nnnModify( GSMid ) + GSMid + "/" + str( GSMCEL ) )
- 
-
+	
 #Get a single RData input file from the CEL files
 
 def funcRawMap( target, source, env ):
