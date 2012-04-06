@@ -46,7 +46,7 @@
 
 #New GSE.R script testing 
 #GSE8126
-GSE10183
+#GSE10183
 #GSE13876
 
 #mult files, one platform
@@ -55,3 +55,7 @@ GSE10183
 
 #GDS testing
 #GDS3597
+
+#Bug Testing 
+GDS2782
+#GSE7708

@@ -35,9 +35,9 @@ sfle.download( pE, hashArgs["c_strURLGPL"] + os.path.basename( str(c_fileGPLTXTG
 
 sfle.pipe( pE, c_fileInputSOFTGZ, c_fileProgSOFT2Metadata, c_fileIDPKL,
 	[[True, c_fileGPLTXTGZ]] )
-Default( c_fileIDPKL )
+#Default( c_fileIDPKL )
 
 sfle.pipe( pE, c_fileInputSOFTGZ, c_fileProgSOFT2PCL, c_fileIDRawPCL,
 	[[True, c_fileGPLTXTGZ]] )
 
-execfile( str(c_fileInputSConscript) )
+#execfile( str(c_fileInputSConscript) )
