@@ -43,11 +43,38 @@ def reorganizetable(inputfile):
     return content
 
 
+def RemoveDubFromList(mylist):
+    if mylist:
+        mylist.sort()
+        last = mylist[-1]
+        for i in range(len(mylist)-2, -1, -1):
+            a = "\t".join(mylist[i].split("\t")[0:5])
+            b = "\t".join(last.split("\t")[0:5])
+            if a == b:
+                del mylist[i]
+            else:
+                last = mylist[i]
+    return mylist
+
+
+
+def removeDoubleEntries(array):
+    vec = []
+    for i in range(len(array)):
+        vec.append("\t".join(array[i].split('\t')))
+    vec2 = RemoveDubFromList(vec)
+    return vec2
+
+
+
+
+
 def saveMatrixAsTxtFile (txtfile, content):
     with open(txtfile, 'w') as file:
+        #file.write("\n".join(content))
         file.writelines(i + '\n' for i in content)
 
     
 table_in = reorganizetable(inputfile)
-saveMatrixAsTxtFile ( outputfile, table_in)
-
+table_out = removeDoubleEntries(table_in)
+saveMatrixAsTxtFile ( outputfile, table_out)
