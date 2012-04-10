@@ -1,0 +1,53 @@
+import arepa
+import os
+import sys
+import sfle
+
+
+#------------------------------------------------------------------------------
+
+c_URL			= "http://regulondb.ccg.unam.mx/data/network_tf_gene.txt"
+c_strInputTaxIDs	= sfle.d( arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
+c_strFileRegDBTXT       = File(sfle.d( sfle.c_strDirTmp, os.path.basename(c_URL)))
+c_strProgRegDB  	= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "regulondb.py" ) )
+
+c_fileOutDAT             = sfle.d( sfle.c_strDirData, "regulondb.dat" )
+c_fileOutDAB             = sfle.d( sfle.c_strDirData,  File( sfle.rebase(c_fileOutDAT, ".dat", ".dab" )))
+c_fileOutQUANT           = sfle.d( sfle.c_strDirData,  File( sfle.rebase(c_fileOutDAT, ".dat", ".quant" )))
+
+
+pE = Environment( )
+
+#===============================================================================
+# Download the source text file
+#===============================================================================
+sfle.download( pE,c_URL,c_strFileRegDBTXT )
+NoClean( c_strFileRegDBTXT )
+
+
+#===============================================================================
+
+def funcRegulonDBExtracter(target, source, env):
+	strT, astrSs = sfle.ts( target, source )
+        strProg,strIn = astrSs[:2]
+	return 	sfle.ex([strProg, strIn, strT])
+afile = Command( c_fileOutDAT, [c_strProgRegDB,c_strFileRegDBTXT], funcRegulonDBExtracter )
+#Default(afile)
+
+
+
+def funcDAB(target, source, env):
+	strT, astrSs = sfle.ts( target, source )
+        strIn = astrSs[0]
+        return sfle.ex([" Dat2Dab -o", strT, "-i", strIn])
+afileDAB = Command( c_fileOutDAB, c_fileOutDAT, funcDAB )
+#Default(afileDAB)
+
+
+def funcQUANT( target, source, env ):
+        strT, astrSs = sfle.ts( target, source )
+        strS = astrSs[0]
+        return (sfle.ex("echo '0.5\t1.5' >" + strT))
+Command( c_fileOutQUANT, c_fileOutDAB ,funcQUANT )
+#Default( c_fileOutQUANT )
+
