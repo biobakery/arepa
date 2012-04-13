@@ -54,8 +54,16 @@
 #GSE10183
 
 #GDS testing
-#GDS3597
+GDS3597
 
 #Bug Testing 
-GDS2782
+#GDS2782
 #GSE7708
+
+#GSE27439
+
+#Testing for bacterial data 
+GDS1849
+GDS3421
+GDS3572
+GDS3174

@@ -86,4 +86,4 @@ def scanner( fileExclude = None, fileInclude = None ):
         return funcRet
 
 
-afileIDsRaw = sfle.sconscript_children( pE, afileIDsTXT , scanner( ), 3, arepa.c_strProgSConstruct, hashArgs )
+#afileIDsRaw = sfle.sconscript_children( pE, afileIDsTXT , scanner( ), 3, arepa.c_strProgSConstruct, hashArgs )

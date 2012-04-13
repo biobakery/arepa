@@ -22,6 +22,16 @@ print( "EWEIGHT		" + ( "	1" * len( aiColumns ) ) )
 #I need to determine if I want to log transform or not
 #criteria: > 50 with expression > 50 
 
+def noNull():
+	def mapNull( str ):
+		if str == "null":
+			return "NaN"
+		else:
+			return str 
+	for iRow in range( pDS.rows() ):
+		astrRow = pDS.row( iRow )
+		astrRow[2:] = map(mapNull, astrRow[2:]) 
+
 def countBig():
 	n = 0 
 	for iRow in range( pDS.rows( ) ):
@@ -30,21 +40,21 @@ def countBig():
 		else: 
 			astrRow = pDS.row( iRow ) 
 			for expr in astrRow[2:]: 
-				if expr < 50:
-					continue 
+				if float(expr) >= 50:
+					n+=1 
 				else:
-					n+=1   
+					continue    
 	return False 
 
 def transform():
-	l2 = lambda x: M.log(x,2) 
+	l2 =  lambda x: M.log(x,2) 
 	if countBig():
 		for iRow in range( pDS.rows( ) ):
 			astrRow = pDS.row( iRow )
 			astrRow[2:] = map(str,map(l2,map(float, astrRow[2:]))) 
-	return None
 
 def printTable():
+	noNull()
 	transform()
 	for iRow in range( pDS.rows( ) ):
         	astrRow = pDS.row( iRow )
