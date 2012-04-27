@@ -5,6 +5,12 @@ import soft
 import sys
 import math as M
 
+#Criteria for log transforming data :
+# >= c_iMaximumCount data points with values >= c_dMaximumValue
+
+c_dMaximumValue = 50
+c_iMaximumCount = 50
+
 astrGPLGZs = sys.argv[1:]
 
 pSOFT = soft.CSOFT( )
@@ -19,8 +25,7 @@ aiColumns = filter( lambda i: pDS.column( i )[0].startswith( "GSM" ), range( pDS
 print( "GID	NAME	GWEIGHT	" + "\t".join( pDS.column( i )[1] for i in aiColumns ) )
 print( "EWEIGHT		" + ( "	1" * len( aiColumns ) ) )
 
-#I need to determine if I want to log transform or not
-#criteria: > 50 with expression > 50 
+#"NaN" works for both R and python as a "not-a-number" classifier 
 
 def noNull():
 	def mapNull( str ):
@@ -35,12 +40,12 @@ def noNull():
 def countBig():
 	n = 0 
 	for iRow in range( pDS.rows( ) ):
-		if n >= 50:
+		if n >= c_iMaximumCount:
 			return True	
 		else: 
 			astrRow = pDS.row( iRow ) 
 			for expr in astrRow[2:]: 
-				if float(expr) >= 50:
+				if float(expr) >= c_dMaximumValue:
 					n+=1 
 				else:
 					continue    

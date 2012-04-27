@@ -14,7 +14,7 @@ c_strURLGEO					= 'ftp.ncbi.nih.gov'
 c_strURLGEOsupp					= 'pub/geo/DATA/supplementary/samples/'
 c_strURLSupp 					= 'ftp://' + c_strURLGEO + '/' + c_strURLGEOsupp 
 c_strFileGSM					= "../GSM.txt"
-c_strFilePCL					= "../" + arepa.cwd().replace("-RAW","") + "_00raw.pcl" 
+c_strFilePCL					= "../" + arepa.cwd().replace("-RAW","") + "_00mapped.pcl" 
 
 c_listTs					= sfle.readcomment( c_strFileGSM )
 c_fileProgReadCel				= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "readCel.R" ) )

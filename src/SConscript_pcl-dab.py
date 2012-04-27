@@ -65,7 +65,6 @@ def funcIDDAB( target, source, env ):
 
 Command( c_fileIDDAB, c_fileIDPCL, funcIDDAB )
 
-
 #- Generate Quant files
 def funcIDQUANT( target, source, env ):
         strT, astrSs = sfle.ts( target, source )

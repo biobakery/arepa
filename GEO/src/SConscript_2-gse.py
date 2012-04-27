@@ -13,6 +13,7 @@ if locals( ).has_key( "testing" ):
 
 c_strID					= arepa.cwd( )
 c_fileInputSConscript		= File( sfle.d( arepa.path_arepa( ), sfle.c_strDirSrc, "SConscript_pcl-dab.py" ) )
+c_fileProgUnpickle			= File( sfle.d( arepa.path_arepa( ), sfle.c_strDirSrc, "unpickle.py") )
 c_fileInputGSER				= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "gse.R" ) )
 c_fileInputManCurTXT		= File( sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, "manual_curation/",
 								c_strID + "_curated_pdata.txt" ) )
@@ -27,10 +28,14 @@ c_fileRDataTXT				= File( c_strID + "_rdata.txt" )
 c_fileRMetadataTXT			= File( c_strID + "_rmetadata.txt" )
 c_fileRPlatformTXT			= File( c_strID + "_rplatform.txt" )
 c_fileIDRawPCL				= File( c_strID + "_00raw.pcl" )
+c_fileIDMappedPCL			= File( c_strID + "_00mapped.pcl")
 c_fileEset				= File( c_strID + ".RData" )
+c_fileExpTable				= File( c_strID + "_exp_metadata.txt" )
+c_fileCondTable				= File( c_strID + "_cond_metadata.txt" )
 
 c_fileProgSeries2PCL		= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "series2pcl.py" ) )
 c_fileProgSeries2Metadata	= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "series2metadata.py" ) )
+c_fileProgPkl2Metadata		= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "pkl2metadata.py" ) )
 c_fileProgSeries2GSM		= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "series2gsm.py" ) )
 c_fileProgProcessRaw		= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "preprocessRaw.R" ) )
 
@@ -53,22 +58,39 @@ def funcGetEset( target, source, env ):
         strIn, strRData = astrSs[:2]
         return sfle.ex( (sfle.cat( strIn ), " | R --no-save --args", strRData, strT, c_strPPfun ) )
 
+def funcMetaTable( target, source, env ):
+	astrTs, astrSs = ([f.get_abspath( ) for f in a] for a in (target,source))
+	print astrTs 
+	print astrSs
+	strExp, strCond = astrTs[:2]
+	strProg, strPkl = astrSs[:2]
+	return sfle.ex(("python", strProg, strPkl, strExp, strCond ))
+
 Command( [c_fileIDSeriesTXTGZ, c_fileRDataTXT, c_fileRMetadataTXT, c_fileRPlatformTXT],
 	[c_fileInputGSER], funcGSER )
 
 sfle.pipe( pE, c_fileIDSeriesTXTGZ, c_fileProgSeries2Metadata, c_fileIDPKL,
 	[[False, c_strID]] + ( [[True, c_fileInputManCurTXT]] if os.path.exists( str(c_fileInputManCurTXT) ) else [] ) )
 
+#Create Tables 
+
+Command( [c_fileExpTable, c_fileCondTable] ,[c_fileProgPkl2Metadata, c_fileIDPKL] ,funcMetaTable)
+
+#sfle.pipe( pE, c_fileIDPKL, c_fileProgPkl2Metadata, c_fileExpTable, 
+#	[[False, c_fileCondTable]] )
+
+#sfle.pipe( pE, c_fileIDPKL, c_fileProgUnpickle, c_fileExpTable, []) 
+
 sfle.pipe( pE, c_fileRDataTXT, c_fileProgSeries2PCL, c_fileIDRawPCL,
 	[[True, f] for f in (c_fileRMetadataTXT, c_fileRPlatformTXT)] )
 
-Command( c_fileEset, [c_fileProgProcessRaw,c_fileIDRawPCL], funcGetEset )
+Command( c_fileEset, [c_fileProgProcessRaw,c_fileIDMappedPCL], funcGetEset )
 
 #Get list of GSMs
 afileIDsTXT = sfle.pipe( pE, c_fileIDSeriesTXTGZ, c_fileProgSeries2GSM, c_fileTXTGSM ) 
 
 # Sleipnir features  
-#execfile( str(c_fileInputSConscript) )
+execfile( str(c_fileInputSConscript) )
 
 def scanner( fileExclude = None, fileInclude = None ):
         setstrExclude = set(readcomment( fileExclude ) if fileExclude else [])
@@ -86,4 +108,4 @@ def scanner( fileExclude = None, fileInclude = None ):
         return funcRet
 
 
-#afileIDsRaw = sfle.sconscript_children( pE, afileIDsTXT , scanner( ), 3, arepa.c_strProgSConstruct, hashArgs )
+afileIDsRaw = sfle.sconscript_children( pE, afileIDsTXT , scanner( ), 3, arepa.c_strProgSConstruct, hashArgs )

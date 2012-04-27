@@ -11,6 +11,7 @@ c_hashSingleKeys	= {
 	"Series_platform_id"	: "platform",
 	"Series_title"			: "title",
 	"Series_summary"		: "gloss",
+	"Series_pubmed_id"		: "pmid" 
 }
 
 c_hashMultipleKeys	= {
@@ -49,8 +50,10 @@ for astrLine in csv.reader( sys.stdin, csv.excel_tab ):
 	if strTo:
 		astrCur = [_stripquotes( s ) for s in astrLine[1:]]
 		pMetadata[strTo] = astrCur
-		if not pMetadata.conditions:
-			pMetadata.conditions = len( astrCur )
+		#if not pMetadata.conditions:
+		#	pMetadata.conditions = len( astrCur )
+		if not pMetadata["conditions"]:
+			pMetadata["conditions"] = len( astrCur ) 
 
 #BUGBUG: This does not correctly handle condition # matching or non-curated default values
 if strMetadata:
@@ -60,6 +63,9 @@ if strMetadata:
 			for i in range( len( astrLine ) ):
 				pMetadata.setdefault( astrHeaders[i], [] ).append( astrLine[i] )
 		else:
-			pMetadata.curated = astrHeaders = astrLine
+			pMetadata["curated"] = astrLine 
+			astrHeaders = astrLine 
+			#pMetadata.curated = astrHeaders = astrLine
+#Need to add a special key that holds the key names for the curated data. 
 
 pMetadata.save( )

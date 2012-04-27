@@ -51,4 +51,4 @@ sfle.pipe( pE, c_fileInputSOFTGZ, c_fileProgSOFT2PCL, c_fileIDRawPCL,
 
 Command( c_fileEset, [c_fileProgProcessRaw,c_fileIDRawPCL], funcGetEset )
 
-#execfile( str(c_fileInputSConscript) )
+execfile( str(c_fileInputSConscript) )
