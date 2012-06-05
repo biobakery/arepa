@@ -53,7 +53,6 @@ def funcRawProcess( target, source, env ):
 	strIn, strRData = astrSs[:2]
         return sfle.ex( (sfle.cat( strIn ), " | R --no-save --args", strRData, strT, c_strPPfun ) )
 
-
 #Execute
 
 #if RAW files exist, process

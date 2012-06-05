@@ -25,6 +25,9 @@ class CMetadata:
 	def __setitem__( self, strKey, pValue ):
 		
 		self.set( strKey, pValue )
+
+	def keys(self):
+		return self.m_hashData.keys() 
 		
 	def get( self, strKey, pValue = None ):
 		

@@ -66,31 +66,33 @@ def funcMetaTable( target, source, env ):
 	strProg, strPkl = astrSs[:2]
 	return sfle.ex(("python", strProg, strPkl, strExp, strCond ))
 
+#Run R script 
 Command( [c_fileIDSeriesTXTGZ, c_fileRDataTXT, c_fileRMetadataTXT, c_fileRPlatformTXT],
 	[c_fileInputGSER], funcGSER )
 
+#Series2Metadata 
 sfle.pipe( pE, c_fileIDSeriesTXTGZ, c_fileProgSeries2Metadata, c_fileIDPKL,
 	[[False, c_strID]] + ( [[True, c_fileInputManCurTXT]] if os.path.exists( str(c_fileInputManCurTXT) ) else [] ) )
 
 #Create Tables 
-
-Command( [c_fileExpTable, c_fileCondTable] ,[c_fileProgPkl2Metadata, c_fileIDPKL] ,funcMetaTable)
+Command( [c_fileExpTable, c_fileCondTable] ,[c_fileProgPkl2Metadata, c_fileIDPKL],funcMetaTable)
 
 #sfle.pipe( pE, c_fileIDPKL, c_fileProgPkl2Metadata, c_fileExpTable, 
 #	[[False, c_fileCondTable]] )
 
-#sfle.pipe( pE, c_fileIDPKL, c_fileProgUnpickle, c_fileExpTable, []) 
 
+#Series2PCL
 sfle.pipe( pE, c_fileRDataTXT, c_fileProgSeries2PCL, c_fileIDRawPCL,
 	[[True, f] for f in (c_fileRMetadataTXT, c_fileRPlatformTXT)] )
 
-Command( c_fileEset, [c_fileProgProcessRaw,c_fileIDMappedPCL], funcGetEset )
+#Make Eset containing all pertinent data 
+#Command( c_fileEset, [c_fileProgProcessRaw,c_fileIDMappedPCL], funcGetEset )
 
-#Get list of GSMs
+# Get list of GSM ids for processing raw files in the next step 
 afileIDsTXT = sfle.pipe( pE, c_fileIDSeriesTXTGZ, c_fileProgSeries2GSM, c_fileTXTGSM ) 
 
-# Sleipnir features  
-execfile( str(c_fileInputSConscript) )
+#Sleipnir features -- imputation, normalization, gene mapping    
+#execfile( str(c_fileInputSConscript) )
 
 def scanner( fileExclude = None, fileInclude = None ):
         setstrExclude = set(readcomment( fileExclude ) if fileExclude else [])
@@ -107,5 +109,5 @@ def scanner( fileExclude = None, fileInclude = None ):
                                 env["sconscript_child"]( target, source[0], env, c_strID + "-RAW" )
         return funcRet
 
-
+# Call next level 
 afileIDsRaw = sfle.sconscript_children( pE, afileIDsTXT , scanner( ), 3, arepa.c_strProgSConstruct, hashArgs )

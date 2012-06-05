@@ -1,14 +1,18 @@
 #!/usr/bin/env python 
 
+import arepa 
 import csv
 import metadata
 import re
 import sys
 
+c_strID 		= arepa.cwd( ) 
+c_fileRMetadataTXT 	= c_strID + "_rmetadata.txt"
+
 c_hashSingleKeys	= {
-	"Series_sample_taxid"	: "taxid",
+	"Series_sample_taxid"		: "taxid",
 	"Series_type"			: "type",
-	"Series_platform_id"	: "platform",
+	"Series_platform_id"		: "platform",
 	"Series_title"			: "title",
 	"Series_summary"		: "gloss",
 	"Series_pubmed_id"		: "pmid" 
@@ -18,8 +22,10 @@ c_hashMultipleKeys	= {
 	"Sample_channel_count"	: "channels",
 }
 
+c_hashkeyCondition		= "conditions"
+c_hashkeyCurated		= "curated"
+
 def _stripquotes( strIn ):
-	
 	mtch = re.search( r'^"(.*)"$', strIn )
 	if mtch:
 		strIn = mtch.group( 1 )
@@ -50,12 +56,12 @@ for astrLine in csv.reader( sys.stdin, csv.excel_tab ):
 	if strTo:
 		astrCur = [_stripquotes( s ) for s in astrLine[1:]]
 		pMetadata[strTo] = astrCur
-		#if not pMetadata.conditions:
-		#	pMetadata.conditions = len( astrCur )
-		if not pMetadata["conditions"]:
-			pMetadata["conditions"] = len( astrCur ) 
+		if not pMetadata[c_hashkeyCondition]:
+			pMetadata[c_hashkeyCondition] = len( astrCur ) 
 
 #BUGBUG: This does not correctly handle condition # matching or non-curated default values
+#if curated metadata does not exist, then use R-generated metadata. 
+
 if strMetadata:
 	astrHeaders = None
 	for astrLine in csv.reader( open( strMetadata ), csv.excel_tab ):
@@ -63,9 +69,19 @@ if strMetadata:
 			for i in range( len( astrLine ) ):
 				pMetadata.setdefault( astrHeaders[i], [] ).append( astrLine[i] )
 		else:
-			pMetadata["curated"] = astrLine 
-			astrHeaders = astrLine 
-			#pMetadata.curated = astrHeaders = astrLine
-#Need to add a special key that holds the key names for the curated data. 
+			pMetadata[c_hashkeyCurated] = astrLine 
+			astrHeaders = astrLine
+else:
+	astrHeaders = None 
+	for astrLine in csv.reader( open( c_fileRMetadataTXT ) ):
+		if astrHeaders:
+			for i in range( len( astrLine )):
+				pMetadata[astrHeaders[i]].append( astrLine[i] )
+				
+		else:
+			pMetadata[c_hashkeyCurated] = astrLine 
+			astrHeaders = astrLine
+			for item in astrHeaders:
+				pMetadata.set( item, [] ) 
 
 pMetadata.save( )
