@@ -29,11 +29,15 @@ def getKeys():
 	''' 
 	returns uncurated, curated keys 
 	'''
-	rUncurated = hashData.keys()
+	rUncurated = []
 	rCurated = hashData[c_hashkeyCurated] 
-	for item in rCurated:
-		if item in hashData.keys():
-			rCurated.remove(item)
+	for item in hashData.keys():
+		if item in rCurated:
+			continue 
+		else:
+			rUncurated.append(item) 
+	#make sure that the list of keys are of the correct size 
+	assert(len(hashData.keys()) == len(rUncurated) + len(rCurated))	
 	return rUncurated, rCurated  
 
 def tryMap( dict, keylst ):
@@ -52,7 +56,7 @@ def writeTable( dict, keys, outfile ):
 	a column format
 	''' 
 	dict = tryMap( dict, keys )
-	outMat = matrix.dict2colmat( dict )
+	outMat = matrix.dict2colmat( dict, keys )
 	outMat = matrix.stripMat( outMat )
 	with open( outfile, "w") as outputf:
 		for row in outMat:
@@ -62,6 +66,10 @@ def writeTable( dict, keys, outfile ):
 
 #get keys 
 uncuratedKeys, curatedKeys = getKeys()
+print "The uncuratedKeys are:"
+print "\n".join(uncuratedKeys) + "\n"
+print "The curatedKeys are:"
+print "\n".join(curatedKeys) + "\n"
 
 #write per-experiment table 
 writeTable( hashData, uncuratedKeys, c_fileExpTable)

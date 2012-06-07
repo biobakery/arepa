@@ -104,14 +104,18 @@ def stripMat( m ):
                                 pass 
         return dummyMat
 
-def dict2mat( d ):
+def dict2mat( d, keyOrder = False ):
 	''' 
 	The value of the dictionary can be a list or a string. 
 	Returns a tuple (mat, collist) where collist is the list of 
-	the variable column lengths. 
+	the variable column lengths. If the key order pertinent, 
+	pass in the keys in order to keyOrder.  
 	'''
 	new_matrix = [] 
-	dictKeys = d.keys()
+	if keyOrder:
+		dictKeys = keyOrder
+	else:
+		dictKeys = d.keys()
 	for key in dictKeys:
 		dummy = [key] 
 		if type(d[key]) == list:
@@ -132,9 +136,11 @@ def maxlen( matrix ):
 			iMax = len(row)
 	return iMax 
  
-def dict2colmat( d ):
-	'''This currently does not work.''' 
-	mat = dict2mat( d )
+def dict2colmat( d, keyOrder = False ):
+	'''Takes a dictionary and produces 
+	a matrix in which a column corresponds 
+	to a vector of values for a specific label'''
+	mat = dict2mat( d, keyOrder )
 	maxcol = maxlen(mat) 
 	new_mat = init(maxcol, len(mat), "")  
 	for i in range(len(mat)):
