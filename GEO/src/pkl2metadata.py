@@ -20,6 +20,8 @@ c_hashkeyCurated	= "curated"
 if len(sys.argv[1:]) != 3:		
 	raise Exception("usage: pkl2metadata.py <ID.pkl> <per-exp.txt> <per-cond.txt>")
 
+#Use shared metadata class to do all this 
+
 c_fileIDpkl, c_fileExpTable, c_fileCondTable = sys.argv[1:]	
 hashData = pickle.load( open(c_fileIDpkl,"r") ) 
 
@@ -40,22 +42,22 @@ def getKeys():
 	assert(len(hashData.keys()) == len(rUncurated) + len(rCurated))	
 	return rUncurated, rCurated  
 
-def tryMap( dict, keylst ):
+def tryMap( dictionary, keylst ):
 	rDict = {}
 	for key in keylst:
 		try:
-			rDict[key] = dict[key]
+			rDict[key] = dictionary[key]
 		except KeyError:
 			pass 
 	return rDict  
 
-def writeTable( dict, keys, outfile ):
+def writeTable( dictionary, keys, outfile ):
 	'''
 	takes in a dictionary, keys, 
 	and output file and writes into 
 	a column format
 	''' 
-	dict = tryMap( dict, keys )
+	dictionary = tryMap( dictionary, keys )
 	outMat = matrix.dict2colmat( dict, keys )
 	outMat = matrix.stripMat( outMat )
 	with open( outfile, "w") as outputf:

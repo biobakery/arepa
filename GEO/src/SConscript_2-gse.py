@@ -5,6 +5,7 @@ import sfle
 import sys
 import csv
 import os 
+import metadata 
 
 def test( iLevel, strID, hashArgs ):
 	return ( iLevel == 2 ) and ( strID.find( "GSE" ) == 0 ) 
@@ -12,6 +13,7 @@ if locals( ).has_key( "testing" ):
 	sys.exit( )
 
 c_strID					= arepa.cwd( )
+c_fileGPL				= File( sfle.d( arepa.path_repo( ), sfle.c_strDirTmp, "gpl.txt" ) )
 c_fileInputSConscript		= File( sfle.d( arepa.path_arepa( ), sfle.c_strDirSrc, "SConscript_pcl-dab.py" ) )
 c_fileProgUnpickle			= File( sfle.d( arepa.path_arepa( ), sfle.c_strDirSrc, "unpickle.py") )
 c_fileInputGSER				= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "gse.R" ) )
@@ -22,6 +24,11 @@ c_filePPfun                                     = File( sfle.d( arepa.path_repo(
 c_strPPfun                                      = sfle.readcomment( c_filePPfun )[0]
 
 c_fileIDPKL					= File( c_strID + ".pkl" )
+c_strURLGPL					= hashArgs["c_strURLGPL"]
+c_strHost					= "ftp.ncbi.nih.gov"
+c_strPath					= "pub/geo/DATA/annotation/platforms/"
+c_strIDAnnot					= File( c_strID + ".annot.gz" )
+
 c_fileTXTGSM					= File( "GSM.txt" )
 c_fileIDSeriesTXTGZ			= File( c_strID + "_series_matrix.txt.gz" )
 c_fileRDataTXT				= File( c_strID + "_rdata.txt" )
@@ -75,7 +82,7 @@ sfle.pipe( pE, c_fileIDSeriesTXTGZ, c_fileProgSeries2Metadata, c_fileIDPKL,
 	[[False, c_strID]] + ( [[True, c_fileInputManCurTXT]] if os.path.exists( str(c_fileInputManCurTXT) ) else [] ) )
 
 #Create Tables 
-Command( [c_fileExpTable, c_fileCondTable] ,[c_fileProgPkl2Metadata, c_fileIDPKL],funcMetaTable)
+#Command( [c_fileExpTable, c_fileCondTable] ,[c_fileProgPkl2Metadata, c_fileIDPKL],funcMetaTable)
 
 #sfle.pipe( pE, c_fileIDPKL, c_fileProgPkl2Metadata, c_fileExpTable, 
 #	[[False, c_fileCondTable]] )
@@ -91,6 +98,26 @@ sfle.pipe( pE, c_fileRDataTXT, c_fileProgSeries2PCL, c_fileIDRawPCL,
 # Get list of GSM ids for processing raw files in the next step 
 afileIDsTXT = sfle.pipe( pE, c_fileIDSeriesTXTGZ, c_fileProgSeries2GSM, c_fileTXTGSM ) 
 
+# Download annotation files for specific platform, if they exist 
+def getGPL( target, source, env ):
+	astrTs, astrSs = ([f.get_abspath( ) for f in a] for a in (target,source))
+	strAnnot 	= astrTs[0]
+	strPKL 		= astrSs[0]
+	strGPLID = metadata.open( open(strPKL) ).get("platform")
+	print strGPLID
+	listGPL = sfle.readcomment( c_fileGPL )
+	if strGPLID in listGPL:
+		print "Annotation file exists, downloading ... "
+		sfle.download( pE, sfle.d( c_strURLGPL, strGPLID + ".annot.gz" ) )
+	#else:
+	#	with open( strGPLID, "w" ) as outputf:
+	#		outputf.write( "None" )
+
+def parseGPL( target, source, env ):
+	pass
+
+Command( c_strIDAnnot, c_fileIDPKL, getGPL ) 
+ 
 #Sleipnir features -- imputation, normalization, gene mapping    
 #execfile( str(c_fileInputSConscript) )
 
