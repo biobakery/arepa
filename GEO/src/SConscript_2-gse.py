@@ -27,7 +27,8 @@ c_fileIDPKL					= File( c_strID + ".pkl" )
 c_strURLGPL					= hashArgs["c_strURLGPL"]
 c_strHost					= "ftp.ncbi.nih.gov"
 c_strPath					= "pub/geo/DATA/annotation/platforms/"
-c_strIDAnnot					= File( c_strID + ".annot.gz" )
+c_fileIDAnnot					= File( c_strID + ".annot.gz" )
+c_fileGPL					= File( "GPL.txt" )
 
 c_fileTXTGSM					= File( "GSM.txt" )
 c_fileIDSeriesTXTGZ			= File( c_strID + "_series_matrix.txt.gz" )
@@ -101,22 +102,24 @@ afileIDsTXT = sfle.pipe( pE, c_fileIDSeriesTXTGZ, c_fileProgSeries2GSM, c_fileTX
 # Download annotation files for specific platform, if they exist 
 def getGPL( target, source, env ):
 	astrTs, astrSs = ([f.get_abspath( ) for f in a] for a in (target,source))
-	strAnnot 	= astrTs[0]
-	strPKL 		= astrSs[0]
+	strAnnot, strGPL = astrTs[:2]
+	strPKL 		 = astrSs[0]
 	strGPLID = metadata.open( open(strPKL) ).get("platform")
 	print strGPLID
 	listGPL = sfle.readcomment( c_fileGPL )
 	if strGPLID in listGPL:
+		with open( strGPL, "w" ) as outputf:
+			outputf.write( strGPLID )
 		print "Annotation file exists, downloading ... "
 		sfle.download( pE, sfle.d( c_strURLGPL, strGPLID + ".annot.gz" ) )
-	#else:
-	#	with open( strGPLID, "w" ) as outputf:
-	#		outputf.write( "None" )
+	else:
+		with open( strGPL, "w" ) as outputf:
+			outputf.write( "#" + strGPLID )
 
 def parseGPL( target, source, env ):
 	pass
 
-Command( c_strIDAnnot, c_fileIDPKL, getGPL ) 
+Command( [c_fileIDAnnot,c_fileGPL], c_fileIDPKL, getGPL ) 
  
 #Sleipnir features -- imputation, normalization, gene mapping    
 #execfile( str(c_fileInputSConscript) )
