@@ -9,20 +9,46 @@ import os
 import csv 
 import pickle 
 
-c_arepacwd = arepa.cwd() 
-
 #Do extensive test on GEO, do 2-3 tests on other modules 
+#Make class structure... so you can do things like RegulonDB.run() 
+
+
+c_astrInclude = ["GEO", "RegulonDB", "MPIDP", "STRING", "IntAct"]
 
 #=====================================================#
 #		General Helper Functions 
 #=====================================================#
 
-def test_against( infile, constant, parse_function ):
-	pTest = parse_function( infile )
-	if pTest == constant:
+def _read( infile, iRange = None, strDelim = None ):
+	dummy = [] 
+	if not strDelim:
+		strDelim = "\t"
+	for line in csv.reader( open( infile, "r" ), delimiter= strDelim ):
+		dummy.append( line ) 
+	if iRange:
+		return dummy[:iRange]
+	else:
+		return dummy 
+	
+def _test( infile, aFixed, parse_function = None ):
+	if not parse_function:
+		pTest = _read( infile, len( aFixed ) ) 
+	else:
+		pTest = parse_function( infile )
+	if pTest == aFixed:
 		print "test passed for", infile 
 	else:
 		raise Exception("!test failed", infile)
+
+def exec_test( strDir, fParse = None, *aCouple ):
+	if __name__ == "__main__":
+		os.chdir( strDir )
+		subprocess.call( "scons" )
+		for strTest, strVal in aCouple:
+			_test( strTest, strVal, fParse )   
+
+def runall( ):
+	pass 
 
 #=====================================================#
 #			GEO
@@ -77,8 +103,7 @@ def geo_test( strId, inPKL, inPCL, cPKL, cPCL ):
 #=====================================================#
 #               	ArrayExpress
 #=====================================================#
-
-'''Test module for ArrayExpress does not exist'''
+#Test module for ArrayExpress does not exist
 
 #=====================================================#
 #               	Bacteriome
@@ -88,36 +113,12 @@ c_dirBacteriomeData	=	sfle.d( c_dirBacteriome, sfle.c_strDirData )
 c_fileBacteriomeDat	= 	sfle.d( c_dirBacteriomeData, "bacteriome.dat" )
 c_fileBacteriomeQuant	=	sfle.d( c_dirBacteriomeData, "bacteriome.quant")
 
-c_BacteriomeQuantLst	=	[0.5,1.5]
+c_BacteriomeQuantLst	=	[["0.5","1.5"]]
 c_BacteriomeDatLst	= 	[["b0002","b0003","0.408408"],["b0002","b0004","0.408408"]]
-'''test 2 output files: bacteriome.dat, bacteriome.quant'''
 
-def bacteriome_test():
-	def quant_test():
-		f = open( c_fileBacteriomeQuant )
-		g = f.read() 
-		lst = map(lambda v: float(v), g.replace("\n","").split("\t"))
-		if lst == c_BacteriomeQuantLst:
-			print "bacteriome.quant passed"
-		else:
-			raise Exception("bacteriome.quant test failed.")
-	def dat_test():
-		dummylst = [] 
-		csvr = csv.reader(open( c_fileBacteriomeDat ), delimiter="\t")
-		for line in csvr:
-			dummylst.append(line)
-		if dummylst[0:2] == c_BacteriomeDatLst:
-			print "bacteriome.dat passed"
-		else:
-			raise Exception("bacteriome.dat test failed")
-	dat_test()
-	quant_test() 
-	
-if __name__ == "__main__":
-	os.chdir( c_dirBacteriome )
-	subprocess.call( "scons" )
-	bacteriome_test() 
-
+exec_test( c_dirBacteriome, None, [c_fileBacteriomeQuant, c_BacteriomeQuantLst], \
+	[ c_fileBacteriomeDat, c_BacteriomeDatLst ] )
+ 	
 #=====================================================#
 #                       BioGrid
 #=====================================================#
@@ -129,54 +130,49 @@ c_fileBioGridPKL	= sfle.d( c_dirBioGridData, "taxid_224308.pkl" )
 c_fileBioGridDat	= sfle.d( c_dirBioGridData, "taxid_224308.dat" )
 c_fileBioGridQuant	= sfle.d( c_dirBioGridData, "taxid_224308.quant" )
 
-c_BioGridDat		= ['rsbV', 'rsbW', '1'] 
+c_BioGridDat		= [['rsbV', 'rsbW', '1']] 
 c_BioGridPKL		= {'platform': 'Co-purification', 'pmid': '8144446', 'type': '857505', 'taxid': '855787'}
-c_BioGridQuant		= [0.5, 1.5]
+c_BioGridQuant		= [["0.5", "1.5"]]
 
-def biogrid_test():
-	def dat_test():
-		f = open( c_fileBioGridDat )
-		g = f.read()
-		tLst = g.replace("\n","").split("\t")
-		if tLst == c_BioGridDat:
-			print "biogrid dat test passed"
-		else:
-			raise Exception("biogrid dat test failed")
-	def pkl_test():
-		pkl = pickle.load( open( c_fileBioGridPKL ) )
-		if pkl == c_BioGridPKL:
-			print "biogrid pkl test passed"
-		else: 
-			raise Exception("biogrid pkl test failed")
-	def quant_test():
-		f = open( c_fileBioGridQuant )
-		g = f.read()
-		tLst = map(lambda v: float(v), g.replace("\n","").split("\t"))
-		if tLst == c_BioGridQuant:
-			print "biogrid quant test passed"
-		else:
-			raise Exception("biogrid quant test failed")
-	dat_test()
-	pkl_test()
-	quant_test() 
-
-if __name__ == "__main__":
-	os.chdir( c_dirBioGrid )
-	subprocess.call( "scons" )
-	biogrid_test()
+exec_test( c_dirBioGrid, None, [c_fileBioGridDat, c_BioGridDat], [c_fileBioGridQuant, c_BioGridQuant] )
+exec_test( c_dirBioGrid, lambda f: pickle.load( open(f, "r") ), [c_fileBioGridPKL, c_BioGridPKL] )
 
 #=====================================================#
 #                       IntAct
 #=====================================================#
+#multiple datasets
 
 #=====================================================#
 #                       MPIDP
 #=====================================================#
+#multiple datasets
+
 
 #=====================================================#
 #                       RegulonDB 
 #=====================================================#
+#single dataset  
+
+c_dirRegulon		= sfle.d( arepa.path_arepa( ), "RegulonDB" )
+c_dirRegulonData	= sfle.d( c_dirRegulon, sfle.c_strDirData ) 
+
+c_RegulonDatLst		= [['AccB', 'accB', '1'], ['AccB', 'accC', '1'], ['AcrR', 'acrA', '1'], ['AcrR', 'acrB', '1']]
+c_RegulonQuantLst	= [["0.5", "1.5"]]
+
+c_fileRegulonDat	= sfle.d( c_dirRegulonData, "regulondb.dat" )
+c_fileRegulonQuant	= sfle.d( c_dirRegulonData, "regulondb.quant" ) 
+
+#execute 
+exec_test( c_dirRegulon, None, [c_fileRegulonDat, c_RegulonDatLst], [c_fileRegulonQuant, c_RegulonQuantLst] ) 
 
 #=====================================================#
 #                       STRING
 #=====================================================#
+#multiple datasets 
+
+c_dirSTRING		= sfle.d( arepa.path_arepa( ), "STRING" )
+c_dirSTRINGData		= sfle.d( c_dirSTRING, sfle.c_strDirData )
+
+
+
+

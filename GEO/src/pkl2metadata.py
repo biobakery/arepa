@@ -7,15 +7,13 @@ import pickle
 import matrix 
 import re 
 import types 
+import metadata 
 
 #this script produces 2 tab-delimited tables:
 #one for the per-experiment metadata and 
 #one for the per-condition metadata
  
-
-c_astrStandards 	= ["curated","taxid", "type", "pmid", "platform", "title", "gloss", "channels", "conditions"]
 c_hashkeyCurated	= "curated"
-
  
 if len(sys.argv[1:]) != 3:		
 	raise Exception("usage: pkl2metadata.py <ID.pkl> <per-exp.txt> <per-cond.txt>")
@@ -23,6 +21,8 @@ if len(sys.argv[1:]) != 3:
 #Use shared metadata class to do all this 
 
 c_fileIDpkl, c_fileExpTable, c_fileCondTable = sys.argv[1:]	
+hashData = metadata.open( 
+
 hashData = pickle.load( open(c_fileIDpkl,"r") ) 
 
 m_missingKey = [] 

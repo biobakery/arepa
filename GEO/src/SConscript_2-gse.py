@@ -28,7 +28,7 @@ c_strURLGPL					= hashArgs["c_strURLGPL"]
 c_strHost					= "ftp.ncbi.nih.gov"
 c_strPath					= "pub/geo/DATA/annotation/platforms/"
 c_fileIDAnnot					= File( c_strID + ".annot.gz" )
-c_fileGPL					= File( "GPL.txt" )
+c_fileIDMap					= File( c_strID + "_map.txt" )
 
 c_fileTXTGSM					= File( "GSM.txt" )
 c_fileIDSeriesTXTGZ			= File( c_strID + "_series_matrix.txt.gz" )
@@ -46,6 +46,7 @@ c_fileProgSeries2Metadata	= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, 
 c_fileProgPkl2Metadata		= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "pkl2metadata.py" ) )
 c_fileProgSeries2GSM		= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "series2gsm.py" ) )
 c_fileProgProcessRaw		= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "preprocessRaw.R" ) )
+c_fileProgAnnot2Map		= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "annot2map.py" ) )
 
 pE = DefaultEnvironment( )
 Import( "hashArgs" )
@@ -100,27 +101,27 @@ sfle.pipe( pE, c_fileRDataTXT, c_fileProgSeries2PCL, c_fileIDRawPCL,
 afileIDsTXT = sfle.pipe( pE, c_fileIDSeriesTXTGZ, c_fileProgSeries2GSM, c_fileTXTGSM ) 
 
 # Download annotation files for specific platform, if they exist 
+
 def getGPL( target, source, env ):
 	astrTs, astrSs = ([f.get_abspath( ) for f in a] for a in (target,source))
-	strAnnot, strGPL = astrTs[:2]
-	strPKL 		 = astrSs[0]
+	strAnnot		= astrTs[0]
+	strPKL		 	= astrSs[0]
 	strGPLID = metadata.open( open(strPKL) ).get("platform")
 	print strGPLID
 	listGPL = sfle.readcomment( c_fileGPL )
 	if strGPLID in listGPL:
-		with open( strGPL, "w" ) as outputf:
-			outputf.write( strGPLID )
 		print "Annotation file exists, downloading ... "
-		sfle.download( pE, sfle.d( c_strURLGPL, strGPLID + ".annot.gz" ) )
+		sfle.ex( ["wget", sfle.d( c_strURLGPL, strGPLID + ".annot.gz" ), "-O", strAnnot ] )	
 	else:
-		with open( strGPL, "w" ) as outputf:
-			outputf.write( "#" + strGPLID )
+		print "Annotation file does not exist"
+		with open( strGPLID + ".annot.gz", "w") as outputf:
+			outputf.write("")
 
-def parseGPL( target, source, env ):
-	pass
+Command( c_fileIDAnnot, c_fileIDPKL, getGPL ) 
 
-Command( [c_fileIDAnnot,c_fileGPL], c_fileIDPKL, getGPL ) 
- 
+#produce mapping files 
+sfle.pipe( pE, c_fileIDAnnot, c_fileProgAnnot2Map, c_fileIDMap ) 
+
 #Sleipnir features -- imputation, normalization, gene mapping    
 #execfile( str(c_fileInputSConscript) )
 

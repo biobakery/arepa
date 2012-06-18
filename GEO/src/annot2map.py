@@ -1,29 +1,24 @@
+#!/usr/bin/env python 
+
 import sfle 
 import glob
 import csv  
 import sys 
 import re 
+import arepa 
 
 ''' parse mapping files
 begins with !platform_table_begin 
 ends with !platform_table_end '''
-print sys.argv
-strGPL, strMap = sys.argv[1:3]
 
-c_hashHead = 	{
-		r"^ID"				: "Affy",	
-		r"^Gene Symbol"			: "HGNC", 
-		r"^Uniprot .*? Symbol"		: "Unitprot/TrEMBL", 
-		r"^UniGene .*? Symbol"		: "Unigene",
-		r"^Entrez .*? Symbol"		: "EntrezGene"
-		} 
+c_fileMapping	= sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, "mapping" )
+c_hashHead 	= { k:v for (k,v) in map( lambda x: map(lambda y: y.strip(), x.split(":")),\
+			sfle.readcomment( open( c_fileMapping)) ) } 
 
-#do I read in from a text file, just like in GSM?
-#for testing purposes 
+strAnnotGZ = sys.stdin.read()
 
-strGPLID = True 
-if strGPLID:
-	aHead = re.findall(r"^#(.+?)\n", open( strGPL,"r" ).read(),re.MULTILINE )
+if strAnnotGZ:
+	aHead = re.findall(r"^#(.+?)\n", strAnnotGZ, re.MULTILINE )
 	aKeys, aDesc = zip(*map( lambda v: map(lambda w: w.strip(), v.split("=")), aHead )) 
 	aOutKeys = [] 
 	hOutDict = {}
@@ -32,21 +27,20 @@ if strGPLID:
 			reLine = re.findall(item, desc, re.M|re.I)
 			if reLine:
 				aOutKeys.extend( [aKeys[aDesc.index(desc)]] )
-				hOutDict[reLine[0]] = c_hashHead[item] 	
-	print str(aOutKeys)
-	print str(hOutDict)
+				hOutDict[ aKeys[aDesc.index(desc)]  ] = c_hashHead[item] 	
+	sys.stderr.write(str(aOutKeys) + "\n")
+	sys.stderr.write(str(hOutDict) + "\n")
 	strTable = re.findall(r"!platform_table_begin(.+)!platform_table_end", \
-		open( strGPL ).read(), re.S )[0].strip()
+		strAnnotGZ, re.S )[0].strip()
 	dr = csv.DictReader( strTable.split("\n"), delimiter = "\t" ) 
-	with open( strMap, "w" ) as outputf:
-		print "writing..."
-		outputf.write( "\t".join( aOutKeys ) + "\n" )
+	with sys.stdout as outputf:
+		"write header"
+		outputf.write( "\t".join( [hOutDict[k] for k in aOutKeys] ) + "\n" )
+		"write data"
 		for item in dr:
 			try:
 				outputf.write( "\t".join( [item[k] for k in aOutKeys] ) + "\n" )
 			except KeyError:
 				continue  
-		print "done!"
 else:
-	with open( strMap, "w" ) as outputf:
-		outputf.write("") 
+	sys.stdout.write("") 
