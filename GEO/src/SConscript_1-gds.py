@@ -13,7 +13,6 @@ if locals( ).has_key( "testing" ):
 	sys.exit( )
 
 c_strID					= arepa.cwd( )
-
 c_fileIDTXT				= File( c_strID + ".txt" )
 c_fileIDSOFTGZ			= File( c_strID + ".soft.gz" )
 

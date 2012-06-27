@@ -33,7 +33,6 @@ def funcIDsTXT( target, source, env ):
 	return None
 		 
 afileIDsTXT = Command( c_fileIDTXT, None, funcIDsTXT )
-#Default( afileIDsTXT )
 
 sfle.sconscript_children( pE, afileIDsTXT, sfle.scanner( ), 2, arepa.c_strProgSConstruct, hashArgs )
 

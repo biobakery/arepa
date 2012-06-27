@@ -27,7 +27,10 @@ class CMetadata:
 		self.set( strKey, pValue )
 
 	def keys(self):
-		return self.m_hashData.keys() 
+		return self.m_hashData.keys()
+	
+	def remove( self, strKey ):
+		return self.m_hashData.pop( strKey )  
 		
 	def get( self, strKey, pValue = None ):
 		

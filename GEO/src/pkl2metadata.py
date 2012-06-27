@@ -3,83 +3,45 @@
 import arepa 
 import csv 
 import sys
-import pickle
-import matrix 
-import re 
-import types 
 import metadata 
 
-#this script produces 2 tab-delimited tables:
-#one for the per-experiment metadata and 
-#one for the per-condition metadata
- 
-c_hashkeyCurated	= "curated"
- 
-if len(sys.argv[1:]) != 3:		
+'''
+This script produces 2 tab-delimited tables:
+one for the per-experiment metadata and 
+one for the per-condition metadata
+'''
+
+c_strCurated	= "curated"
+
+if len(sys.argv[1:]) != 3:				
 	raise Exception("usage: pkl2metadata.py <ID.pkl> <per-exp.txt> <per-cond.txt>")
-
-#Use shared metadata class to do all this 
-
+ 
 c_fileIDpkl, c_fileExpTable, c_fileCondTable = sys.argv[1:]	
-hashData = metadata.open( 
+hashMeta = metadata.open( open( c_fileIDpkl, "r" ) ) 
 
-hashData = pickle.load( open(c_fileIDpkl,"r") ) 
+astrExp, astrCond = filter( lambda k: isinstance(hashMeta.get(k),str or int or float), \
+	hashMeta.keys() ), filter( lambda k: isinstance(hashMeta.get(k),list) and \
+	k != c_strCurated, hashMeta.keys() ) 
 
-m_missingKey = [] 
-
-def getKeys():
-	''' 
-	returns uncurated, curated keys 
-	'''
-	rUncurated = []
-	rCurated = hashData[c_hashkeyCurated] 
-	for item in hashData.keys():
-		if item in rCurated:
-			continue 
-		else:
-			rUncurated.append(item) 
-	#make sure that the list of keys are of the correct size 
-	assert(len(hashData.keys()) == len(rUncurated) + len(rCurated))	
-	return rUncurated, rCurated  
-
-def tryMap( dictionary, keylst ):
-	rDict = {}
-	for key in keylst:
-		try:
-			rDict[key] = dictionary[key]
-		except KeyError:
-			pass 
-	return rDict  
-
-def writeTable( dictionary, keys, outfile ):
-	'''
-	takes in a dictionary, keys, 
-	and output file and writes into 
-	a column format
-	''' 
-	dictionary = tryMap( dictionary, keys )
-	outMat = matrix.dict2colmat( dict, keys )
-	outMat = matrix.stripMat( outMat )
-	with open( outfile, "w") as outputf:
-		for row in outMat:
-			outputf.write("\t".join( row ) + "\n")
-
-#Execute 
-
-#get keys 
-uncuratedKeys, curatedKeys = getKeys()
-print "The uncuratedKeys are:"
-print "\n".join(uncuratedKeys) + "\n"
-print "The curatedKeys are:"
-print "\n".join(curatedKeys) + "\n"
+def writeTable( hMeta, astrKeys, outputf, bIter = False ):
+	hMeta = {k:hMeta[k] for k in astrKeys}
+	csvw = csv.writer( open( outputf, "w" ), csv.excel_tab )
+	csvw.writerow( astrKeys )
+	if bIter:
+		astrHeader = hMeta.get("sample_name") or hMeta.get("")
+		#sys.stderr.write( type(astrHeader)  )
+		for iSample, strSample in enumerate(astrHeader):
+			#for s in astrKeys:
+				#sys.stderr.write( str(iSample) + '\n' )
+				#sys.stderr.write( '#' + hMeta.get(s)[iSample] + '\n' ) 
+			csvw.writerow( map( lambda x: str(x).replace("\n"," "), \
+			[hMeta.get(s)[iSample] for s in astrKeys] )) 
+	else:
+		csvw.writerow( map(lambda x: str(x).replace("\n"," "), \
+		[hMeta[k] for k in astrKeys]) )
 
 #write per-experiment table 
-writeTable( hashData, uncuratedKeys, c_fileExpTable)
+writeTable( hashMeta, astrExp, c_fileExpTable, False )
 #write per-condition table 
-writeTable( hashData, curatedKeys, c_fileCondTable)
-
-if m_missingKey:
-	print "The following keys are missing in the metadata:\n", \
-		("\n".join(m_missingKey)) 
-
+writeTable( hashMeta, astrCond, c_fileCondTable, True )
 

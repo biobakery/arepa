@@ -10,20 +10,21 @@ def test( iLevel, strID, hashArgs ):
 if locals( ).has_key( "testing" ):
 	sys.exit( )
 
-c_strURLGEO					= 'ftp.ncbi.nih.gov'
-c_strURLGEOsupp					= 'pub/geo/DATA/supplementary/samples/'
-c_strURLSupp 					= 'ftp://' + c_strURLGEO + '/' + c_strURLGEOsupp 
-c_strFileGSM					= "../GSM.txt"
-c_strFilePCL					= "../" + arepa.cwd().replace("-RAW","") + "_00mapped.pcl" 
+c_strURLGEO			= 'ftp.ncbi.nih.gov'
+c_strURLGEOsupp			= 'pub/geo/DATA/supplementary/samples/'
+c_strURLSupp 			= 'ftp://' + c_strURLGEO + '/' + c_strURLGEOsupp 
+c_strFileGSM			= "../GSM.txt"
+c_strFilePCL			= "../" + arepa.cwd().replace("-RAW","") + "_00mapped.pcl" 
 
-c_listTs					= sfle.readcomment( c_strFileGSM )
-c_fileProgReadCel				= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "readCel.R" ) )
-c_fileProgProcessRaw				= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "preprocessRaw.R" ) )
-c_strInputRData					= arepa.cwd() + ".RData"
-c_strOutputRData				= c_strInputRData.replace("-RAW", "") 
+c_listTs			= sfle.readcomment( c_strFileGSM )
+c_fileProgReadCel		= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "readCel.R" ) )
+c_fileProgProcessRaw		= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "preprocessRaw.R" ) )
+c_strInputRData			= arepa.cwd() + ".RData"
+c_strOutputRData		= c_strInputRData.replace("-RAW", "") 
 
-c_filePPfun            				= File( sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, "preprocess"))
-c_strPPfun					= sfle.readcomment( c_filePPfun )[0]
+c_filePPfun            		= File( sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, "preprocess"))
+c_strPPfun			= sfle.readcomment( c_filePPfun )[0] if \
+				sfle.readcomment( c_filePPfun ) else "affy::rma"
 
 pE = DefaultEnvironment( )
 Import( "hashArgs" )
@@ -62,6 +63,4 @@ if c_listTs:
 	Command( c_strOutputRData, [c_fileProgProcessRaw,c_strInputRData], funcRawProcess )
 #else use vanilla pcl
 else:
-	Command( c_strOutputRData, [c_fileProgProcessRaw,c_strFilePCL], funcRawProcess )
-
-	
+	Command( c_strOutputRData, [c_fileProgProcessRaw,c_strFilePCL], funcRawProcess )	

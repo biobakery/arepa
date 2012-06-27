@@ -13,7 +13,13 @@ ends with !platform_table_end '''
 
 c_fileMapping	= sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, "mapping" )
 c_hashHead 	= { k:v for (k,v) in map( lambda x: map(lambda y: y.strip(), x.split(":")),\
-			sfle.readcomment( open( c_fileMapping)) ) } 
+		sfle.readcomment( open( c_fileMapping)) ) } if sfle.readcomment(open(c_fileMapping))\
+		else {	
+		"^ID .*? platform"             	: "Affy",
+		"Entrez Gene Symbol"       	: "HGNC",
+		"Uniprot .*? Symbol"  		: "Uniprot/TrEMBL",
+		"^(Entrez)? UniGene Symbol"	: "Unigene"
+		}
 
 strAnnotGZ = sys.stdin.read()
 
@@ -28,19 +34,17 @@ if strAnnotGZ:
 			if reLine:
 				aOutKeys.extend( [aKeys[aDesc.index(desc)]] )
 				hOutDict[ aKeys[aDesc.index(desc)]  ] = c_hashHead[item] 	
-	sys.stderr.write(str(aOutKeys) + "\n")
-	sys.stderr.write(str(hOutDict) + "\n")
 	strTable = re.findall(r"!platform_table_begin(.+)!platform_table_end", \
 		strAnnotGZ, re.S )[0].strip()
 	dr = csv.DictReader( strTable.split("\n"), delimiter = "\t" ) 
 	with sys.stdout as outputf:
-		"write header"
+		#write header
 		outputf.write( "\t".join( [hOutDict[k] for k in aOutKeys] ) + "\n" )
-		"write data"
+		#write data
 		for item in dr:
 			try:
 				outputf.write( "\t".join( [item[k] for k in aOutKeys] ) + "\n" )
 			except KeyError:
 				continue  
 else:
-	sys.stdout.write("") 
+	sys.stdout.write(" ") 
