@@ -126,7 +126,8 @@ def getGPL( target, source, env ):
 		print "Annotation file does not exist"
 		with open( strGPLID + ".annot.gz", "w") as outputf:
 			outputf.write("")
-Command( c_fileIDAnnot, c_fileIDPKL, getGPL ) 
+
+fileAnnot = Command( c_fileIDAnnot, c_fileIDPKL, getGPL ) 
 
 #Produce mapping files for gene mapping; if does not exist, then nothing. 
 fileGeneMap = sfle.pipe( pE, c_fileIDAnnot, c_fileProgAnnot2Map, c_fileIDMap ) 
