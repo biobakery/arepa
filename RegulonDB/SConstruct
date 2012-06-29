@@ -15,6 +15,12 @@ c_fileOutDAT             = sfle.d( sfle.c_strDirData, "regulondb.dat" )
 c_fileOutDAB             = sfle.d( sfle.c_strDirData,  File( sfle.rebase(c_fileOutDAT, ".dat", ".dab" )))
 c_fileOutQUANT           = sfle.d( sfle.c_strDirData,  File( sfle.rebase(c_fileOutDAT, ".dat", ".quant" )))
 
+#For GeneMapper:
+c_fileMapDAT            = File(sfle.d( sfle.c_strDirData, "regulondb_mapped.dat" ))
+c_path_GeneMapper       = sfle.d( arepa.path_arepa(), "GeneMapper")
+c_funcGeneMapper        = sfle.d( c_path_GeneMapper, sfle.c_strDirSrc, "bridgemapper.py" )
+c_strMappingfileEcoli   = sfle.d( arepa.path_repo( ), sfle.c_strDirEtc,"511145_eco_colibri-eco.list.map")
+
 
 pE = Environment( )
 
@@ -31,17 +37,29 @@ def funcRegulonDBExtracter(target, source, env):
 	strT, astrSs = sfle.ts( target, source )
         strProg,strIn = astrSs[:2]
 	return 	sfle.ex([strProg, strIn, strT])
-afile = Command( c_fileOutDAT, [c_strProgRegDB,c_strFileRegDBTXT], funcRegulonDBExtracter )
-#Default(afile)
+Command( c_fileOutDAT, [c_strProgRegDB,c_strFileRegDBTXT], funcRegulonDBExtracter )
 
 
+def funcGeneIdMapping( target, source, env):
+        strT, astrSs = sfle.ts( target, source )
+        strFunc, strDATin = astrSs[:2]
+        return sfle.ex([ strFunc,strDATin, strT, c_strMappingfileEcoli, "[0,1]", "H", "Ck"]) 
+Command( c_fileMapDAT,[c_funcGeneMapper, c_fileOutDAT ], funcGeneIdMapping)
+
+#def funcDAB(target, source, env):
+#	strT, astrSs = sfle.ts( target, source )
+#        strIn = astrSs[0]
+#        return sfle.ex([" Dat2Dab -o", strT, "-i", strIn])
+#afileDAB = Command( c_fileOutDAB, c_fileOutDAT, funcDAB )
 
 def funcDAB(target, source, env):
-	strT, astrSs = sfle.ts( target, source )
-        strIn = astrSs[0]
-        return sfle.ex([" Dat2Dab -o", strT, "-i", strIn])
-afileDAB = Command( c_fileOutDAB, c_fileOutDAT, funcDAB )
-#Default(afileDAB)
+        strT, astrSs = sfle.ts( target, source )
+        fileOut,fileMap = astrSs[:2]
+        if os.stat(fileMap)[6]!=0:
+                return sfle.ex([" Dat2Dab -o", strT, "-i", fileMap])
+        else:
+                return sfle.ex([" Dat2Dab -o", strT, "-i", fileOut])
+Command( c_fileOutDAB, [c_fileOutDAT,c_fileMapDAT], funcDAB )
 
 
 def funcQUANT( target, source, env ):
@@ -49,5 +67,5 @@ def funcQUANT( target, source, env ):
         strS = astrSs[0]
         return (sfle.ex("echo '0.5\t1.5' >" + strT))
 Command( c_fileOutQUANT, c_fileOutDAB ,funcQUANT )
-#Default( c_fileOutQUANT )
+Default( c_fileOutQUANT )
 
