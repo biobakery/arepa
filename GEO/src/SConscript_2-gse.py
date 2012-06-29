@@ -40,6 +40,7 @@ c_fileRMetadataTXT		= File( c_strID + "_rmetadata.txt" )
 c_fileRPlatformTXT		= File( c_strID + "_rplatform.txt" )
 c_fileIDRawPCL			= File( c_strID + "_00raw.pcl" )
 c_fileIDMappedPCL		= File( c_strID + "_00mapped.pcl")
+c_fileIDPCL			= File( c_strID + ".pcl" )
 c_fileEset			= File( c_strID + ".RData" )
 c_fileExpTable			= File( c_strID + "_exp_metadata.txt" )
 c_fileCondTable			= File( c_strID + "_cond_metadata.txt" )
@@ -74,14 +75,12 @@ def funcGSER( target, source, env ):
 
 def funcGetEset( target, source, env ):
         strT, astrSs = sfle.ts(target, source)
-        strIn, strRData = astrSs[:2]
+        strIn, strRData, strExpMetadata, strCondMetadata = astrSs[:4]
         return sfle.ex( (sfle.cat( strIn ), " | R --no-save --args", strRData, strT, \
-		c_strPPfun ) )
+		c_strPPfun, strExpMetadata, strCondMetadata ) )
 
 def funcMetaTable( target, source, env ):
 	astrTs, astrSs = ([f.get_abspath( ) for f in a] for a in (target,source))
-	print astrTs 
-	print astrSs
 	strExp, strCond = astrTs[:2]
 	strProg, strPkl = astrSs[:2]
 	return sfle.ex(("python", strProg, strPkl, strExp, strCond ))
@@ -104,11 +103,8 @@ sfle.pipe( pE, c_fileRDataTXT, c_fileProgSeries2PCL, c_fileIDRawPCL,
 	[[True, f] for f in (c_fileRMetadataTXT, c_fileRPlatformTXT)] )
 
 #Make Eset containing all pertinent data
-#BUGBUG: R script throwing errors 
-#Command( c_fileEset, [c_fileProgProcessRaw,c_fileIDMappedPCL], funcGetEset )
-
-# Get list of GSM ids for processing raw files in the next step 
-afileIDsTXT = sfle.pipe( pE, c_fileIDSeriesTXTGZ, c_fileProgSeries2GSM, c_fileTXTGSM ) 
+Command( c_fileEset, [c_fileProgProcessRaw,c_fileIDPCL, c_fileExpTable, \
+		c_fileCondTable], funcGetEset )
 
 # Download annotation files for specific platform, if they exist 
 def getGPL( target, source, env ):
@@ -116,16 +112,15 @@ def getGPL( target, source, env ):
 	strAnnot		= astrTs[0]
 	strPKL		 	= astrSs[0]
 	strGPLID = metadata.open( open(strPKL) ).get("platform")
-	print strGPLID
 	listGPL = sfle.readcomment( c_fileGPL )
 	if strGPLID in listGPL:
-		print "Annotation file exists, downloading ... "
+		#print "Annotation file exists, downloading ... "
 		sfle.ex( ["wget", sfle.d( c_strURLGPL, strGPLID + ".annot.gz" ), "-O", \
 			strAnnot ] )	
 	else:
-		print "Annotation file does not exist"
+		#print "Annotation file does not exist"
 		with open( strGPLID + ".annot.gz", "w") as outputf:
-			outputf.write("")
+			outputf.write(" ")
 
 fileAnnot = Command( c_fileIDAnnot, c_fileIDPKL, getGPL ) 
 
@@ -133,7 +128,7 @@ fileAnnot = Command( c_fileIDAnnot, c_fileIDPKL, getGPL )
 fileGeneMap = sfle.pipe( pE, c_fileIDAnnot, c_fileProgAnnot2Map, c_fileIDMap ) 
 
 #Clean Microarray Data -- Imputation, Normalization, Gene Mapping    
-#execfile( str(c_fileInputSConscript) )
+execfile( str( c_fileInputSConscript ) )
 
 def scanner( fileExclude = None, fileInclude = None ):
         setstrExclude = set(readcomment( fileExclude ) if fileExclude else [])
@@ -152,6 +147,9 @@ def scanner( fileExclude = None, fileInclude = None ):
                                 env["sconscript_child"]( target, source[0], env, c_strID + "-RAW" )
         return funcRet
 
+# Get list of GSM ids for processing raw files in the next step 
+afileIDsTXT = sfle.pipe( pE, c_fileIDSeriesTXTGZ, c_fileProgSeries2GSM, c_fileTXTGSM ) 
+
 #Run RAW pipeline 
-#afileIDsRaw = sfle.sconscript_children( pE, afileIDsTXT , scanner( ), 3, \
-#	arepa.c_strProgSConstruct, hashArgs )
+afileIDsRaw = sfle.sconscript_children( pE, afileIDsTXT , scanner( ), 3, \
+	arepa.c_strProgSConstruct, hashArgs )

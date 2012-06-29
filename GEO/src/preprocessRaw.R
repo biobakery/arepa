@@ -17,9 +17,8 @@
 ##
 ## Sample input arguments:
 ##
-## inputargs <- c("./testaffybatch.RData","./testeset.RData","affy::rma")
-## inputargs <- c("./testaffybatch.RData","./testeset.RData","affy::mas5")
-## inputargs <- c("../data/GSE21815/GSE21815/GSE21815_01norm.pcl","./testeset.RData","affy::mas5")
+## inputargs <- c("../data/GSE10183/GSE10183/GSE10183_01norm.pcl","./testeset.RData","affy::mas5", "../data/GSE10183/GSE10183/GSE10183_exp_metadata.txt","../data/GSE10183/GSE10183/GSE10183_exp_metadata.txt")
+## inputargs <- c("../data/GSE8126/GSE8126/GSE8126_01norm.pcl","./testeset.RData","affy::mas5", "../data/GSE8126/GSE8126/GSE8126_exp_metadata.txt","../data/GSE8126/GSE8126/GSE8126_exp_metadata.txt")
 
 inputargs <- commandArgs(TRUE)
 print(inputargs)
@@ -27,6 +26,13 @@ print(inputargs)
 strInputData		<- inputargs[1]
 strOutputData		<- inputargs[2]
 strProcessingFunction   <- inputargs[3]
+##per-condition and per-experiment metadata:
+strInputExperiment      <- inputargs[4]
+strInputConditional     <- inputargs[5]
+
+##Nothing is done with these yet, but these will be used to populate the ExpressionSet:
+dfExperiment <- read.delim(strInputExperiment, as.is=TRUE)
+dfConditional <- read.delim(strInputConditional, as.is=TRUE, row.names=1)
 
 strPackage <- strsplit(strProcessingFunction,split="::")[[1]][1]
 library(affy)
