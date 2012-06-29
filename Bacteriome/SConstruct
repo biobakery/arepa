@@ -44,9 +44,9 @@ Command( c_fileOutDAT, [c_strProgBacteriome,c_strFileBactTXT], funcBacteriomeExt
 
 def funcGeneIdMapping( target, source, env):
         strT, astrSs = sfle.ts( target, source )
-        strFunc, strDATin, strMapfile  = astrSs[:3]
-        return sfle.ex([ strFunc,strDATin, strT, strMapfile, "[0,1]", "Kg", "Ck"]) 
-Command( c_fileMapDAT,[c_funcGeneMapper, c_fileOutDAT,c_strMappingfileEcoli ], funcGeneIdMapping)
+        strFunc, strDATin  = astrSs[:2]
+        return sfle.ex([ strFunc,strDATin, strT, c_strMappingfileEcoli,  "[0,1]", "Kg", "Ck"]) 
+Command( c_fileMapDAT,[c_funcGeneMapper, c_fileOutDAT ], funcGeneIdMapping)
 
 
 def funcDAB(target, source, env):
