@@ -26,17 +26,16 @@ astrExp, astrCond = filter( lambda k: isinstance(hashMeta.get(k),str or int or f
 def writeTable( hMeta, astrKeys, outputf, bIter = False ):
 	hMeta = {k:hMeta[k] for k in astrKeys}
 	csvw = csv.writer( open( outputf, "w" ), csv.excel_tab )
-	csvw.writerow( astrKeys )
-	if bIter:
+	if bIter:	
 		astrHeader = hMeta.get("sample_name") or hMeta.get("")
-		#sys.stderr.write( type(astrHeader)  )
+		_astrKeys = filter(lambda x: hMeta.get(x) != astrHeader,astrKeys)
+		csvw.writerow( ["sample_name"] + _astrKeys )
 		for iSample, strSample in enumerate(astrHeader):
-			#for s in astrKeys:
-				#sys.stderr.write( str(iSample) + '\n' )
-				#sys.stderr.write( '#' + hMeta.get(s)[iSample] + '\n' ) 
 			csvw.writerow( map( lambda x: str(x).replace("\n"," "), \
-			[hMeta.get(s)[iSample] for s in astrKeys] )) 
+			[ strSample ] + [hMeta.get(s)[iSample] for s in \
+			_astrKeys] )) 
 	else:
+		csvw.writerow( astrKeys )
 		csvw.writerow( map(lambda x: str(x).replace("\n"," "), \
 		[hMeta[k] for k in astrKeys]) )
 

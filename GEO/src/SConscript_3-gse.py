@@ -15,7 +15,7 @@ c_strURLGEO			= 'ftp.ncbi.nih.gov'
 c_strURLGEOsupp			= 'pub/geo/DATA/supplementary/samples/'
 c_strURLSupp 			= 'ftp://' + c_strURLGEO + '/' + c_strURLGEOsupp 
 c_strFileGSM			= "../GSM.txt"
-c_strFilePCL			= "../" + c_strID + "_00mapped.pcl" 
+c_strFilePCL			= "../" + c_strID + ".pcl" 
 
 c_listTs			= sfle.readcomment( c_strFileGSM )
 c_fileProgReadCel		= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "readCel.R" ) )
@@ -69,4 +69,5 @@ if c_listTs:
 		 funcRawProcess )
 #else use vanilla pcl
 else:
-	Command( c_strOutputRData, [c_fileProgProcessRaw,c_strFilePCL], funcRawProcess )	
+	Command( c_strOutputRData, [c_fileProgProcessRaw,c_strFilePCL, c_fileExpTable, c_fileCondTable],\
+		 funcRawProcess )	
