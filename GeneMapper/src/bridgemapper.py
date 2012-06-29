@@ -166,8 +166,10 @@ if os.path.exists(c_inputfile) and os.stat(c_inputfile)[6]!=0:
                     geneids_out_tmp = convertGeneIds (geneids_in, c_mappingfile)
                     geneids_out = map(listfirstitem, geneids_out_tmp)
                     table_geneids_replaced = transpose(replaceGeneIdsInPCLMatrix (table_in_transp,geneids_out, col))
+                    ## Handling NxM entry gene names from BridgeDB:
                     table_out_tmp = handleNxMgenes(table_geneids_replaced, " /// ", col)
-                    table_out = handleDoubleEntries(table_out_tmp)
+                    #table_out = handleDoubleEntries(table_out_tmp)
+                    table_out = table_out_tmp
                     table_in = table_out
                 else:
                     sys.stderr.write( "+++ ERROR in GeneMapper +++ Empty mapping. Return emtpy file.\n")
