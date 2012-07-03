@@ -32,7 +32,11 @@ strInputConditional     <- inputargs[5]
 
 ##Nothing is done with these yet, but these will be used to populate the ExpressionSet:
 dfExperiment <- read.delim(strInputExperiment, as.is=TRUE)
-dfConditional <- read.delim(strInputConditional, as.is=TRUE, row.names=1)
+
+##Optional conditional metadata argument  
+if( length( inputargs ) > 4 ){
+ dfConditional <- read.delim(strInputConditional, as.is=TRUE, row.names=1)
+}
 
 strPackage <- strsplit(strProcessingFunction,split="::")[[1]][1]
 library(affy)

@@ -34,10 +34,9 @@ def funcIDNormPCL( target, source, env, iMaxLines = 100000 ):
 	return ( sfle.ex( "Normalizer -t pcl -T medmult < " + strS, strT )
 		if ( iLC < iMaxLines ) else sfle.ex( "head -n 3 < " + strS, strT ) )
 
-if open( str(c_fileIDMappedPCL) ).read().strip(): 
-	Command( c_fileIDNormPCL, c_fileIDMappedPCL, funcIDNormPCL )
-else:
-	Command( c_fileIDNormPCL, c_fileIDRawPCL, funcIDNormPCL )
+#BUGBUG: Default behavior for mapping should be returning the same table 
+# not returning an empty table -- for SCons's sake. 
+Command( c_fileIDNormPCL, c_fileIDMappedPCL, funcIDNormPCL )
 
 #- Impute
 def funcIDKNNPCL( target, source, env, iMaxLines = 40000 ):

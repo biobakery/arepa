@@ -172,20 +172,21 @@ if os.path.exists(c_inputfile) and os.stat(c_inputfile)[6]!=0:
                     table_out = table_out_tmp
                     table_in = table_out
                 else:
-                    sys.stderr.write( "+++ ERROR in GeneMapper +++ Empty mapping. Return emtpy file.\n")
-                    writeEmptyFile(c_outputfile)
+                    sys.stderr.write( "+++ ERROR in GeneMapper +++ Empty mapping. Return original file.\n")
+		    savePCLAsTxtFile( c_outputfile, readTable( c_inputfile ) )
                     break
             if table_out != []:
                 savePCLAsTxtFile (c_outputfile, table_out)
             else:
-                sys.stderr.write( "+++ ERROR in GeneMapper +++ Empty output mapping. Return emtpy file.\n")
-                writeEmptyFile(c_outputfile)
+                sys.stderr.write( "+++ ERROR in GeneMapper +++ Empty output mapping. Return original file.\n")
+		savePCLAsTxtFile( c_outputfile, readTable( c_inputfile ) )
         else:
             sys.stderr.write( "+++ ERROR in GeneMapper +++ Number of requested columns to map is larger than the number of columns in the input data file.\n")
+	    savePCLAsTxtFile( c_outputfile, table_in )
     else:
         sys.stderr.write("+++ ERROR in GeneMapper +++ Mapping file does not exist or is empty. Return original file.\n")               
-        writeEmptyFile(c_outputfile)
+	savePCLAsTxtFile( c_outputfile, readTable( c_inputfile ) )
 else: 
     sys.stderr.write( "+++ ERROR in GeneMapper +++ Input file does not exist or is empty. Return empty file.\n")
-    writeEmptyFile(c_outputfile)
+    savePCLAsTxtFile( c_outputfile, readTable( c_inputfile ) )
 

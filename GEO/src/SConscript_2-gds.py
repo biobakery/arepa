@@ -27,7 +27,6 @@ c_fileIDRawPCL			= File( c_strID + "_00raw.pcl" )
 c_fileEset 			= File( c_strID + ".RData" )
 
 c_fileExpTable                  = File( c_strID + "_exp_metadata.txt" )
-c_fileCondTable                 = File( c_strID + "_cond_metadata.txt" )
 
 c_fileProgSOFT2PCL		= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, \
 				"soft2pcl.py" ) )
@@ -47,10 +46,17 @@ Import( "hashArgs" )
 # Convert SOFT file with platform info to TXT and PCL
 #===============================================================================
 
+def funcMetaTable( target, source, env ):
+        astrTs, astrSs = ([f.get_abspath( ) for f in a] for a in (target,source))
+        strExp = astrTs[0]
+        strProg, strPkl = astrSs[:2]
+        return sfle.ex(("python", strProg, strPkl, strExp ))
+
 def funcGetEset( target, source, env ):
         strT, astrSs = sfle.ts(target, source)
-        strIn, strRData = astrSs[:2]
-        return sfle.ex( (sfle.cat( strIn ), " | R --no-save --args", strRData, strT, c_strPPfun ) )
+        strIn, strRData, strExpMetadata = astrSs[:3]
+        return sfle.ex( (sfle.cat( strIn ), " | R --no-save --args", strRData, strT, \
+		c_strPPfun, strExpMetadata ) )
 
 #Download annotation files: in the case for GDS, GPLid is always included in name and always exists
 sfle.download( pE, hashArgs["c_strURLGPL"] + os.path.basename( str( c_fileGPLTXTGZ ) ) )
@@ -66,8 +72,12 @@ sfle.pipe( pE, c_fileInputSOFTGZ, c_fileProgSOFT2Metadata, c_fileIDPKL,
 sfle.pipe( pE, c_fileInputSOFTGZ, c_fileProgSOFT2PCL, c_fileIDRawPCL,
 	[[True, c_fileGPLTXTGZ]] )
 
+#Create Tables 
+Command( c_fileExpTable, [c_fileProgPkl2Metadata, c_fileIDPKL], \
+	funcMetaTable) 
+
 #Produce expression set file
-Command( c_fileEset, [c_fileProgProcessRaw,c_fileIDRawPCL], funcGetEset )
+Command( c_fileEset, [c_fileProgProcessRaw,c_fileIDRawPCL, c_fileExpTable], funcGetEset )
 
 #Clean microarray data -- Impute, Normalize, Gene Mapping 
 execfile( str(c_fileInputSConscript) )
