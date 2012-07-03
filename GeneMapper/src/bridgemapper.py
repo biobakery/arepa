@@ -176,7 +176,7 @@ if os.path.exists(c_inputfile) and os.stat(c_inputfile)[6]!=0:
 		    savePCLAsTxtFile( c_outputfile, readTable( c_inputfile ) )
                     break
             if table_out != []:
-                savePCLAsTxtFile (c_outputfile, table_out)
+                savePCLAsTxtFile (c_outputfile, readTable( c_inputfile)[:2] + table_out)
             else:
                 sys.stderr.write( "+++ ERROR in GeneMapper +++ Empty output mapping. Return original file.\n")
 		savePCLAsTxtFile( c_outputfile, readTable( c_inputfile ) )
