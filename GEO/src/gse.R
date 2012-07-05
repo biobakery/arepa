@@ -1,6 +1,6 @@
-##inputargs <- c("/home/lwaldron/hg/arepa/GEO/data/GSE13876/GSE13876/GSE13876_series_matrix.txt.gz","/home/lwaldron/hg/arepa/GEO/data/GSE13876/GSE13876/GSE13876_rplatform.txt","/home/lwaldron/hg/arepa/GEO/data/GSE13876/GSE13876/GSE13876_rmetadata.txt","/home/lwaldron/hg/arepa/GEO/data/GSE13876/GSE13876/GSE13876_rdata.txt")
+##inputargs <- c("/home/lwaldron/hg/arepa/GEO/data/GSE7055-GPL4700/GSE7055-GPL4700/GSE7055-GPL4700_series_matrix.txt.gz","/home/lwaldron/hg/arepa/GEO/data/GSE7055-GPL4700/GSE7055-GPL4700/GSE7055-GPL4700_rplatform.txt","/home/lwaldron/hg/arepa/GEO/data/GSE7055-GPL4700/GSE7055-GPL4700/GSE7055-GPL4700_rmetadata.txt","/home/lwaldron/hg/arepa/GEO/data/GSE7055-GPL4700/GSE7055-GPL4700/GSE7055-GPL4700_rdata.txt")
 ##
-## R CMD BATCH --vanilla "--args /home/lwaldron/hg/arepa/GEO/data/GSE13876/GSE13876/GSE13876_series_matrix.txt.gz /home/lwaldron/hg/arepa/GEO/data/GSE13876/GSE13876/GSE13876_rplatform.txt /home/lwaldron/hg/arepa/GEO/data/GSE13876/GSE13876/GSE13876_rmetadata.txt /home/lwaldron/hg/arepa/GEO/data/GSE13876/GSE13876/GSE13876_rdata.txt" gse.R &
+## R CMD BATCH --vanilla "--args /home/lwaldron/hg/arepa/GEO/data/GSE7055-GPL4700/GSE7055-GPL4700/GSE7055-GPL4700_series_matrix.txt.gz /home/lwaldron/hg/arepa/GEO/data/GSE7055-GPL4700/GSE7055-GPL4700/GSE7055-GPL4700_rplatform.txt /home/lwaldron/hg/arepa/GEO/data/GSE7055-GPL4700/GSE7055-GPL4700/GSE7055-GPL4700_rmetadata.txt /home/lwaldron/hg/arepa/GEO/data/GSE7055-GPL4700/GSE7055-GPL4700/GSE7055-GPL4700_rdata.txt" gse.R &
 
 library(GEOquery)
 #options(download.file.method="wget")
@@ -45,10 +45,13 @@ if(file.exists(strInputFile)){  #get from disk
   gsedat <- getGEO(strInputAccession,destdir=targetdir,AnnotGPL=FALSE)
 }
 
+if(class(gsedat) == "list" & length(gsedat) > 1){
+    platforms.in.gse <- sapply(gsedat,function(x) x@annotation)
+    if(exists("strPlatform"))
+        gsedat <- gsedat[platforms.in.gse %in% strPlatform]
+}
+
 if(class(gsedat)=="list" & length(gsedat) > 1){  ##Try to merge multiple esets if they are from the same platform
-  platforms.in.gse <- sapply(gsedat,function(x) x@annotation)
-  if(exists("strPlatform"))
-    gsedat <- gsedat[platforms.in.gse %in% strPlatform]
   ##Write out merged series matrix file:
   series.matrix.files <- paste(targetdir,names(gsedat),sep="")
   series.matrix.list <- lapply(series.matrix.files,function(x) readLines(gzfile(x)))
