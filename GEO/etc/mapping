@@ -1,0 +1,6 @@
+#configuration file for mapping 
+#format is regular expression: column name 
+^ID .*? platform		: Affy
+Entrez Gene Symbol          	: HGNC
+Uniprot .*? Symbol            	: Uniprot/TrEMBL
+^(Entrez)? UniGene Symbol     	: Unigene

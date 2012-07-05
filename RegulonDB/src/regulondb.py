@@ -54,9 +54,15 @@ table_in = readTableWithoutHeader(c_inputfile)
 table_in_transp = transpose(table_in)
 IntA  = table_in_transp[cols_genes[0]]
 IntB = table_in_transp[cols_genes[1]]
+#Write all gene ids as lower case for further mapping reasons:
+IntAa = []
+for ia in IntA:
+    IntAa.append(ia.lower())
+IntBb = []
+for bi in IntB:
+    IntBb.append(bi.lower())
 Scores = table_in_transp[cols_scores]
-
-saveMatrixAsTxtFile(c_resfile, transpose([IntA, IntB, Scores]))
+saveMatrixAsTxtFile(c_resfile, transpose([IntAa, IntBb, Scores]))
 
 
 

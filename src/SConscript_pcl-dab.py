@@ -11,27 +11,20 @@ c_fileIDPCL			= File( c_strID + ".pcl" )
 c_fileIDDAB			= File( c_strID + ".dab" )
 c_fileIDQUANT       = File( c_strID + ".quant" )
 
-c_fileIDPCLorig     = File(c_strID + "_orig.pcl")
-c_fileIDPKL         = File(c_strID + ".pkl")
 c_fileIDMappedPCL   = File( c_strID + "_00mapped.pcl" )
-c_funcPclIds        = sfle.d( arepa.path_arepa( ), sfle.c_strDirSrc, "pclids.py" )
-c_pathmappingfiles  = sfle.d(arepa.path_arepa(),sfle.c_strDirEtc)
+
+## Gene Mapper:
+c_path_GeneMapper   = sfle.d( arepa.path_arepa(), "GeneMapper")
+c_funcPclIds        = sfle.d( c_path_GeneMapper, sfle.c_strDirSrc, "bridgemapper.py" )
+c_fileMap           = File(c_strID + "_map.txt")
 
 
 #- Gene id mapping
 def funcGeneIdMapping( target, source, env):
     strT, astrSs = sfle.ts( target, source )
-    strFunc, strRawPCL, strMapping, strPKL = astrSs[:4]
-    pMetadata = metadata.open(open(strPKL,"rb") )
-    c_Taxa = pMetadata["taxid"]
-    c_platform = pMetadata["platform"]
-    c_mappingfilename = str(c_platform)+"_taxid"+str(c_Taxa)+".txt"
-    c_mappingfile = sfle.d(strMapping, c_mappingfilename)
-    sys.stderr.write("+++ GENE ID Mapping +++ \n"+str(c_platform)+"\n")
-    return sfle.ex([ strFunc, strRawPCL, strT, c_mappingfile])
-
-Command(c_fileIDMappedPCL, [c_funcPclIds, c_fileIDRawPCL, c_pathmappingfiles , c_fileIDPKL], funcGeneIdMapping)
-
+    strFunc, strDATin, strMapfile  = astrSs[:3]
+    return sfle.ex([ strFunc,strDATin, strT, strMapfile, "[0]", "X", "H"])
+Command( c_fileIDMappedPCL,[c_funcPclIds, c_fileIDRawPCL, c_fileMap], funcGeneIdMapping)
 
 #- Normalize
 def funcIDNormPCL( target, source, env, iMaxLines = 100000 ):
@@ -41,9 +34,9 @@ def funcIDNormPCL( target, source, env, iMaxLines = 100000 ):
 	return ( sfle.ex( "Normalizer -t pcl -T medmult < " + strS, strT )
 		if ( iLC < iMaxLines ) else sfle.ex( "head -n 3 < " + strS, strT ) )
 
+#BUGBUG: Default behavior for mapping should be returning the same table 
+# not returning an empty table -- for SCons's sake. 
 Command( c_fileIDNormPCL, c_fileIDMappedPCL, funcIDNormPCL )
-#Command( c_fileIDNormPCL, c_fileIDRawPCL, funcIDNormPCL ) #call if gene id mapping is skipped
-
 
 #- Impute
 def funcIDKNNPCL( target, source, env, iMaxLines = 40000 ):

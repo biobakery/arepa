@@ -1,0 +1,24 @@
+import arepa
+import os
+import sys
+import sfle
+
+
+#------------------------------------------------------------------------------
+
+c_URL			= "http://svn.bigcat.unimaas.nl/bridgedb/trunk/"
+c_dirProg		= sfle.d("trunk")
+c_fileBuilder		= sfle.d(c_dirProg, "build.xml")
+#c_progBatchmapper	= sfle.d(c_dirProg, "batchmapper.sh")
+#c_dirMappingfiles	= sfle.d(sfle.c_strDirEtc)
+
+pE = Environment( )
+
+#===============================================================================
+# Check out last version of the tool and compile
+#===============================================================================
+
+sfle.ex(["svn checkout", c_URL])
+sfle.ex(["ant -buildfile", c_fileBuilder])
+
+

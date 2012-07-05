@@ -10,21 +10,26 @@ def test( iLevel, strID, hashArgs ):
 if locals( ).has_key( "testing" ):
 	sys.exit( )
 
-c_strURLGEO					= 'ftp.ncbi.nih.gov'
-c_strURLGEOsupp					= 'pub/geo/DATA/supplementary/samples/'
-c_strURLSupp 					= 'ftp://' + c_strURLGEO + '/' + c_strURLGEOsupp 
-c_strFileGSM					= "../GSM.txt"
-c_strFilePCL					= "../" + arepa.cwd().replace("-RAW","") + "_00mapped.pcl" 
+c_strID				= arepa.cwd().replace("-RAW","")
+c_strURLGEO			= 'ftp.ncbi.nih.gov'
+c_strURLGEOsupp			= 'pub/geo/DATA/supplementary/samples/'
+c_strURLSupp 			= 'ftp://' + c_strURLGEO + '/' + c_strURLGEOsupp 
+c_strFileGSM			= "../GSM.txt"
+c_strFilePCL			= "../" + c_strID + ".pcl" 
 
-c_listTs					= sfle.readcomment( c_strFileGSM )
-c_fileProgReadCel				= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "readCel.R" ) )
-c_fileProgProcessRaw				= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "preprocessRaw.R" ) )
-c_strInputRData					= arepa.cwd() + ".RData"
-c_strOutputRData				= c_strInputRData.replace("-RAW", "") 
+c_listTs			= sfle.readcomment( c_strFileGSM )
+c_fileProgReadCel		= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "readCel.R" ) )
+c_fileProgProcessRaw		= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "preprocessRaw.R" ) )
+c_strInputRData			= arepa.cwd() + ".RData"
+c_strOutputRData		= c_strInputRData.replace("-RAW", "") 
 
-c_filePPfun            				= File( sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, "preprocess"))
-c_strPPfun					= sfle.readcomment( c_filePPfun )[0]
+c_filePPfun            		= File( sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, "preprocess"))
+c_strPPfun			= sfle.readcomment( c_filePPfun )[0] if \
+				sfle.readcomment( c_filePPfun ) else "affy::rma"
 
+c_fileExpTable			= File( "../" + c_strID + "_exp_metadata.txt" )
+c_fileCondTable			= File( "../" + c_strID + "_cond_metadata.txt" )
+ 
 pE = DefaultEnvironment( )
 Import( "hashArgs" )
 
@@ -50,8 +55,9 @@ def funcRawMap( target, source, env ):
 
 def funcRawProcess( target, source, env ):
 	strT, astrSs = sfle.ts(target, source)
-	strIn, strRData = astrSs[:2]
-        return sfle.ex( (sfle.cat( strIn ), " | R --no-save --args", strRData, strT, c_strPPfun ) )
+	strIn, strRData, strExpMetadata, strCondMetadata = astrSs[:4]
+        return sfle.ex( (sfle.cat( strIn ), " | R --no-save --args", strRData, strT, \
+		c_strPPfun, strExpMetadata, strCondMetadata ) )
 
 #Execute
 
@@ -59,9 +65,9 @@ def funcRawProcess( target, source, env ):
 if c_listTs:
 	funcDownloadRAW( c_listTs )
 	Command( c_strInputRData, [c_fileProgReadCel] + c_listTs , funcRawMap )
-	Command( c_strOutputRData, [c_fileProgProcessRaw,c_strInputRData], funcRawProcess )
+	Command( c_strOutputRData, [c_fileProgProcessRaw,c_strInputRData, c_fileExpTable, c_fileCondTable],\
+		 funcRawProcess )
 #else use vanilla pcl
 else:
-	Command( c_strOutputRData, [c_fileProgProcessRaw,c_strFilePCL], funcRawProcess )
-
-	
+	Command( c_strOutputRData, [c_fileProgProcessRaw,c_strFilePCL, c_fileExpTable, c_fileCondTable],\
+		 funcRawProcess )	

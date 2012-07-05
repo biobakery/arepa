@@ -4,27 +4,27 @@ import sfle
 import sys
 import urllib
 
-c_iMaxTaxa				= 100
-c_strPre				= "_pre"
-c_strSufTXT				= ".txt"
-c_strSufXML				= ".xml"
+c_iMaxTaxa			= 100
+c_strPre			= "_pre"
+c_strSufTXT			= ".txt"
+c_strSufXML			= ".xml"
 c_strURLLeft			= "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gds&term="
 c_strURLRight			= "[ETYP]&retmax=1000000&usehistory=y"
-c_strURLSum				= "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=gds&query_key=%s&WebEnv=%s"
-c_strURL				= "ftp://ftp.ncbi.nih.gov/pub/geo/DATA/"
-c_strURLGDS				= c_strURL + "SOFT/GDS/"
-c_strURLGSE				= c_strURL + "SeriesMatrix/"
-c_strURLGPL				= c_strURL + "annotation/platforms/"
+c_strURLSum			= "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=gds&query_key=%s&WebEnv=%s"
+c_strURL			= "ftp://ftp.ncbi.nih.gov/pub/geo/DATA/"
+c_strURLGDS			= c_strURL + "SOFT/GDS/"
+c_strURLGSE			= c_strURL + "SeriesMatrix/"
+c_strURLGPL			= c_strURL + "annotation/platforms/"
 
 c_fileInputInclude		= sfle.d( sfle.c_strDirEtc, "include" )
 c_fileInputExclude		= sfle.d( sfle.c_strDirEtc, "exclude" )
 c_fileInputTaxIDs		= sfle.d( arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
 
-c_hashFiles				= {
-	"GDS"					: "gds",
-	"GSE"					: "gse",
-	"GPL+NOT+GSE+NOT+GSM"	: "gpl"
-}
+c_hashFiles			= {
+				"GDS"			: "gds",
+				"GSE"			: "gse",
+				"GPL+NOT+GSE+NOT+GSM"	: "gpl"
+				}		
 
 c_fileProgXML2TXT		= sfle.d( sfle.c_strDirSrc, "xml2txt.py" )
 
