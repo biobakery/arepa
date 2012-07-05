@@ -46,6 +46,10 @@ def runall( ):
 #=====================================================#
 #			GEO
 #=====================================================#
+''' 
+instead of testing for python pkl files, which are huge, 
+test for tab delimited printed text files
+'''
 #constants for GEO testing 
 '''
 <GSEs>
@@ -98,7 +102,7 @@ c_GSE10183PCL		= 	[['GID', 'NAME', 'GWEIGHT',
 
 #exec_test( c_dirGEO, lambda f: {k:pickle.load(open(f,"r")).get(k) for k in c_astrMetaKeys},\
 #[c_fileGSE10183PKL, c_GSE10183PKL] )
-#exec_test( c_dirGEO, None, [c_fileGSE10183PCL,c_GSE10183PCL] )
+exec_test( c_dirGEO, None, [c_fileGSE10183PCL,c_GSE10183PCL] )
 
 ###GSE8126###
 
@@ -107,7 +111,7 @@ c_dirGSE8126		= 	sfle.d( c_dirGSE8126base, c_strGSE8126 )
 c_fileGSE8126PKL	= 	sfle.d( c_dirGSE8126, c_strGSE8126 + ".pkl" )
 c_fileGSE8126PCL	=	sfle.d( c_dirGSE8126, c_strGSE8126 + "_00raw.pcl" ) 
 
-#c_GSE8126PKL 		= 	 
+c_GSE8126EXP		=	_readstr( "Series_platform_taxid\tSeries_contact_department\tSeries_contact_name\tSeries_status\tgloss\tSeries_relation\tSeries_contact_state\tSeries_contact_address\tSeries_contact_city\tplatform\tSeries_contact_laboratory\tSeries_overall_design\tSeries_contributor\tSeries_contact_country\tSeries_contact_zip/postal_code\tSeries_supplementary_file\tSeries_geo_accession\tSeries_sample_id\ttaxid\tSeries_contact_institute\tSeries_submission_date\tSeries_last_update_date\r\n9606\tGenetics, USP Medical School at Ribeirao Preto\tRicardo,Z.N.,V\xc3\xaancio\tPublic on Jan 14 2009\tCancer cells were MACS sorted from tumor tissue specimem 05-179. Self replicates of CD26+ cancer cells were generated and the expression profiles were determined using Affymetrix U133 Plus 2.0 arrays. These data represent cancer cell type specific transcriptome. Keywords: disease state analysis\tBioProject: http://www.ncbi.nlm.nih.gov/bioproject/108397\tSP\tAv. Bandeirantes, 3900\tRibeirao Preto\tGPL570\thttp://labpib.fmrp.usp.br\tSelf replicates of the sorted were done.\tAlvin,,Liu\tBrazil\t14049-900\tftp://ftp.ncbi.nlm.nih.gov/pub/geo/DATA/supplementary/series/GSE10183/GSE10183_RAW.tar\tGSE10183\tGSM257248 GSM257249 \t9606\tUniversidade de S\xc3\xa3o Paulo\tJan 15 2008\tJun 06 2012\r\n" )	 
 
 #exec_test( c_dirGEO, lambda f: {k:pickle.load(open(f,"r")).get(k) for k in c_astrMetaKeys},\
 # [c_fileGSE8126PKL, c_GSE8126PKL] )
@@ -116,6 +120,8 @@ c_fileGSE8126PCL	=	sfle.d( c_dirGSE8126, c_strGSE8126 + "_00raw.pcl" )
 #=====================================================#
 #               	Bacteriome
 #=====================================================#
+#single dataset 
+
 c_dirBacteriome		= 	sfle.d( arepa.path_arepa( ), "Bacteriome" )
 c_dirBacteriomeData	=	sfle.d( c_dirBacteriome, sfle.c_strDirData )
 c_fileBacteriomeDat	= 	sfle.d( c_dirBacteriomeData, "bacteriome.dat" )
@@ -130,6 +136,7 @@ exec_test( c_dirBacteriome, None, [c_fileBacteriomeQuant, c_BacteriomeQuantLst],
 #=====================================================#
 #                       BioGrid
 #=====================================================#
+#single dataset 
 
 c_strBioGrid		= "taxid_224308"
 c_dirBioGrid		= sfle.d( arepa.path_arepa( ), "BioGrid" )
@@ -151,7 +158,7 @@ exec_test( c_dirBioGrid, lambda f: pickle.load( open(f, "r") ), [c_fileBioGridPK
 #multiple datasets
 
 #=====================================================#
-#                       MPIDP
+#                       MPIDB
 #=====================================================#
 #multiple datasets
 
