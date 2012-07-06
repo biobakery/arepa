@@ -8,9 +8,23 @@ import sfle
 import os 
 import csv 
 import pickle 
+import sys 
 
+if len(sys.argv[1:]) > 0:
+	f_scons = True if sys.argv[1] == "scons" else False 
+else:
+	f_scons = False 
 
-c_astrInclude = ["GEO", "RegulonDB", "MPIDP", "STRING", "IntAct"]
+#=====================================================#
+#		ARepA Submodules		      #
+#=====================================================#
+
+c_strGEO 	= "GEO"
+c_strRegulonDB	= "RegulonDB"
+c_strMPIDB	= "MPIDP"
+c_strSTRING	= "STRING"
+c_strIntAct	= "IntAct"
+c_strBioGrid	= "BioGrid" 
 
 #=====================================================#
 #		General Helper Functions 
@@ -36,13 +50,12 @@ def _test( infile, aFixed, parse_function = None ):
 def exec_test( strDir, fParse = None, *aCouple ):
 	strCur = os.getcwd( )
 	os.chdir( strDir )
-	subprocess.call( "scons" )
+	if f_scons:
+		subprocess.call( "scons" )
 	for strTest, strVal in aCouple:
 		_test( strTest, strVal, fParse )
 	os.chdir( strCur )    
 
-def runall( ):
-	return None 
 #=====================================================#
 #			GEO
 #=====================================================#
@@ -64,9 +77,9 @@ GDS3174
 '''
 
 c_strGSE8126		= 	"GSE8126"
-c_strGSE10645		=	"GSE10645"
-c_strGSE16560		= 	"GSE16560"
-c_strGSE8402		=	"GSE8402"
+#c_strGSE10645		=	"GSE10645"
+#c_strGSE16560		= 	"GSE16560"
+#c_strGSE8402		=	"GSE8402"
 c_strGSE10183		=	"GSE10183"
 c_strGDS1849		=	"GDS1849"
 c_strGDS3421		=	"GDS3421"
@@ -82,14 +95,11 @@ c_dirGEOData		= 	sfle.d( c_dirGEO, sfle.c_strDirData )
  
 c_dirGSE10183base	=	sfle.d( c_dirGEOData,c_strGSE10183 )
 c_dirGSE10183		=	sfle.d( c_dirGSE10183base, c_strGSE10183 )
-c_fileGSE10183PKL	= 	sfle.d( c_dirGSE10183, c_strGSE10183 + ".pkl" )
+c_fileGSE10183EXP	= 	sfle.d( c_dirGSE10183, c_strGSE10183 + "_exp_metadata.txt" )
 c_fileGSE10183PCL	=	sfle.d( c_dirGSE10183, c_strGSE10183 + "_00raw.pcl" ) 
 
-'''
-{k:hMeta.get(k) for k in ["taxid", "pmid", "platform", "gloss", "channels", "conditions"]} 
-'''
 
-c_GSE10183PKL		= {'gloss': 'Cancer cells were MACS sorted from tumor tissue specimem 05-179. Self replicates of CD26+ cancer cells were generated and the expression profiles were determined using Affymetrix U133 Plus 2.0 arrays. These data represent cancer cell type specific transcriptome.\nKeywords: disease state analysis', 'taxid': '9606', 'channels': 1, 'platform': 'GPL570', 'pmid': None, 'conditions': 2}
+c_GSE10183EXP		=	_readstr( 'Series_platform_taxid\tSeries_contact_department\tSeries_contact_name\tSeries_status\tgloss\tSeries_relation\tSeries_contact_state\tSeries_contact_address\tSeries_contact_city\tplatform\tSeries_contact_laboratory\tSeries_overall_design\tSeries_contributor\tSeries_contact_country\tSeries_contact_zip/postal_code\tSeries_supplementary_file\tSeries_geo_accession\tSeries_sample_id\ttaxid\tSeries_contact_institute\tSeries_submission_date\tSeries_last_update_date\r\n9606\tGenetics, USP Medical School at Ribeirao Preto\tRicardo,Z.N.,V\xc3\xaancio\tPublic on Jan 14 2009\tCancer cells were MACS sorted from tumor tissue specimem 05-179. Self replicates of CD26+ cancer cells were generated and the expression profiles were determined using Affymetrix U133 Plus 2.0 arrays. These data represent cancer cell type specific transcriptome. Keywords: disease state analysis\tBioProject: http://www.ncbi.nlm.nih.gov/bioproject/108397\tSP\tAv. Bandeirantes, 3900\tRibeirao Preto\tGPL570\thttp://labpib.fmrp.usp.br\tSelf replicates of the sorted were done.\tAlvin,,Liu\tBrazil\t14049-900\tftp://ftp.ncbi.nlm.nih.gov/pub/geo/DATA/supplementary/series/GSE10183/GSE10183_RAW.tar\tGSE10183\tGSM257248 GSM257249 \t9606\tUniversidade de S\xc3\xa3o Paulo\tJan 15 2008\tJun 06 2012\r\n')
 
 c_GSE10183PCL		= 	[['GID', 'NAME', 'GWEIGHT', 
 				'GSM257248: CD26+ cancer cell, replicate 1', \
@@ -100,23 +110,42 @@ c_GSE10183PCL		= 	[['GID', 'NAME', 'GWEIGHT',
 				['117_at', 'X51757', '1', '10.89463506', '10.85675361'],
 				['121_at', 'X69699', '1', '8.020897183', '7.84238035']]
 
-#exec_test( c_dirGEO, lambda f: {k:pickle.load(open(f,"r")).get(k) for k in c_astrMetaKeys},\
-#[c_fileGSE10183PKL, c_GSE10183PKL] )
 exec_test( c_dirGEO, None, [c_fileGSE10183PCL,c_GSE10183PCL] )
 
 ###GSE8126###
 
 c_dirGSE8126base	=	sfle.d( c_dirGEOData,c_strGSE8126 )
 c_dirGSE8126		= 	sfle.d( c_dirGSE8126base, c_strGSE8126 )
-c_fileGSE8126PKL	= 	sfle.d( c_dirGSE8126, c_strGSE8126 + ".pkl" )
+c_fileGSE8126EXP	= 	sfle.d( c_dirGSE8126, c_strGSE8126 + "_exp_metadata.txt" )
 c_fileGSE8126PCL	=	sfle.d( c_dirGSE8126, c_strGSE8126 + "_00raw.pcl" ) 
 
-c_GSE8126EXP		=	_readstr( "Series_platform_taxid\tSeries_contact_department\tSeries_contact_name\tSeries_status\tgloss\tSeries_relation\tSeries_contact_state\tSeries_contact_address\tSeries_contact_city\tplatform\tSeries_contact_laboratory\tSeries_overall_design\tSeries_contributor\tSeries_contact_country\tSeries_contact_zip/postal_code\tSeries_supplementary_file\tSeries_geo_accession\tSeries_sample_id\ttaxid\tSeries_contact_institute\tSeries_submission_date\tSeries_last_update_date\r\n9606\tGenetics, USP Medical School at Ribeirao Preto\tRicardo,Z.N.,V\xc3\xaancio\tPublic on Jan 14 2009\tCancer cells were MACS sorted from tumor tissue specimem 05-179. Self replicates of CD26+ cancer cells were generated and the expression profiles were determined using Affymetrix U133 Plus 2.0 arrays. These data represent cancer cell type specific transcriptome. Keywords: disease state analysis\tBioProject: http://www.ncbi.nlm.nih.gov/bioproject/108397\tSP\tAv. Bandeirantes, 3900\tRibeirao Preto\tGPL570\thttp://labpib.fmrp.usp.br\tSelf replicates of the sorted were done.\tAlvin,,Liu\tBrazil\t14049-900\tftp://ftp.ncbi.nlm.nih.gov/pub/geo/DATA/supplementary/series/GSE10183/GSE10183_RAW.tar\tGSE10183\tGSM257248 GSM257249 \t9606\tUniversidade de S\xc3\xa3o Paulo\tJan 15 2008\tJun 06 2012\r\n" )	 
+#c_GSE8126EXP 		=	
 
+#exec_test( c_dirGEO, None, [c_fileGSE8126EXP, c_GSE8126EXP] )
 #exec_test( c_dirGEO, lambda f: {k:pickle.load(open(f,"r")).get(k) for k in c_astrMetaKeys},\
 # [c_fileGSE8126PKL, c_GSE8126PKL] )
 #exec_test( c_dirGEO, None, [c_fileGSE8126PCL,c_GSE8126PCL] )
- 
+
+
+###GDS1849### 
+
+c_dirGDS1849base	=	sfle.d( c_dirGEOData, c_strGDS1849 )
+c_dirGDS1849		=	sfle.d( c_dirGDS1849base, "GDS1849-GPL1821" )
+c_fileGDS1849PKL	=	sfle.d( c_dirGDS1849, "GDS1849-GPL1821.pkl" )
+c_fileGDS1849EXP	=	sfle.d( c_dirGDS1849, "GDS1849-GPL1821_exp_metadata.txt")
+c_fileGDS1849PCL	=	sfle.d( c_dirGDS1849, "GDS1849-GPL1821_00raw.pcl" ) 
+
+c_GDS1849PKL		= 	{'channels': '1',
+ 'conditions': '42',
+ 'gloss': 'Analysis of Bacteroides thetaiotaomicron (BT) from the ceca of mice on polysaccharide or simple sugar diets. BT is involved in the breakdown of plant polysaccharides. BT-colonized mice is a human gut ecosystem model. Results identify genes that may endow flexibility in adapting to dietary changes.',
+ 'platform': 'GPL1821',
+ 'pmid': '16735464',
+ 'taxid': '818',
+ 'title': 'Intestine-adapted bacterial symbiont response to polysaccharide and simple sugar diets',
+ 'type': 'expression profiling'}
+
+
+exec_test( c_dirGEO, lambda f: pickle.load(open(f,"r")), [c_fileGDS1849PKL, c_GDS1849PKL] ) 
 #=====================================================#
 #               	Bacteriome
 #=====================================================#
@@ -157,11 +186,129 @@ exec_test( c_dirBioGrid, lambda f: pickle.load( open(f, "r") ), [c_fileBioGridPK
 #=====================================================#
 #multiple datasets
 
+c_astrIntActIDs		=	[ "taxid_9606_pmid_10383454", "taxid_1061", "taxid_1063" ] 
+c_dirIntAct		=	sfle.d( arepa.path_arepa( ), "IntAct" ) 
+c_dirIntActData		=	sfle.d( c_dirIntAct, sfle.c_strDirData )
+
+f_dirIntActData		=	lambda x: sfle.d( c_dirIntActData, x )
+f_fileIntActDAT		= 	lambda x: sfle.d( f_dirIntActData( x ), x + ".dat" )
+f_fileIntActQUANT	=	lambda x: sfle.d( f_dirIntActData( x ), x + ".quant" )
+f_fileIntActPKL		=	lambda x: sfle.d( f_dirIntActData( x ), x + ".pkl" ) 
+
+c_fileIntActData1DAT	=	f_fileIntActDAT( c_astrIntActIDs[0] )
+c_fileIntActData1QUANT	=	f_fileIntActQUANT( c_astrIntActIDs[0] )
+c_fileIntActData1PKL	=	f_fileIntActPKL( c_astrIntActIDs[0] )
+
+c_fileIntActData2DAT	=	f_fileIntActDAT( c_astrIntActIDs[1] )
+c_fileIntActData2QUANT	=	f_fileIntActQUANT( c_astrIntActIDs[1] )
+c_fileIntActData2PKL	=	f_fileIntActPKL( c_astrIntActIDs[1] )
+
+c_fileIntActData3DAT	=	f_fileIntActDAT( c_astrIntActIDs[2] )
+c_fileIntActData3QUANT	=	f_fileIntActQUANT( c_astrIntActIDs[2] )
+c_fileIntActData3PKL	=	f_fileIntActPKL( c_astrIntActIDs[2] )
+
+c_IntActData1DAT	=	[['O43187', 'P51617', '1'],
+				['O43187', 'Q9Y616', '1'],
+				['O43187', 'Q9Y4K3', '1'],
+				['O43187', 'Q99836', '1'],
+				['P51617', 'Q9Y616', '1'],
+				['P51617', 'Q9Y4K3', '1'],
+				['P51617', 'Q99836', '1'],
+				['Q9Y616', 'Q9Y4K3', '1'],
+				['Q9Y616', 'Q99836', '1']]	
+c_IntActData1PKL	=	{'platform': 'anti tag coip', 'pmid': '10383454', \
+					'type': 'physical association', 'taxid': '9606'}
+
+c_IntActData1QUANT	= 	[["0.5","1.5"]]
+
+c_IntActData2DAT	=	[['EBI-2011951', 'P13556', '1'],
+				['P13556', 'Q52690', '1'],
+				['P13556', 'Q2MHS1', '1'],
+				['EBI-2011955', 'EBI-2011958', '1']] 
+c_IntActData2PKL	=	{'platform': '2 hybrid',
+ 				 'pmid': '12923097',
+				 'taxid': '1061',
+				 'type': 'physical association'}
+c_IntActData2QUANT	=	[["0.5","1.5"]]
+
+c_IntActData3DAT	=	[['P33517', 'Q03736', '1'],
+				['P33517', 'P84153', '1'],
+				['P33517', 'Q8KRK5', '1']]
+c_IntActData3PKL	=	{'platform': 'x-ray diffraction',
+				 'pmid': '12144789',
+ 				 'taxid': '1063',
+				 'type': 'physical association'}
+c_IntActData3QUANT	= 	[["0.5","1.5"]]
+
+#Test data 
+exec_test( c_dirIntAct, None, [c_fileIntActData1DAT, c_IntActData1DAT], \
+		[c_fileIntActData1QUANT, c_IntActData1QUANT], \
+		[c_fileIntActData2DAT, c_IntActData2DAT], \
+		[c_fileIntActData2QUANT, c_IntActData2QUANT], \
+		[c_fileIntActData3DAT, c_IntActData3DAT], \
+		[c_fileIntActData3QUANT, c_IntActData3QUANT] ) 
+#Test metadata 
+exec_test( c_dirIntAct, lambda f: pickle.load(open(f, "r")), \
+		[c_fileIntActData1PKL, c_IntActData1PKL], \
+		[c_fileIntActData2PKL, c_IntActData2PKL], \
+		[c_fileIntActData3PKL, c_IntActData3PKL] )
 #=====================================================#
 #                       MPIDB
 #=====================================================#
 #multiple datasets
 
+c_astrMPIDBIDs		= ["taxid_1772", "taxid_446", "taxid_899"]
+
+c_dirMPIDB		= sfle.d( arepa.path_arepa( ), c_strMPIDB )
+c_dirMPIDBData		= sfle.d( c_dirMPIDB, sfle.c_strDirData )
+
+c_fileMPIDBData1DAT	= sfle.d( c_dirMPIDBData,c_astrMPIDBIDs[0],c_astrMPIDBIDs[0] + ".dat" )
+c_fileMPIDBData1QUANT	= sfle.d( c_dirMPIDBData,c_astrMPIDBIDs[0],c_astrMPIDBIDs[0] + ".quant" )
+c_fileMPIDBData1PKL	= sfle.d( c_dirMPIDBData,c_astrMPIDBIDs[0],c_astrMPIDBIDs[0] + ".pkl" )
+
+c_fileMPIDBData2DAT	= sfle.d( c_dirMPIDBData,c_astrMPIDBIDs[1],c_astrMPIDBIDs[1] + ".dat" )
+c_fileMPIDBData2QUANT	= sfle.d( c_dirMPIDBData,c_astrMPIDBIDs[1],c_astrMPIDBIDs[1] + ".quant" )
+c_fileMPIDBData2PKL	= sfle.d( c_dirMPIDBData,c_astrMPIDBIDs[1],c_astrMPIDBIDs[1] + ".pkl" )
+
+c_fileMPIDBData3DAT	= sfle.d( c_dirMPIDBData,c_astrMPIDBIDs[2],c_astrMPIDBIDs[2] + ".dat" )
+c_fileMPIDBData3QUANT	= sfle.d( c_dirMPIDBData,c_astrMPIDBIDs[2],c_astrMPIDBIDs[2] + ".quant" )
+c_fileMPIDBData3PKL	= sfle.d( c_dirMPIDBData,c_astrMPIDBIDs[2],c_astrMPIDBIDs[2] + ".pkl" )
+
+c_MPIDBData1DAT		= [["Q9F408", "Q9F409", "1"]] 
+c_MPIDBData1QUANT	= [["0.5", "1.5"]]
+c_MPIDBData1PKL		= {'platform': 'ubiquitin reconstruction',
+ 				'pmid': '12427759',
+ 				'taxid': '1772',
+				'type': 'physical association'}
+
+c_MPIDBData2DAT		= [["O54568","O54635","1"]] 
+c_MPIDBData2QUANT	= [["0.5", "1.5"]]
+c_MPIDBData2PKL		= {'platform': set(['coimmunoprecipitation',
+      				'enzyme linked immunosorbent assay']),
+ 				'pmid': '11401716',
+ 				'taxid': '446',
+ 				'type': 'physical association'}
+
+c_MPIDBData3DAT		= [['P13063', 'P13065', '1']]
+c_MPIDBData3QUANT	= [["0.5", "1.5"]]
+c_MPIDBData3PKL		= {'platform': 'x-ray crystallography',
+				 'pmid': '10378275',
+				 'taxid': '899',
+				 'type': 'physical association'}
+
+#test data 
+exec_test( c_dirMPIDB, None, [c_fileMPIDBData1DAT, c_MPIDBData1DAT],\
+		[c_fileMPIDBData2DAT, c_MPIDBData2DAT],\
+		[c_fileMPIDBData3DAT, c_MPIDBData3DAT],\
+		[c_fileMPIDBData1QUANT, c_MPIDBData1QUANT],\
+		[c_fileMPIDBData2QUANT, c_MPIDBData2QUANT],\
+		[c_fileMPIDBData3QUANT, c_MPIDBData3QUANT] )
+
+#test metadata 
+exec_test( c_dirMPIDB, lambda f: pickle.load( open(f,"r") ), 
+		[c_fileMPIDBData1PKL, c_MPIDBData1PKL],\
+		[c_fileMPIDBData2PKL, c_MPIDBData2PKL],\
+		[c_fileMPIDBData3PKL, c_MPIDBData3PKL] )
 
 #=====================================================#
 #                       RegulonDB 
@@ -171,13 +318,16 @@ exec_test( c_dirBioGrid, lambda f: pickle.load( open(f, "r") ), [c_fileBioGridPK
 c_dirRegulon		= sfle.d( arepa.path_arepa( ), "RegulonDB" )
 c_dirRegulonData	= sfle.d( c_dirRegulon, sfle.c_strDirData ) 
 
-c_RegulonDatLst		= [['AccB', 'accB', '1'], ['AccB', 'accC', '1'], ['AcrR', 'acrA', '1'], ['AcrR', 'acrB', '1']]
+c_RegulonDatLst		= [['AccB', 'accB', '1'],
+			['AccB', 'accC', '1'], 
+			['AcrR', 'acrA', '1'], 
+			['AcrR', 'acrB', '1']]
 c_RegulonQuantLst	= [["0.5", "1.5"]]
 
 c_fileRegulonDat	= sfle.d( c_dirRegulonData, "regulondb.dat" )
 c_fileRegulonQuant	= sfle.d( c_dirRegulonData, "regulondb.quant" ) 
 
-#execute 
+#test data  
 exec_test( c_dirRegulon, None, [c_fileRegulonDat, c_RegulonDatLst], [c_fileRegulonQuant, c_RegulonQuantLst] ) 
 
 #=====================================================#
@@ -204,9 +354,9 @@ c_fileSTRINGtaxidExpressionQuant= sfle.d( c_dirSTRINGtaxidExpression, c_strSTRIN
 					".quant" )
 
 c_dirSTRINGtaxidPtmod		= sfle.d( c_dirSTRINGData, c_strSTRINGtaxidPtmod )
-c_fileSTRINGtaxidPtmodDat	= sfle.d( c_dirSTRINGtaxidExpression, c_strSTRINGtaxidPtmod + \
+c_fileSTRINGtaxidPtmodDat	= sfle.d( c_dirSTRINGtaxidPtmod, c_strSTRINGtaxidPtmod + \
 					".dat" )
-c_fileSTRINGtaxidPtmodQuant	= sfle.d( c_dirSTRINGtaxidExpression, c_strSTRINGtaxidPtmod + \
+c_fileSTRINGtaxidPtmodQuant	= sfle.d( c_dirSTRINGtaxidPtmod, c_strSTRINGtaxidPtmod + \
 					".quant" )
 
 c_STRINGtaxidBindingDat		= [['Mkms_5492', 'Mkms_2727', '0.322'],
