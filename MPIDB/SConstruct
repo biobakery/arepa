@@ -1,0 +1,42 @@
+import arepa
+import os
+import sfle
+import sys
+
+c_iMinimum			= 10
+c_strSufTXT			= ".txt"
+c_strURL			= "http://www.jcvi.org/mpidb/download.php?&pname=&species_txtbox=&species_select=&dbsource=&cvname=&confidence_structure=&confidence_method=&confidence_interologs=&confidence_purification=&confidence_evidences=&submit=Search&__utma=79309195.414799375.1333565465.1333565465.1333565465.1&__utmb=79309195.13.10.1333565465&__utmc=79309195&__utmz=79309195.1333565465.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none)&__unam=fb61bf3-1367eb4bad2-7e187f47-1"
+
+#------------------------------------------------------------------------------ 
+
+c_fileInputTaxIDs	= sfle.d( arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
+c_fileMPIDPTXT		= sfle.d( sfle.c_strDirTmp, "MPIDB.tab" )
+c_fileC			= sfle.d( sfle.c_strDirTmp, "mpidbc" )
+c_fileProg2C		= sfle.d( sfle.c_strDirSrc, "mpidb2c.py" )
+
+
+pE = DefaultEnvironment( )
+
+#===============================================================================
+# Download the  source file
+#===============================================================================
+
+sfle.download( pE, c_strURL, c_fileMPIDPTXT )
+NoClean( c_fileMPIDPTXT )
+
+
+#===============================================================================
+# Process intact.txt into the more compact intactc
+#===============================================================================
+
+afileC = sfle.pipe( pE, c_fileMPIDPTXT, c_fileProg2C,c_fileC, [[False, c_iMinimum], [True, c_fileInputTaxIDs]] )
+
+#===============================================================================
+# Pass the IDs from intactc to child directories
+#===============================================================================
+
+def funcScanner( target, source, env ):
+	for strLine in open( str(source[0]) ):
+		if strLine.startswith( ">" ):
+			env["sconscript_child"]( target, source[0], env, strLine[1:].strip( ) )
+sfle.sconscript_children( pE, afileC, funcScanner, 1, arepa.c_strProgSConstruct )
