@@ -12,7 +12,7 @@ begins with !platform_table_begin
 ends with !platform_table_end '''
 
 c_fileMapping	= sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, "mapping" )
-c_hashHead 	= { k:v for (k,v) in map( lambda x: map(lambda y: y.strip(), x.split(":")),\
+c_hashHead 	= { k:v for (k,v) in map( lambda x: map(lambda y: y.strip(), x.split("%")),\
 		sfle.readcomment( open( c_fileMapping)) ) } if sfle.readcomment(open(c_fileMapping))\
 		else {	
 		"^ID .*? platform"             	: "Affy",

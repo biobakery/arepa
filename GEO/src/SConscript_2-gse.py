@@ -111,7 +111,8 @@ def getGPL( target, source, env ):
 	astrTs, astrSs = ([f.get_abspath( ) for f in a] for a in (target,source))
 	strAnnot		= astrTs[0]
 	strPKL		 	= astrSs[0]
-	strGPLID = metadata.open( open(strPKL) ).get("platform")
+	strGPLID = c_strID.split("-")[1] if len( c_strID.split("-") ) == 2 else \
+		metadata.open( open(strPKL) ).get("platform")
 	listGPL = sfle.readcomment( c_fileGPL )
 	if strGPLID in listGPL:
 		#print "Annotation file exists, downloading ... "
@@ -120,7 +121,7 @@ def getGPL( target, source, env ):
 	else:
 		#print "Annotation file does not exist"
 		with open( strGPLID + ".annot.gz", "w") as outputf:
-			outputf.write(" ")
+			outputf.write("")
 
 fileAnnot = Command( c_fileIDAnnot, c_fileIDPKL, getGPL ) 
 

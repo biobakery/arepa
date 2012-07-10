@@ -1,6 +1,10 @@
 #configuration file for mapping 
-#format is regular expression: column name 
-^ID .*? platform		: Affy
-Entrez Gene Symbol          	: HGNC
-Uniprot .*? Symbol            	: Uniprot/TrEMBL
-^(Entrez)? UniGene Symbol     	: Unigene
+#format is regular expression % column name 
+^ID .*? platform			% Affy
+Entrez Gene Symbol          		% HGNC
+Uniprot .*? Symbol            		% Uniprot/TrEMBL
+^(Entrez)? UniGene Symbol     		% Unigene
+Entrez Unigene Identifier		% Unigene_ID 
+GenBank Accession			% GB_ACC
+Entrez Gene identifier 			% EntrezGene
+GenBank Identifier			% GenBank_ID 
