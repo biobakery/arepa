@@ -39,10 +39,3 @@ def funcCompileTrunk( target, source, env ):
 Command(c_logfilecomp, c_logfilecheck, funcCompileTrunk )
 Default(c_logfilecomp)
 
-
-def funcDownloadHSMappingfile( target, source, env ):
-        strT, astrSs = sfle.ts( target, source )
-        sfle.download( c_fileHSMappingfileURL, strT)
-	return strT
-Command(c_fileHSMappingfile, None, funcDownloadHSMappingfile)
-Default(c_fileHSMappingfile)
