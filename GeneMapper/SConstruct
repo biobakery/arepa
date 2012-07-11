@@ -8,9 +8,14 @@ import sfle
 
 c_URL			= "http://svn.bigcat.unimaas.nl/bridgedb/trunk/"
 c_dirProg		= sfle.d("trunk")
-c_fileBuilder		= sfle.d(c_dirProg, "build.xml")
-#c_progBatchmapper	= sfle.d(c_dirProg, "batchmapper.sh")
-#c_dirMappingfiles	= sfle.d(sfle.c_strDirEtc)
+c_fileBuilder		= File(sfle.d(c_dirProg, "build.xml"))
+c_progBatchmapper	= File(sfle.d(c_dirProg, "batchmapper.sh"))
+c_logfilecheck		= File(sfle.d(sfle.c_strDirTmp, "checkout.log"))
+c_logfilecomp		= File(sfle.d(sfle.c_strDirTmp, "compile.log"))
+
+c_fileHSMappingfileURL	= "http://bridgedb.org/data/gene_database/Hs_Derby_20110601.bridge"
+c_dirMappingfiles       = sfle.d(sfle.c_strDirEtc)
+c_fileHSMappingfile	= File(sfle.d(c_dirMappingfiles, os.path.basename(c_fileHSMappingfileURL))) 
 
 pE = Environment( )
 
@@ -18,7 +23,26 @@ pE = Environment( )
 # Check out last version of the tool and compile
 #===============================================================================
 
-sfle.ex(["svn checkout", c_URL])
-sfle.ex(["ant -buildfile", c_fileBuilder])
+sfle.download(pE, c_fileHSMappingfileURL, c_fileHSMappingfile)
+NoClean(c_fileHSMappingfile)
+
+def funcCheckoutTrunk( target, source, env ):
+        strT, astrSs = sfle.ts( target, source )
+	sfle.ex(["svn checkout", c_URL])
+	return sfle.ex(["echo 'checked out OK' > ", strT])
+Command(c_logfilecheck, c_fileHSMappingfile, funcCheckoutTrunk )
+
+def funcCompileTrunk( target, source, env ):
+        strT, astrSs = sfle.ts( target, source )
+        sfle.ex(["ant -buildfile", c_fileBuilder])
+        return sfle.ex(["echo 'compiled OK' > ", strT])
+Command(c_logfilecomp, c_logfilecheck, funcCompileTrunk )
+Default(c_logfilecomp)
 
 
+def funcDownloadHSMappingfile( target, source, env ):
+        strT, astrSs = sfle.ts( target, source )
+        sfle.download( c_fileHSMappingfileURL, strT)
+	return strT
+#Command(c_fileHSMappingfile, None, funcDownloadHSMappingfile)
+#Default(c_fileHSMappingfile)
