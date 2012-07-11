@@ -44,5 +44,5 @@ def funcDownloadHSMappingfile( target, source, env ):
         strT, astrSs = sfle.ts( target, source )
         sfle.download( c_fileHSMappingfileURL, strT)
 	return strT
-#Command(c_fileHSMappingfile, None, funcDownloadHSMappingfile)
-#Default(c_fileHSMappingfile)
+Command(c_fileHSMappingfile, None, funcDownloadHSMappingfile)
+Default(c_fileHSMappingfile)
