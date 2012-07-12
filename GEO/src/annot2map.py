@@ -44,7 +44,7 @@ if strAnnotGZ:
 		for item in dr:
 			try:
 				outputf.write( "\t".join( [item[k] for k in aOutKeys] ) + "\n" )
-			except KeyError:
+			except Exception:
 				continue  
 else:
 	sys.stdout.write(" ") 
