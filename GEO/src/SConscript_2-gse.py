@@ -15,6 +15,8 @@ if locals( ).has_key( "testing" ):
 c_strID				= arepa.cwd( )
 c_fileGPL			= File( sfle.d( arepa.path_repo( ), sfle.c_strDirTmp, \
 				"gpl.txt" ) )
+c_fileAnnot			= File( sfle.d( arepa.path_repo( ), sfle.c_strDirTmp, \
+				"annot.txt") )
 c_fileInputSConscript		= File( sfle.d( arepa.path_arepa( ), sfle.c_strDirSrc, \
 				"SConscript_pcl-dab.py" ) )
 c_fileProgUnpickle		= File( sfle.d( arepa.path_arepa( ), sfle.c_strDirSrc, \
@@ -113,13 +115,14 @@ def getGPL( target, source, env ):
 	strPKL		 	= astrSs[0]
 	strGPLID = c_strID.split("-")[1] if len( c_strID.split("-") ) == 2 else \
 		metadata.open( open(strPKL) ).get("platform")
-	listGPL = sfle.readcomment( c_fileGPL )
+	listGPL = map( lambda v: v.replace(".annot.gz",""), \
+		sfle.readcomment( c_fileAnnot ) )
 	if strGPLID in listGPL:
-		#print "Annotation file exists, downloading ... "
+		#Annotation file exist, download
 		sfle.ex( ["wget", sfle.d( c_strURLGPL, strGPLID + ".annot.gz" ), "-O", \
 			strAnnot ] )	
 	else:
-		#print "Annotation file does not exist"
+		#Annotation file does not exist, skip download 
 		with open( strGPLID + ".annot.gz", "w") as outputf:
 			outputf.write("")
 

@@ -16,9 +16,14 @@ c_strURLGDS			= c_strURL + "SOFT/GDS/"
 c_strURLGSE			= c_strURL + "SeriesMatrix/"
 c_strURLGPL			= c_strURL + "annotation/platforms/"
 
+c_strHost 			= "ftp.ncbi.nih.gov"
+c_strPathAnnot 			= "pub/geo/DATA/annotation/platforms/"
+
 c_fileInputInclude		= sfle.d( sfle.c_strDirEtc, "include" )
 c_fileInputExclude		= sfle.d( sfle.c_strDirEtc, "exclude" )
 c_fileInputTaxIDs		= sfle.d( arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
+
+c_fileTmpAnnot			= sfle.d( arepa.path_repo( ), sfle.c_strDirTmp, "annot" + c_strSufTXT ) 
 
 c_hashFiles			= {
 				"GDS"			: "gds",
@@ -60,6 +65,17 @@ for strSet, strBase in c_hashFiles.items( ):
 # Save GDS and GSEs for later
 	if strBase != "gpl":
 		afileTXTs += afileCur
+
+# Download List of annotation files 
+def getAnnot( target, source, env ):
+	astrT, astrS = ([f.get_abspath( ) for f in a] for a in (target,source))
+	print astrT, astrS 
+	astrAnnotation = sfle.ftpls( c_strHost, c_strPathAnnot )
+        with open( astrT[0], "w" ) as outputf:
+                outputf.write( "\n".join( astrAnnotation ) )
+
+afileAnnot = Command( c_fileTmpAnnot, None, getAnnot )
+NoClean( afileAnnot )
 
 #===============================================================================
 # Pass the IDs from gds/gse/gpl.txt to child directories

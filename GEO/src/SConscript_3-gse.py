@@ -4,6 +4,7 @@ import arepa
 import sfle
 import sys 
 import ftplib
+import re 
 
 def test( iLevel, strID, hashArgs ):
 	return ( iLevel == 3 ) and ( strID.find( "GSE" ) == 0 )
@@ -37,13 +38,15 @@ Import( "hashArgs" )
 
 def funcDownloadRAW( alistTs ):
 	def nnnModify( strID ):
-        	return strID[0:len(strID)-3] + "nnn/"
+		strStrip = re.findall(r'GSM\d+', strID )[0]	
+        	strNNN = strStrip[0:len(strStrip)-3] + "nnn/"
+		return strNNN, strStrip 
 	for GSMCEL in alistTs:
 		GSMid = str( GSMCEL ).split(".")[0]
-		sfle.download( pE, c_strURLSupp + nnnModify( GSMid ) + GSMid + "/" + str( GSMCEL ) )
-	
-#Get a single RData input file from the CEL files
+		sfle.download( pE, sfle.d( c_strURLSupp, nnnModify( GSMid )[0] ,\
+			nnnModify( GSMid )[1], str(GSMCEL) ) )
 
+#Get a single RData input file from the CEL files
 def funcRawMap( target, source, env ):
         astrTs, astrSs = ([f.get_abspath( ) for f in a] for a in (target, source))
         strOutputRData = astrTs[0]
