@@ -51,10 +51,6 @@ if strTaxa:
 	for astrLine in csv.reader( open( strTaxa ), csv.excel_tab ):
 		setstrTaxa.add( astrLine[1] )
 
-#debugging output 
-#import pickle
-#pickle.dump( setstrTaxa, open("setTaxa.pkl","w") )
-
 pSAX = xml.sax.make_parser( )
 pSAX.setContentHandler( CParser( strType, setstrTaxa ) )
 pSAX.parse( sys.stdin )

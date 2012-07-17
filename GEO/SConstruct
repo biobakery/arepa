@@ -1,4 +1,5 @@
 import arepa
+import os
 import re
 import sfle
 import sys
@@ -8,9 +9,10 @@ c_iMaxTaxa			= 100
 c_strPre			= "_pre"
 c_strSufTXT			= ".txt"
 c_strSufXML			= ".xml"
+c_strAll			= "_all"
 c_strURLLeft			= "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gds&term="
 c_strURLRight			= "[ETYP]&retmax=1000000&usehistory=y"
-c_strURLSum			= "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=gds&query_key=%s&WebEnv=%s"
+c_strURLSum			= "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=gds&retmax=1000000&query_key=%s&WebEnv=%s"
 c_strURL			= "ftp://ftp.ncbi.nih.gov/pub/geo/DATA/"
 c_strURLGDS			= c_strURL + "SOFT/GDS/"
 c_strURLGSE			= c_strURL + "SeriesMatrix/"
@@ -66,16 +68,30 @@ for strSet, strBase in c_hashFiles.items( ):
 	if strBase != "gpl":
 		afileTXTs += afileCur
 
+# Parse XML into gds_all/gse_all/gpl_all.txt (text files containing all ids) 
+def getAll( target, source, env ):
+	stripFw = lambda s: stripFw( s[1:] ) if s.startswith("0") else s
+	astrT, astrS = ([f.get_abspath( ) for f in a] for a in (target,source))
+	strPre = os.path.basename( astrS[0] ).replace(c_strPre + c_strSufXML,"").upper() 
+	lst = re.findall( r'<Id>(\d+)</Id>', open( astrS[0], "r" ).read() )
+	with open( astrT[0], "w" ) as outputf:
+		outputf.write("\n".join( map( lambda t: strPre +\
+			 ( t if strPre=="GDS" else stripFw(t[1:])  ) , lst )))
+
+for item in c_hashFiles.values():
+	Command( sfle.d( sfle.c_strDirTmp, item + c_strAll + c_strSufTXT), \
+		sfle.d( sfle.c_strDirTmp, item + c_strPre + c_strSufXML), getAll ) 	
+
 # Download List of annotation files 
 def getAnnot( target, source, env ):
 	astrT, astrS = ([f.get_abspath( ) for f in a] for a in (target,source))
-	print astrT, astrS 
 	astrAnnotation = sfle.ftpls( c_strHost, c_strPathAnnot )
         with open( astrT[0], "w" ) as outputf:
                 outputf.write( "\n".join( astrAnnotation ) )
 
 afileAnnot = Command( c_fileTmpAnnot, None, getAnnot )
 NoClean( afileAnnot )
+
 
 #===============================================================================
 # Pass the IDs from gds/gse/gpl.txt to child directories
