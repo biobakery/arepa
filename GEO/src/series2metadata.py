@@ -1,5 +1,6 @@
 #!/usr/bin/env python 
 
+import sfle 
 import arepa 
 import csv
 import metadata
@@ -35,10 +36,11 @@ def _stripquotes( strIn ):
 	return strIn
 
 if len( sys.argv ) < 2:
-	raise Exception( "Usage: series2metadata.py <id> [curated.txt] < <series.txt>" )
+	raise Exception( "Usage: series2metadata.py <id> <status> [curated.txt] < <series.txt>" )
 
-strID = sys.argv[1]
-strMetadata = sys.argv[2] if ( len( sys.argv ) > 2 ) else None
+strID 		= sys.argv[1]
+strStatus 	= sys.argv[2]
+strMetadata 	= sys.argv[3] if ( len( sys.argv ) > 3 ) else None
 
 ###### Series Matrix Metadata ######
 
@@ -93,4 +95,7 @@ else:
 			for item in astrHeaders:
 				pMetadata.set( item, [] ) 
 
-pMetadata.save( )
+###### Add Mapping Status and Save ######
+k,v = sfle.readcomment( open( strStatus ) )[0].split("\t")
+pMetadata.update({k:v})
+pMetadata.save()

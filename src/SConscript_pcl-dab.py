@@ -18,6 +18,8 @@ c_fileIDNormPCL		= File( c_strID + "_01norm.pcl" )
 c_fileIDPCL		= File( c_strID + ".pcl" )
 c_fileIDDAB		= File( c_strID + ".dab" )
 c_fileIDQUANT       	= File( c_strID + ".quant" )
+c_fileIDPKL		= File( c_strID + ".pkl" )
+c_fileStatus		= File( "status.txt" )
 
 c_strDirManMap		= sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, c_strManMap ) 
 c_fileIDMappedPCL   	= File( c_strID + "_00mapped.pcl" )
@@ -33,10 +35,12 @@ c_fileMap           	= reduce( lambda x,y: x or y, filter( lambda x: x==c_strID 
 
 #- Gene id mapping
 def funcGeneIdMapping( target, source, env):
-    strT, astrSs = sfle.ts( target, source )
+    astrT, astrSs = ([f.get_abspath( ) for f in a] for a in (target,source))
+    strMappedPCL, strStatus =  astrT[:2]
     strFunc, strDATin, strMapfile  = astrSs[:3]
-    return sfle.ex([ strFunc,strDATin, strT, strMapfile, "[0]", "X", "H"])
-Command( c_fileIDMappedPCL,[c_funcPclIds, c_fileIDRawPCL, c_fileMap], funcGeneIdMapping)
+    return sfle.ex([ strFunc,strDATin, strMappedPCL, strMapfile, "[0]", "X", "H", strStatus])
+Command( [c_fileIDMappedPCL,c_fileStatus],[c_funcPclIds, c_fileIDRawPCL, c_fileMap], \
+	funcGeneIdMapping)
 
 #- Normalize
 def funcIDNormPCL( target, source, env, iMaxLines = 100000 ):
