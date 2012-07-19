@@ -53,7 +53,6 @@ def funcRawMap( target, source, env ):
 	strIn, astrCel = astrSs[0], astrSs[1:]
         return sfle.ex( [sfle.cat( strIn ), " | R --no-save --args", strOutputRData] + astrCel)
 	
-
 #Take the RData file produced by funcRawMap and process
 
 def funcRawProcess( target, source, env ):
@@ -61,8 +60,6 @@ def funcRawProcess( target, source, env ):
 	strIn, strRData, strExpMetadata, strCondMetadata = astrSs[:4]
         return sfle.ex( (sfle.cat( strIn ), " | R --no-save --args", strRData, strT, \
 		c_strPPfun, strExpMetadata, strCondMetadata ) )
-
-#Execute
 
 #if RAW files exist, process
 if c_listTs:

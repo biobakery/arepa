@@ -1,3 +1,8 @@
+#!/usr/bin/env python 
+'''
+Microarray pipeline -- gene mapping, normalization, imputation, 
+co-expression network construction
+'''
 import sys
 import csv
 import pickle
@@ -5,19 +10,26 @@ import sfle
 import arepa
 import os
 import metadata
+import glob 
 
+c_strSufMap		= ".map"
+c_strManMap		= "manual_mapping"
 c_fileIDNormPCL		= File( c_strID + "_01norm.pcl" )
-c_fileIDPCL			= File( c_strID + ".pcl" )
-c_fileIDDAB			= File( c_strID + ".dab" )
-c_fileIDQUANT       = File( c_strID + ".quant" )
+c_fileIDPCL		= File( c_strID + ".pcl" )
+c_fileIDDAB		= File( c_strID + ".dab" )
+c_fileIDQUANT       	= File( c_strID + ".quant" )
 
-c_fileIDMappedPCL   = File( c_strID + "_00mapped.pcl" )
+c_strDirManMap		= sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, c_strManMap ) 
+c_fileIDMappedPCL   	= File( c_strID + "_00mapped.pcl" )
 
 ## Gene Mapper:
-c_path_GeneMapper   = sfle.d( arepa.path_arepa(), "GeneMapper")
-c_funcPclIds        = sfle.d( c_path_GeneMapper, sfle.c_strDirSrc, "bridgemapper.py" )
-c_fileMap           = File(c_strID + "_map.txt")
+c_path_GeneMapper   	= sfle.d( arepa.path_arepa(), "GeneMapper")
+c_funcPclIds        	= sfle.d( c_path_GeneMapper, sfle.c_strDirSrc, "bridgemapper.py" )
 
+# If manually curated mapping file exists, use. Otherwise, use automatically generated one. 
+c_fileMap           	= reduce( lambda x,y: x or y, filter( lambda x: x==c_strID + c_strSufMap,\
+				glob.glob(sfle.d(c_strDirManMap,"*" + c_strSufMap)) ),None ) \
+				or File(c_strID + "_map.txt")
 
 #- Gene id mapping
 def funcGeneIdMapping( target, source, env):
@@ -34,8 +46,6 @@ def funcIDNormPCL( target, source, env, iMaxLines = 100000 ):
 	return ( sfle.ex( "Normalizer -t pcl -T medmult < " + strS, strT )
 		if ( iLC < iMaxLines ) else sfle.ex( "head -n 3 < " + strS, strT ) )
 
-#BUGBUG: Default behavior for mapping should be returning the same table 
-# not returning an empty table -- for SCons's sake. 
 Command( c_fileIDNormPCL, c_fileIDMappedPCL, funcIDNormPCL )
 
 #- Impute
