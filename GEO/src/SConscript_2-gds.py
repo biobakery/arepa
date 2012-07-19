@@ -20,6 +20,7 @@ c_fileInputSOFTGZ		= File( "../" + c_strGDS + ".soft.gz" )
 c_filePPfun			= File( sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, "preprocess"))
 c_strPPfun 			= sfle.readcomment( c_filePPfun )[0]
 
+c_fileStatus			= File( "status.txt" )
 c_fileIDMap			= File( c_strID + "_map.txt" )
 c_fileIDPKL			= File( c_strID + ".pkl" )
 c_fileGPLTXTGZ			= File( c_strGPL + ".annot.gz" )
@@ -66,7 +67,7 @@ sfle.pipe( pE, c_fileGPLTXTGZ, c_fileProgAnnot2Map, c_fileIDMap )
 
 #Get metadata from soft file 
 sfle.pipe( pE, c_fileInputSOFTGZ, c_fileProgSOFT2Metadata, c_fileIDPKL,
-	[[True, c_fileGPLTXTGZ]] )
+	 [[True, c_fileStatus]] + [[True, c_fileGPLTXTGZ]] )
 
 #Produce pcl files 
 sfle.pipe( pE, c_fileInputSOFTGZ, c_fileProgSOFT2PCL, c_fileIDRawPCL,

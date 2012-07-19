@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import sfle
 import arepa
 import gzip
 import metadata
@@ -11,7 +12,8 @@ def metadatum( funcMetadata, strValue ):
 
 		hashOut.setdefault( strID, set() ).add( strValue )
 
-astrGPLGZs = sys.argv[1:]
+strStatus 	= sys.argv[1]
+astrGPLGZs	= sys.argv[2:]
 
 pSOFT = soft.CSOFT( )
 for strGPLGZ in astrGPLGZs:
@@ -28,4 +30,8 @@ for pDS in pSOFT.get( "DATASET" ).values( ):
 	pMetadata.conditions( pDS.get_attribute( "dataset_sample_count" ) )
 	pMetadata.platform( pDS.get_attribute( "dataset_platform" ) )
 	pMetadata.taxid( arepa.org2taxid( pDS.get_attribute( "dataset_sample_organism" ) ) )
+
+###### Add Mapping Status and Save ######
+k,v = sfle.readcomment( open( strStatus ) )[0].split("\t")
+pMetadata.update({k:v})
 pMetadata.save( sys.stdout )
