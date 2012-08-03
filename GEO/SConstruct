@@ -7,16 +7,22 @@ import urllib
 
 c_iMaxTaxa			= 100
 c_strPre			= "_pre"
+c_strRet			= "_ret"
 c_strSufTXT			= ".txt"
 c_strSufXML			= ".xml"
 c_strAll			= "_all"
 c_strURLLeft			= "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gds&term="
 c_strURLRight			= "[ETYP]&retmax=1000000&usehistory=y"
-c_strURLSum			= "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=gds&retmax=1000000&query_key=%s&WebEnv=%s"
+c_strURLSum			= "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=gds&retstart=%s&retmax=1000000&query_key=%s&WebEnv=%s"
 c_strURL			= "ftp://ftp.ncbi.nih.gov/pub/geo/DATA/"
 c_strURLGDS			= c_strURL + "SOFT/GDS/"
 c_strURLGSE			= c_strURL + "SeriesMatrix/"
 c_strURLGPL			= c_strURL + "annotation/platforms/"
+
+c_strType			= "type"
+c_strCount			= "count"
+c_strQuery			= "query_key"
+c_strWebEnv			= "WebEnv"
 
 c_strHost 			= "ftp.ncbi.nih.gov"
 c_strPathAnnot 			= "pub/geo/DATA/annotation/platforms/"
@@ -34,6 +40,7 @@ c_hashFiles			= {
 				}		
 
 c_fileProgXML2TXT		= sfle.d( sfle.c_strDirSrc, "xml2txt.py" )
+c_fileProgXMLMerge		= sfle.d( sfle.c_strDirSrc, "xmlmerge.py" )
 
 pE = DefaultEnvironment( )
 
@@ -41,24 +48,47 @@ pE = DefaultEnvironment( )
 # Download the lists of GDS, GSE, and GPL IDs
 #===============================================================================
 
+#First step will be to take id.xml and produce id_ret.txt containing relevant 
+#information for the pipe. Then 
+# cat id1.xml id2.xml id3.xml ... > id.xml 
+
 afileTXTs = []
 for strSet, strBase in c_hashFiles.items( ):
+	hashRet = {c_strCount: None, c_strQuery: None, c_strWebEnv: None}
 	strOut = sfle.d( sfle.c_strDirTmp, strBase )
+	strOutRet = strOut + c_strRet
 	afilePreXMLs = sfle.download( pE, c_strURLLeft + strSet + c_strURLRight,
 		strOut + c_strPre + c_strSufXML, False, False )
 	NoClean( afilePreXMLs )
-
 	def funcXML( target, source, env ):
 		strT, astrSs = sfle.ts( target, source )
-		strKey = strEnv = None
+		strCount = strKey = strEnv = None
 		for strLine in open( astrSs[0] ):
+			cmtch = re.search( r'<Count>(\d+)</Count>', strLine )
+			if cmtch:
+				strCount = cmtch.groups( )[0]
+				hashRet[c_strCount] = strCount
 			mtch = re.search( r'QueryKey>(\d+)<.*WebEnv>([^<]+)<', strLine )
 			if mtch:
 				strKey, strEnv = mtch.groups( )
+				hashRet[c_strQuery] = strKey 
+				hashRet[c_strWebEnv] = strEnv 
 				break
-		return ( sfle.download( env, c_strURLSum % (strKey, strEnv), strT, False, False, True ) if
-			( strKey and strEnv ) else 1 )
-	afileXMLs = Command( strOut + c_strSufXML, afilePreXMLs, funcXML )
+		#return ( sfle.download( env, c_strURLSum % (strKey, strEnv), strT, False, False, True ) if
+		#	( strKey and strEnv ) else 1 )
+		with open( strT, "w" ) as outputf:
+			outputf.write( "\n".join( map( lambda a: a[0]+"\t"+a[1], hashRet.items() ) ) )
+		#return sfle.pipe( pE, None, astrSs[1], strT, [[False, strBase]] + \
+		#	[[False, strCount]] + [[False, strKey]] + [[False, strEnv]] )
+	
+	afileRets = Command( strOutRet + c_strSufTXT, afilePreXMLs, funcXML )
+	#afileXMLs = Command( strOut + c_strSufXML, afilePreXMLs + [c_fileProgXMLMerge], funcXML )
+	NoClean( afileRets )	
+	def funcMergeXML( target, source, env ):
+		strT, astrSs = sfle.ts( target, source )
+		strProg, strRet = astrSs
+		sfle.ex(["python", strProg, strRet, os.path.basename(strRet).replace("_ret.txt","") ])
+	afileXMLs = Command( strOut + c_strSufXML, [c_fileProgXMLMerge,afileRets[0]], funcMergeXML )
 	NoClean( afileXMLs )
 
 # Process XML into the more compact gds/gse/gpl.txt

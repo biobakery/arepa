@@ -1,15 +1,13 @@
 #!/usr/bin/env python 
-
+''' parse mapping files
+begins with !platform_table_begin 
+ends with !platform_table_end '''
 import sfle 
 import glob
 import csv  
 import sys 
 import re 
 import arepa 
-
-''' parse mapping files
-begins with !platform_table_begin 
-ends with !platform_table_end '''
 
 c_fileMapping	= sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, "mapping" )
 c_hashHead 	= { k:v for (k,v) in map( lambda x: map(lambda y: y.strip(), x.split("%")),\
@@ -18,7 +16,11 @@ c_hashHead 	= { k:v for (k,v) in map( lambda x: map(lambda y: y.strip(), x.split
 		"^ID .*? platform"             	: "Affy",
 		"Entrez Gene Symbol"       	: "HGNC",
 		"Uniprot .*? Symbol"  		: "Uniprot/TrEMBL",
-		"^(Entrez)? UniGene Symbol"	: "Unigene"
+		"^(Entrez)? UniGene Symbol"	: "Unigene",	
+		"Entrez Unigene Identifier"     : "Unigene_ID",
+		"GenBank Accession"             : "GB_ACC",
+		"Entrez Gene identifier"        : "EntrezGene",
+		"GenBank Identifier"            : "GenBank_ID"
 		}
 
 strAnnotGZ = sys.stdin.read()

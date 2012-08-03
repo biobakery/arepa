@@ -9,11 +9,13 @@ import sfle
 c_URL			= "http://svn.bigcat.unimaas.nl/bridgedb/trunk/"
 c_dirProg		= sfle.d("trunk")
 c_dirKegg		= sfle.d(arepa.path_repo( ), sfle.c_strDirEtc, "kegg" )
+c_dirUniprotKO		= sfle.d(arepa.path_repo( ), sfle.c_strDirEtc, "uniprotko" )
 c_fileBuilder		= File(sfle.d(c_dirProg, "build.xml"))
 c_progBatchmapper	= File(sfle.d(c_dirProg, "batchmapper.sh"))
 c_logfilecheck		= File(sfle.d(sfle.c_strDirTmp, "checkout.log"))
 c_logfilecomp		= File(sfle.d(sfle.c_strDirTmp, "compile.log"))
 c_fileGZKegg		= File(sfle.d( c_dirKegg, "kegg.gz" ) )
+c_fileUniprotKO		= File(sfle.d( c_dirUniprotKO, "uniprotko.gz" )) 
 
 c_fileHSMappingfileURL	= "http://bridgedb.org/data/gene_database/Hs_Derby_20110601.bridge"
 c_dirMappingfiles       = sfle.d(sfle.c_strDirEtc)
@@ -44,4 +46,6 @@ Command(c_logfilecomp, c_logfilecheck, funcCompileTrunk )
 
 #unzip Kegg file 
 sfle.ex(["unzip",c_fileGZKegg, "-d", c_dirKegg])
-
+#unzip UniprotKO file 
+sfle.ex(["unzip",c_fileUniprotKO, "-d", c_dirUniprotKO])
+ 

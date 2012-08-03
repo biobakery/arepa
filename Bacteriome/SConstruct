@@ -3,9 +3,6 @@ import os
 import sys
 import sfle
 
-
-#------------------------------------------------------------------------------
-
 c_URL			= "http://www.compsysbio.org/bacteriome/dataset/combined_interactions.txt"
 c_strInputTaxIDs	= sfle.d( arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
 c_strFileBactTXT        = File(sfle.d( sfle.c_strDirTmp, os.path.basename(c_URL)))
@@ -31,9 +28,6 @@ pE = Environment( )
 #===============================================================================
 sfle.download( pE,c_URL,c_strFileBactTXT )
 NoClean( c_strFileBactTXT )
-
-
-#===============================================================================
 
 def funcBacteriomeExtracter(target, source, env):
 	strT, astrSs = sfle.ts( target, source )
