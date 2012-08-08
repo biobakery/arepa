@@ -76,12 +76,12 @@ for strSet, strBase in c_hashFiles.items( ):
 		astrOutput = [sfle.d(sfle.c_strDirTmp,geo_id + str(i) + c_strSufXML) for i in range(1,len(count_list)+1)]
 		query_list = zip( astrOutput, count_list, [strKey] * len(count_list), [strEnv] * len(count_list) )
 
-		# Download 
+		#Download temporary files 
 		for astr in query_list:
 			strItemTemp, strItemCount, strItemQuery, strItemWeb = astr
         		sfle.ex( ["curl", "-g", "-f", "-z", '"' + strItemTemp +  '"', '"' + c_strURLSum % (strItemCount,strItemQuery,strItemWeb) + '"', ">", strItemTemp] )
 
-		#Save 
+		#Merge XMLs and save  
 		with open( strT,"w" ) as idXML:
 			astrOutTemp = zip(*query_list)[0]
 			strHeader = "".join(open(astrOutTemp[0],"r").readlines()[:3])
