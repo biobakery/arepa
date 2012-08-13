@@ -1,0 +1,52 @@
+"""
+Transates RST README.txt document into 
+web page, pdf file included with figures 
+and all pertinent information 
+"""
+
+import sfle
+
+c_fileProgRST2HTML	= "rst2html.py" 
+c_fileProgRST2LATEX	= "rst2latex.py"
+
+c_fileProgPDFLATEX	= "pdflatex"
+
+c_fileTXTREADME		= "README.txt"
+c_fileHTMLREADME	= "README.html"
+c_fileLATEXREADME	= "README.tex"
+c_filePDFREADME		= "README.pdf"
+
+c_hashProgOutput	= { c_fileHTMLREADME: c_fileProgRST2HTML, 
+			c_fileLATEXREADME: c_fileProgRST2LATEX, 
+			c_filePDFREADME: c_fileProgPDFLATEX }
+
+pE = DefaultEnvironment( )
+
+def transform( target, source, env ): 
+	strT, astrSs = sfle.ts( target, source )
+	strTXT =  astrSs[0]
+	sfle.ex([c_hashProgOutput[strT], strTXT, strT ])
+
+def pdflatex( target, source, env ):
+	strT, astrSs = sfle.ts( target, source )
+	strTEX = astrSs[0]
+	sfle.ex( [c_fileProgPDFLATEX, strTEX] )
+
+#============================================#
+# TXT to HTML
+#============================================#
+
+afileHTML = Command( c_fileHTMLREADME, [c_fileTXTREADME], transform )
+
+#============================================#
+# TXT to TEX
+#============================================#
+
+afileTEX = Command( c_fileLATEXREADME, [c_fileTXTREADME, \
+	afileHTML[0]], transform )
+
+#============================================#
+# TEX to PDF 
+#============================================#
+
+Command( c_filePDFREADME, [c_fileLATEXREADME], pdflatex )
