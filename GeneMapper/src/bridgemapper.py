@@ -201,5 +201,6 @@ else:
     hashMeta.update({"mapped":False})
 
 #Save Metadata
-with open( c_fileStatus, "w" ) as outputf:
-	outputf.write( "\t".join( ["mapped",str(hashMeta.get("mapped"))] ) )
+if c_fileStatus!="None":
+	with open( c_fileStatus, "w" ) as outputf:
+		outputf.write( "\t".join( ["mapped",str(hashMeta.get("mapped"))] ) )

@@ -115,7 +115,7 @@ def funcGeneIdMapping( target, source, env):
                 c_mappingfile = mapping
                 break
     ## START FIND TAXONOMICAL CHILDREN MAPPINGFILE
-    return sfle.ex([ strFunc, strDATin, strT, c_mappingfile,"[0,1]", "Kg", "Ck"])
+    return sfle.ex([ strFunc, strDATin, strT, c_mappingfile,"[0,1]", "Kg", "Ck","None"])
 #Command(c_fileIDMapDAT, [c_funcGeneMapper, c_fileIDDAT], funcGeneIdMapping)
 
 
@@ -123,7 +123,7 @@ def funcGeneIdMapping2( target, source, env):
     strT, astrSs = sfle.ts( target, source )
     strFunc, strDATin = astrSs[:2]
     sys.stderr.write("+++ GENE ID Mapping +++ \n")
-    return sfle.ex([ strFunc, strDATin, strT, c_fileMappingHuman,"[0,1]", "S", "Ck"])
+    return sfle.ex([ strFunc, strDATin, strT, c_fileMappingHuman,"[0,1]", "S", "Ck","None"])
 Command(c_fileIDMapDAT, [c_funcGeneMapper, c_fileIDDAT], funcGeneIdMapping2)
 
 

@@ -100,8 +100,8 @@ def funcGeneIdMapping( target, source, env):
     c_mappingfilename = func_GetMappingfileFromDir(c_Taxa) #Normal mapping in Human: func_GetMappingfile(c_Taxa)
     c_mappingfile = sfle.d(c_path_Mappingfiles, c_mappingfilename)
     ## END DETERMINE MAPPINGFILE
-    sfle.ex([ strFunc, strDATin, strT, c_mappingfile,"0", "S", "Ck"])
-    return sfle.ex([ strFunc, strT, strT, c_mappingfile,"1", "S", "Ck"])
+    sfle.ex([ strFunc, strDATin, strT, c_mappingfile,"0", "S", "Ck",""])
+    return sfle.ex([ strFunc, strT, strT, c_mappingfile,"1", "S", "Ck",""])
 Command(c_fileIDMapDAT, [c_funcGeneMapper, c_fileIDDAT, c_fileIDPKL], funcGeneIdMapping)
 
 

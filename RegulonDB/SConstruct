@@ -43,7 +43,7 @@ Command( c_fileOutDAT, [c_strProgRegDB,c_strFileRegDBTXT], funcRegulonDBExtracte
 def funcGeneIdMapping( target, source, env):
         strT, astrSs = sfle.ts( target, source )
         strFunc, strDATin = astrSs[:2]
-        return sfle.ex([ strFunc,strDATin, strT, c_strMappingfileEcoli, "[0,1]", "H", "Ck"]) 
+        return sfle.ex([ strFunc,strDATin, strT, c_strMappingfileEcoli, "[0,1]", "H", "Ck","None"]) 
 Command( c_fileMapDAT,[c_funcGeneMapper, c_fileOutDAT ], funcGeneIdMapping)
 
 #def funcDAB(target, source, env):
