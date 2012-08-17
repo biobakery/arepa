@@ -2,6 +2,7 @@ import arepa
 import os
 import sys
 import sfle
+import pickle
 
 c_URL			= "http://www.compsysbio.org/bacteriome/dataset/combined_interactions.txt"
 c_strInputTaxIDs	= sfle.d( arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
@@ -15,11 +16,13 @@ c_fileOutDAT             = File(sfle.d( sfle.c_strDirData, "bacteriome.dat" ))
 c_fileMapDAT        	= File(sfle.d( sfle.c_strDirData, "bacteriome_mapped.dat" ))
 c_path_GeneMapper       = sfle.d( arepa.path_arepa(), "GeneMapper")
 c_funcGeneMapper        = sfle.d( c_path_GeneMapper, sfle.c_strDirSrc, "bridgemapper.py" )
-c_strMappingfileEcoli   = sfle.d(sfle.c_strDirEtc,"511145_eco_ko_uniprot.map")
+c_strMappingfileEcoli   = sfle.d(arepa.path_arepa(), "GeneMapper", sfle.c_strDirEtc, "uniprotko","511145_eco_ko_uniprot.map")
 
-c_fileOutDAB             = File(sfle.d( sfle.c_strDirData,  File( sfle.rebase(c_fileMapDAT, ".dat", ".dab" ))))
-c_fileOutQUANT           = File(sfle.d( sfle.c_strDirData,  File( sfle.rebase(c_fileMapDAT, ".dat", ".quant" ))))
+c_fileInMeta		= sfle.d( arepa.path_repo(), sfle.c_strDirEtc, "bacteriome.txt" )
 
+c_fileOutDAB            = File(sfle.d( sfle.c_strDirData,  File( sfle.rebase(c_fileMapDAT, ".dat", ".dab" ))))
+c_fileOutQUANT          = File(sfle.d( sfle.c_strDirData,  File( sfle.rebase(c_fileMapDAT, ".dat", ".quant" ))))
+c_fileOutPKL		= File(sfle.d( sfle.c_strDirData, "bacteriome.pkl" ))		 
 
 pE = Environment( )
 
@@ -52,6 +55,15 @@ def funcDAB(target, source, env):
 		return sfle.ex([" Dat2Dab -o", strT, "-i", fileOut])
 Command( c_fileOutDAB, [c_fileOutDAT,c_fileMapDAT], funcDAB )
 
+
+def funcMeta( target, source, env ):
+	strT, astrSs = sfle.ts( target, source )
+	strS = astrSs[0]
+	with open( strT,"wb" ) as outputf:
+		pickle.dump({k:v for k,v in map( lambda k: k.split("\t"), sfle.readcomment( strS ) )},\
+			outputf	)
+Command( c_fileOutPKL, [c_fileInMeta], funcMeta )
+Default( c_fileOutPKL )
 
 def funcQUANT( target, source, env ):
         strT, astrSs = sfle.ts( target, source )

@@ -1,0 +1,6 @@
+taxid	83333
+type	regulatory network interaction
+title	RegulonDB
+gloss	Escherichia coli K12 Transcriptional Network
+conditions	4005
+url	http://regulondb.ccg.unam.mx/data/network_tf_gene.txt

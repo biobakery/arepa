@@ -157,6 +157,7 @@ def scanner( fileExclude = None, fileInclude = None ):
 #Get list of GSM ids for processing raw files in the next step 
 afileIDsTXT = sfle.pipe( pE, c_fileIDSeriesTXTGZ, c_fileProgSeries2GSM, c_fileTXTGSM ) 
 
-#Run RAW pipeline 
+#Run RAW pipeline
+# if configuration file says so, run  
 afileIDsRaw = sfle.sconscript_children( pE, afileIDsTXT , scanner( ), 3, \
 	arepa.c_strProgSConstruct, hashArgs )

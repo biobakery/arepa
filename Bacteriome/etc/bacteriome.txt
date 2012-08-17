@@ -1,0 +1,7 @@
+taxid	83333
+type	protein interaction
+title	Bacteriome
+gloss	Bacterial Protein Interaction Database
+conditions	3888
+url	http://www.compsysbio.org/bacteriome/dataset/combined_interactions.txt
+

@@ -2,7 +2,7 @@ import arepa
 import os
 import sys
 import sfle
-
+import pickle
 
 #------------------------------------------------------------------------------
 
@@ -11,9 +11,13 @@ c_strInputTaxIDs	= sfle.d( arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
 c_strFileRegDBTXT       = File(sfle.d( sfle.c_strDirTmp, os.path.basename(c_URL)))
 c_strProgRegDB  	= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "regulondb.py" ) )
 
-c_fileOutDAT             = sfle.d( sfle.c_strDirData, "regulondb.dat" )
-c_fileOutDAB             = sfle.d( sfle.c_strDirData,  File( sfle.rebase(c_fileOutDAT, ".dat", ".dab" )))
-c_fileOutQUANT           = sfle.d( sfle.c_strDirData,  File( sfle.rebase(c_fileOutDAT, ".dat", ".quant" )))
+c_fileInMeta		= sfle.d( sfle.c_strDirEtc, "regulondb.txt" )
+
+c_fileOutDAT            = sfle.d( sfle.c_strDirData, "regulondb.dat" )
+c_fileOutDAB            = sfle.d( sfle.c_strDirData,  File( sfle.rebase(c_fileOutDAT, ".dat", ".dab" )))
+c_fileOutQUANT          = sfle.d( sfle.c_strDirData,  File( sfle.rebase(c_fileOutDAT, ".dat", ".quant" )))
+c_fileOutPKL		= sfle.d( sfle.c_strDirData, "regulondb.pkl" )
+
 
 #For GeneMapper:
 c_fileMapDAT            = File(sfle.d( sfle.c_strDirData, "regulondb_mapped.dat" ))
@@ -61,6 +65,15 @@ def funcDAB(target, source, env):
                 return sfle.ex([" Dat2Dab -o", strT, "-i", fileOut])
 Command( c_fileOutDAB, [c_fileOutDAT,c_fileMapDAT], funcDAB )
 
+
+def funcMeta( target, source, env ):
+        strT, astrSs = sfle.ts( target, source )
+        strS = astrSs[0]
+        with open( strT,"wb" ) as outputf:
+                pickle.dump({k:v for k,v in map( lambda k: k.split("\t"), sfle.readcomment( strS ) )},\
+                        outputf )
+Command( c_fileOutPKL, [c_fileInMeta], funcMeta )
+Default( c_fileOutPKL )
 
 def funcQUANT( target, source, env ):
         strT, astrSs = sfle.ts( target, source )
