@@ -58,8 +58,10 @@ def funcRawMap( target, source, env ):
 def funcRawProcess( target, source, env ):
 	strT, astrSs = sfle.ts(target, source)
 	strIn, strRData, strExpMetadata, strCondMetadata = astrSs[:4]
-        return sfle.ex( (sfle.cat( strIn ), " | R --no-save --args", strRData, strT, \
-		c_strPPfun, strExpMetadata, strCondMetadata ) )
+	iRet = sfle.ex( (sfle.cat(strIn), "--no-save", "--args", strRData, strT, c_strPPfun, strExpMetadata, strCondMetadata) )
+	if iRet:
+		iRet = sfle.ex( (sfle.cat( strIn ), " | R --no-save --args", c_strFilePCL, strT, c_strPPfun, strExpMetadata, strCondMetadata ) )
+	return iRet
 
 #if RAW files exist, process
 if c_listTs:
