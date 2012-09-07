@@ -28,7 +28,7 @@ c_destGeneId 		= sys.argv[6]
 c_fileStatus		= sys.argv[7]
 
 #Remove the delimiter from the list of strings so that we end up with only the acutal columns in the list:
-c_columnToMap = filter( lambda a: a != (" " or "," or ";"), c_columnToMap[1:-1] )
+c_columnToMap = filter( lambda a: a != ",", c_columnToMap[1:-1] )
 
 c_path_GeneMapper 	= sfle.d( arepa.path_arepa(), "GeneMapper")
 c_path_geneidmapper 	= sfle.d(c_path_GeneMapper, "trunk", "batchmapper.sh")
@@ -157,7 +157,8 @@ if os.path.exists(c_inputfile) and os.stat(c_inputfile)[6]!=0:
     if os.path.exists(c_mappingfile) and os.stat(c_mappingfile)[6]!=0:
         table_in = readTable(c_inputfile)
         table_in_columns = len(table_in[0])
-        if table_in_columns > len(c_columnToMap):
+	#sys.stderr.write("\n" +  str( table_in_columns ) + "," + str( c_columnToMap  ) + "\n" )
+        if table_in_columns >= len(c_columnToMap):
             for col in c_columnToMap:
                 if table_in != []:
                     col = int(col)

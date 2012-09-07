@@ -23,7 +23,7 @@ c_fileOutPKL		= sfle.d( sfle.c_strDirData, "regulondb.pkl" )
 c_fileMapDAT            = File(sfle.d( sfle.c_strDirData, "regulondb_mapped.dat" ))
 c_path_GeneMapper       = sfle.d( arepa.path_arepa(), "GeneMapper")
 c_funcGeneMapper        = sfle.d( c_path_GeneMapper, sfle.c_strDirSrc, "bridgemapper.py" )
-c_strMappingfileEcoli   = sfle.d( arepa.path_repo( ), sfle.c_strDirEtc,"511145_eco_colibri-eco.list.map")
+c_strMappingfileEcoli   = sfle.d( c_path_GeneMapper, sfle.c_strDirEtc, "uniprotko","511145_eco_colibri-eco.list.map")
 
 
 pE = Environment( )
