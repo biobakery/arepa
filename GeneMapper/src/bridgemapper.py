@@ -30,10 +30,13 @@ c_fileStatus		= sys.argv[7]
 #Remove the delimiter from the list of strings so that we end up with only the acutal columns in the list:
 c_columnToMap = filter( lambda a: a != ",", c_columnToMap[1:-1] )
 
+c_generatorNum		= (i for i in range(1,len(c_columnToMap)+1))
+
 c_path_GeneMapper 	= sfle.d( arepa.path_arepa(), "GeneMapper")
 c_path_geneidmapper 	= sfle.d(c_path_GeneMapper, "trunk", "batchmapper.sh")
 c_mappingfile 		= c_mappingfilein 
 c_path_mappingfiles 	= os.path.dirname(c_mappingfile)
+c_path_inputfile	= os.path.dirname(c_inputfile)
 
 if c_mappingfile.endswith(".bridge"):
     c_mappingflag = "-g"
@@ -84,8 +87,11 @@ def writeEmptyFile(txtfile):
 # GENE ID MAPPING: convert geneids_in into geneids_out
 #########################################################
 def convertGeneIds (geneids, mapfile):
-    inputfile = sfle.d(c_path_mappingfiles, 'geneids.txt') 
-    outputfile = sfle.d(c_path_mappingfiles, 'geneids_mapped.txt') 
+    iCol = next(c_generatorNum)
+    #inputfile = sfle.d(c_path_mappingfiles, 'geneids.txt') 
+    inputfile = sfle.d(c_path_inputfile, 'geneids' + str(iCol) + '.txt')
+    outputfile = sfle.d(c_path_inputfile, 'geneids' + str(iCol) + '_mapped.txt')	
+    #outputfile = sfle.d(c_path_mappingfiles, 'geneids_mapped.txt') 
     saveColumnAsTxtFile (geneids, inputfile)
     sfle.ex([c_path_geneidmapper, " -i ", inputfile, " -is",c_origGeneId , \
 	" -os ",c_destGeneId, " -o ",outputfile, c_mappingflag , mapfile ," -mm "])
@@ -104,19 +110,24 @@ def replaceGeneIdsInPCLMatrix (matrix, vec, col):
 #########################################################
 # Handling NxM geneids 
 #########################################################
-def handleNxMgenes (matrix_in, pattern, col):
+def handleNxMgenes(matrix_in, pattern):
     matrix_out = []
+    iCol = len(matrix_in[0])
     for row in matrix_in:
         crow = row
-        gene = crow[col]
-        if gene.find(pattern) != -1:
-            continue
-        elif gene == "":  
-            continue
-        else:
-            matrix_out.append(crow)
+        #gene = crow[col]
+	for i in range(iCol):
+	    gene = crow[i]
+            if gene.find(pattern) != -1:
+                break
+            elif gene.strip() == "":  
+                break
+            elif i== (iCol-1):
+                matrix_out.append(row)
+	    else:
+	        continue 
     return matrix_out
-    
+
 def handleDoubleEntries (matrix_in):
     vec = []
     vec2 = []
@@ -144,7 +155,39 @@ def handleDoubleEntries (matrix_in):
         matrix_out.append(v.split(pattern))
     return matrix_out
 
+def isEqual( tuple1, tuple2 ):
+    id1,id2 = list(tuple1[:2]),list(tuple2[:2])
+    if id1 == id2:
+        return True
+    elif id1 == [id2[1],id2[0]]:
+        return True
+    else:
+        return False 
 
+def handleDoubleEntries1(matrix_in):
+    matrix_out = []
+    def combo2(n):
+        return dict([('%d,%d'%(i,j),(i,j)) for j in range(1,n+1) for i in range(1,j)])
+    def populate_double(mat):
+        label_out = []
+        for i,j in combo2(len(mat)).values():
+            if isEqual(mat[i],mat[j]):
+                label_out.append([i,j])
+        return label_out
+    def reduce_list(l):
+        outl = []
+        for item in l:
+            if not(item[0] in outl): outl.append(item[0])
+            else:
+                if not(item[1] in outl): outl.append(item[1])
+        return outl 
+    delete_list = reduce_list(populate_double(matrix_in))
+    sys.stderr.write("\n".join(lambda v: str(v), delete_list))
+    for iRow in range(len(matrix_in)):
+        if not(iRow in delete_list):
+            matrix_out.append(matrix_in[iRow])
+    return matrix_out 
+        
 ###########################################################
 # Getting the probe set ids from the pcl file: geneids_in 
 ###########################################################
@@ -157,29 +200,43 @@ if os.path.exists(c_inputfile) and os.stat(c_inputfile)[6]!=0:
     if os.path.exists(c_mappingfile) and os.stat(c_mappingfile)[6]!=0:
         table_in = readTable(c_inputfile)
         table_in_columns = len(table_in[0])
-	#sys.stderr.write("\n" +  str( table_in_columns ) + "," + str( c_columnToMap  ) + "\n" )
         if table_in_columns >= len(c_columnToMap):
             for col in c_columnToMap:
+		#fix this here 
+		#table_in = readTable(c_inputfile)
+		#fix this here 
                 if table_in != []:
                     col = int(col)
                     table_in_transp = transpose(table_in)
+		    sys.stderr.write("the length of table_in is " + str(len(table_in)))
+		    sys.stderr.write("the length of table_in_transp is " + str(len(table_in_transp)) + "\n" )
                     geneids_in = table_in_transp[col]
+		    sys.stderr.write(str(len(geneids_in)) + "\n" )
                     geneids_out_tmp = convertGeneIds (geneids_in, c_mappingfile)
                     geneids_out = map(listfirstitem, geneids_out_tmp)
+		    sys.stderr.write(str(len(geneids_out)) + "\n" )
                     table_geneids_replaced = transpose(replaceGeneIdsInPCLMatrix \
 			(table_in_transp,geneids_out, col))
                     ## Handling NxM entry gene names from BridgeDB:
-                    table_out_tmp = handleNxMgenes(table_geneids_replaced, " /// ", col)
+		    #this needs to happen so that the gene names in the other columns get deleted! 
+                    #table_out_tmp = handleNxMgenes(table_geneids_replaced, " /// ", col)
                     #table_out = handleDoubleEntries(table_out_tmp)
-                    table_out = table_out_tmp
-                    table_in = table_out
+		    table_out = table_geneids_replaced 
+                    #table_out = table_out_tmp
+		    sys.stderr.write("the length of table_out is: " + str(len(table_out)) + "\n")
+                    #table_in = table_out
+		    table_in = table_out
                 else:
                     sys.stderr.write( "+++ ERROR in GeneMapper +++ Empty mapping. Return original file.\n")
 		    savePCLAsTxtFile( c_outputfile, readTable( c_inputfile ) )
 		    hashMeta.update({"mapped": False})
                     break
             if table_out != []:
-                savePCLAsTxtFile (c_outputfile, readTable( c_inputfile)[:2] + table_out)
+		#this is if it has labels; this needs to be fixed so that it handles files differently for files 
+		# that has labels and files that don't. 
+                #savePCLAsTxtFile (c_outputfile, readTable( c_inputfile)[:2] + table_out)
+		savePCLAsTxtFile(c_outputfile, handleNxMgenes(table_out, " /// " ) ) 
+		#savePCLAsTxtFile(c_outputfile, handleDoubleEntries1( handleNxMgenes(table_out, " /// " ) ) )
 		hashMeta.update({"mapped":True})
             else:
                 sys.stderr.write( "+++ ERROR in GeneMapper +++ Empty output mapping. Return original file.\n")
