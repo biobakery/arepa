@@ -39,10 +39,9 @@ c_path_mappingfiles 	= os.path.dirname(c_mappingfile)
 c_path_inputfile	= os.path.dirname(c_inputfile)
 
 if c_mappingfile.endswith(".bridge"):
-    c_mappingflag = "-g"
+	c_mappingflag = "-g"
 elif c_mappingfile.endswith(".txt") or c_mappingfile.endswith(".map"):
-    c_mappingflag = "-t"
-
+	c_mappingflag = "-t"
 
 #########################################################
 # Local functions
@@ -50,52 +49,52 @@ elif c_mappingfile.endswith(".txt") or c_mappingfile.endswith(".map"):
 
 #Gets a specific column from a table file
 def readColFromTable (table,ind):
-    fullcolumn = []
-    columns = csv.reader(open(table),delimiter="\t")
-    [fullcolumn.append(col[ind]) for col in columns]
-    return fullcolumn
+	fullcolumn = []
+	columns = csv.reader(open(table),delimiter="\t")
+	[fullcolumn.append(col[ind]) for col in columns]
+	return fullcolumn
 
 #Reads complete table file into a list
 def readTable(table):
-    content = []
-    f = csv.reader(open(table),delimiter="\t")
-    [content.append(col) for col in f]
-    return content
+	content = []
+	f = csv.reader(open(table),delimiter="\t")
+	[content.append(col) for col in f]
+	return content
 
 #Transpose a given matrix
 def transpose(matrix):
-    return [[matrix[x][y] for x in range(len(matrix))] for y in range(len(matrix[0]))]
+	return [[matrix[x][y] for x in range(len(matrix))] for y in range(len(matrix[0]))]
 
 #Saves a column vector as a file
 def saveColumnAsTxtFile (col, txtfile):
-    f = open(txtfile, 'w')
-    f.writelines(["%s\n" % item for item in col])
-    f.close()
+	f = open(txtfile, 'w')
+	f.writelines(["%s\n" % item for item in col])
+	f.close()
 
 #Saves a PCL file as a file
 def savePCLAsTxtFile (txtfile, content):
-    with open(txtfile, 'w') as file:
-        file.writelines('\t'.join(i) + '\n' for i in content)
+	with open(txtfile, 'w') as file:
+		file.writelines('\t'.join(i) + '\n' for i in content)
     
 #Write Empty file in error case to avoid trouble with scons:
 def writeEmptyFile(txtfile):
-    f=open(txtfile,"w")
-    f.write("")
-    f.close()
+	f=open(txtfile,"w")
+	f.write("")
+	f.close()
 
 #########################################################
 # GENE ID MAPPING: convert geneids_in into geneids_out
 #########################################################
 def convertGeneIds (geneids, mapfile):
-    iCol = next(c_generatorNum)
-    #inputfile = sfle.d(c_path_mappingfiles, 'geneids.txt') 
-    inputfile = sfle.d(c_path_inputfile, 'geneids' + str(iCol) + '.txt')
-    outputfile = sfle.d(c_path_inputfile, 'geneids' + str(iCol) + '_mapped.txt')	
-    #outputfile = sfle.d(c_path_mappingfiles, 'geneids_mapped.txt') 
-    saveColumnAsTxtFile (geneids, inputfile)
-    sfle.ex([c_path_geneidmapper, " -i ", inputfile, " -is",c_origGeneId , \
-	" -os ",c_destGeneId, " -o ",outputfile, c_mappingflag , mapfile ," -mm "])
-    return readTable(outputfile)
+	iCol = next(c_generatorNum)
+	#inputfile = sfle.d(c_path_mappingfiles, 'geneids.txt') 
+	inputfile = sfle.d(c_path_inputfile, 'geneids' + str(iCol) + '.txt')
+	outputfile = sfle.d(c_path_inputfile, 'geneids' + str(iCol) + '_mapped.txt')	
+	#outputfile = sfle.d(c_path_mappingfiles, 'geneids_mapped.txt') 
+	saveColumnAsTxtFile (geneids, inputfile)
+	sfle.ex([c_path_geneidmapper, " -i ", inputfile, " -is",c_origGeneId , \
+		" -os ",c_destGeneId, " -o ",outputfile, c_mappingflag , mapfile ," -mm "])
+	return readTable(outputfile)
 
 def listfirstitem (l): return l[0]
 
@@ -103,91 +102,82 @@ def listfirstitem (l): return l[0]
 # Replace the probe set ids in the pcl file with the new gene ids
 ##################################################################
 def replaceGeneIdsInPCLMatrix (matrix, vec, col):
-    matrix_out = matrix
-    matrix_out[col] = vec
-    return matrix_out
+	matrix_out = matrix
+	matrix_out[col] = vec
+	return matrix_out
 
 #########################################################
 # Handling NxM geneids 
 #########################################################
 def handleNxMgenes(matrix_in, pattern):
-    matrix_out = []
-    iCol = len(matrix_in[0])
-    for row in matrix_in:
-        crow = row
-        #gene = crow[col]
-	for i in range(iCol):
-	    gene = crow[i]
-            if gene.find(pattern) != -1:
-                break
-            elif gene.strip() == "":  
-                break
-            elif i== (iCol-1):
-                matrix_out.append(row)
-	    else:
-	        continue 
-    return matrix_out
+	matrix_out = []
+	iCol = len(matrix_in[0])
+	for row in matrix_in:
+		crow = row
+		#gene = crow[col]
+		for i in range(iCol):
+			gene = crow[i]
+			if gene.find(pattern) != -1:
+				break
+			elif gene.strip() == "":  
+				break
+			elif i== (iCol-1):
+				matrix_out.append(row)
+			else:
+				continue 
+	return matrix_out
 
-def handleDoubleEntries (matrix_in):
-    vec = []
-    vec2 = []
-    vec22=[]
-    matrix_out=[]
-    pattern = "___"
-    #formatting matrix into simple vector:
-    for row in matrix_in:
-        vec.append(pattern.join(row))
-        vec2.append(pattern.join([row[1], row[0]]))
-        vec22.append(pattern.join(row[:2]))
-    for i,v in enumerate(vec):
-        for j,v2 in enumerate(vec2):
-            if v2 in v:
-                vec[j] = ""
-        for jj,v22 in enumerate(vec22):
-            if i != jj:
-               if v22 in v:
-                   vec[jj] = ""
-    vec = filter(None,vec)
-    #remove equal entries:
-    vec = list(set(vec)) 
-    #reformatting into a matrix:
-    for v in vec:
-        matrix_out.append(v.split(pattern))
-    return matrix_out
+#def handleDoubleEntries (matrix_in):
+#	vec = []
+#	vec2 = []
+#	vec22=[]
+#    	matrix_out=[]
+#    	pattern = "___"
+#    	#formatting matrix into simple vector:
+#	for row in matrix_in:
+#        	vec.append(pattern.join(row))
+#        	vec2.append(pattern.join([row[1], row[0]]))
+#        	vec22.append(pattern.join(row[:2]))
+#    	for i,v in enumerate(vec):
+#        	for j,v2 in enumerate(vec2):
+#            		if v2 in v:
+#                		vec[j] = ""
+#        for jj,v22 in enumerate(vec22):
+#            if i != jj:
+#               if v22 in v:
+#                   vec[jj] = ""
+#    vec = filter(None,vec)
+#    #remove equal entries:
+#    vec = list(set(vec)) 
+#    #reformatting into a matrix:
+#    for v in vec:
+#        matrix_out.append(v.split(pattern))
+#    return matrix_out
 
-def isEqual( tuple1, tuple2 ):
-    id1,id2 = list(tuple1[:2]),list(tuple2[:2])
-    if id1 == id2:
-        return True
-    elif id1 == [id2[1],id2[0]]:
-        return True
-    else:
-        return False 
-
-def handleDoubleEntries1(matrix_in):
-    matrix_out = []
-    def combo2(n):
-        return dict([('%d,%d'%(i,j),(i,j)) for j in range(1,n+1) for i in range(1,j)])
-    def populate_double(mat):
-        label_out = []
-        for i,j in combo2(len(mat)).values():
-            if isEqual(mat[i],mat[j]):
-                label_out.append([i,j])
-        return label_out
-    def reduce_list(l):
-        outl = []
-        for item in l:
-            if not(item[0] in outl): outl.append(item[0])
-            else:
-                if not(item[1] in outl): outl.append(item[1])
-        return outl 
-    delete_list = reduce_list(populate_double(matrix_in))
-    sys.stderr.write("\n".join(lambda v: str(v), delete_list))
-    for iRow in range(len(matrix_in)):
-        if not(iRow in delete_list):
-            matrix_out.append(matrix_in[iRow])
-    return matrix_out 
-        
+#def handleDoubleEntries1(matrix_in):
+#    matrix_out = []
+#    def combo2(n):
+#        return dict([('%d,%d'%(i,j),(i,j)) for j in range(1,n+1) for i in range(1,j)])
+#    def populate_double(mat):
+#        label_out = []
+#        for i,j in combo2(len(mat)).values():
+#            if isEqual(mat[i],mat[j]):
+#                label_out.append([i,j])
+#        return label_out
+#    def reduce_list(l):
+#        outl = []
+#        for item in l:
+#            if not(item[0] in outl): outl.append(item[0])
+#            else:
+#                if not(item[1] in outl): outl.append(item[1])
+#        return outl 
+#    delete_list = reduce_list(populate_double(matrix_in))
+#    sys.stderr.write("\n".join(lambda v: str(v), delete_list))
+#    for iRow in range(len(matrix_in)):
+#        if not(iRow in delete_list):
+#            matrix_out.append(matrix_in[iRow])
+#    return matrix_out 
+       
 ###########################################################
 # Getting the probe set ids from the pcl file: geneids_in 
 ###########################################################
@@ -198,17 +188,14 @@ hashMeta = metadata.open()
 #Map
 if os.path.exists(c_inputfile) and os.stat(c_inputfile)[6]!=0:
     if os.path.exists(c_mappingfile) and os.stat(c_mappingfile)[6]!=0:
-        table_in = readTable(c_inputfile)
+	table_in = readTable(c_inputfile)
         table_in_columns = len(table_in[0])
         if table_in_columns >= len(c_columnToMap):
             for col in c_columnToMap:
-		#fix this here 
-		#table_in = readTable(c_inputfile)
-		#fix this here 
                 if table_in != []:
                     col = int(col)
                     table_in_transp = transpose(table_in)
-		    sys.stderr.write("the length of table_in is " + str(len(table_in)))
+		    sys.stderr.write("the length of table_in is " + str(len(table_in)) + "\n")
 		    sys.stderr.write("the length of table_in_transp is " + str(len(table_in_transp)) + "\n" )
                     geneids_in = table_in_transp[col]
 		    sys.stderr.write(str(len(geneids_in)) + "\n" )
