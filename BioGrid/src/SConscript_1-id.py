@@ -31,7 +31,7 @@ c_fileIDMapDAB      =  c_strID + "_mapped.dab"
 c_fileIDMapQUANT    =  c_strID + "_mapped.quant"
 c_path_GeneMapper   =  sfle.d( arepa.path_arepa(), "GeneMapper")
 c_funcGeneMapper    =  sfle.d( c_path_GeneMapper, sfle.c_strDirSrc, "bridgemapper.py" )
-c_path_Mappingfiles =  sfle.d( arepa.path_repo( ), sfle.c_strDirEtc)
+c_path_Mappingfiles =  sfle.d( arepa.path_arepa( ), "GeneMapper",sfle.c_strDirEtc,"uniprotko")
 c_fileMappingHuman  =  sfle.d( c_path_GeneMapper, sfle.c_strDirEtc,"Hs_Derby_20110601.bridge")
 
 

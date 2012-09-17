@@ -28,8 +28,8 @@ c_fileIDMapDAB      =  c_strID + "_mapped.dab"
 c_fileIDMapQUANT    =  c_strID + "_mapped.quant"
 c_path_GeneMapper   =  sfle.d( arepa.path_arepa(), "GeneMapper")
 c_funcGeneMapper    =  sfle.d( c_path_GeneMapper, sfle.c_strDirSrc, "bridgemapper.py" )
-c_path_Mappingfiles =  sfle.d( arepa.path_repo( ), sfle.c_strDirEtc)
-#c_fileMappingfileUniprot2KO = sfle.d(c_path_Mappingfiles, "mappingfile_allspecies_uniref2KO.map")
+c_path_Mappingfiles =  sfle.d( arepa.path_arepa( ), "GeneMapper", sfle.c_strDirEtc, "uniprotko")
+c_fileMappingfileUniprot2KO = sfle.d(c_path_Mappingfiles, "mappingfile_allspecies_uniref2KO.map")
 c_fileMappingHuman  =  sfle.d( c_path_GeneMapper, sfle.c_strDirEtc,"Hs_Derby_20110601.bridge")
 c_funcChildrenTaxa  =  sfle.d( c_path_GeneMapper, sfle.c_strDirSrc, "getTaxidsFromChildren.py" )
 c_filetaxachildren  =  sfle.d( arepa.path_repo( ), sfle.c_strDirTmp,"taxachildren.txt")
@@ -100,15 +100,15 @@ def funcGeneIdMapping( target, source, env):
     c_mappingfile = sfle.d(c_path_Mappingfiles, c_mappingfilename)
     ## END DETERMINE MAPPINGFILE
     ## START FIND TAXONOMICAL CHILDREN MAPPINGFILE IF ORIGINAL DOES NOT EXIST!
-    if not os.path.exists(c_mappingfile):
-        sys.stderr.write("+++ Original mappingfile does not exist, try one of its taxonomical children.  +++ \n")
-        sfle.ex([c_funcChildrenTaxa, c_Taxa, c_filetaxachildren])
-        for line in open(c_filetaxachildren,"r"):
-            mapping = func_GetMappingfileFromDir(line.split("\n")[0])
-            mapping = sfle.d(c_path_Mappingfiles, mapping)
-            if os.path.exists(mapping):
-                c_mappingfile = mapping
-                break
+    #if not os.path.exists(c_mappingfile):
+    #    sys.stderr.write("+++ Original mappingfile does not exist, try one of its taxonomical children.  +++ \n")
+    #    sfle.ex([c_funcChildrenTaxa, c_Taxa, c_filetaxachildren])
+    #    for line in open(c_filetaxachildren,"r"):
+    #        mapping = func_GetMappingfileFromDir(line.split("\n")[0])
+    #        mapping = sfle.d(c_path_Mappingfiles, mapping)
+    #        if os.path.exists(mapping):
+    #            c_mappingfile = mapping
+    #            break
     ## END FIND TAXONOMICAL CHILDREN MAPPINGFILE
     ## START Take general Uniprot to KO mappingfile if no mappingfile exists so far...
     if not os.path.exists(c_mappingfile):
@@ -116,7 +116,7 @@ def funcGeneIdMapping( target, source, env):
         c_mappingfile = c_fileMappingfileUniprot2KO
     ## END Take general Uniprot to KO mappingfile if no mappingfile exists so far...
     return sfle.ex([ strFunc, strDATin, strT, c_mappingfile,"[0,1]", "S", "Ck", "None"])
-#Command(c_fileIDMapDAT, [c_funcGeneMapper, c_fileIDDAT, c_fileIDPKL], funcGeneIdMapping)
+Command(c_fileIDMapDAT, [c_funcGeneMapper, c_fileIDDAT, c_fileIDPKL], funcGeneIdMapping)
 
 
 def funcGeneIdMapping2( target, source, env):
@@ -124,7 +124,7 @@ def funcGeneIdMapping2( target, source, env):
     strFunc, strDATin = astrSs[:2]
     sys.stderr.write("+++ GENE ID Mapping +++ \n")
     return sfle.ex([ strFunc, strDATin, strT, c_fileMappingHuman,"[0,1]", "S", "Ck","None"])
-Command(c_fileIDMapDAT, [c_funcGeneMapper, c_fileIDDAT], funcGeneIdMapping2)
+#Command(c_fileIDMapDAT, [c_funcGeneMapper, c_fileIDDAT], funcGeneIdMapping2)
 
 
 def funcDABmapped( target, source, env ):
