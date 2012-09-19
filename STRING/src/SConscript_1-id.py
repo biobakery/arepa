@@ -13,9 +13,10 @@ def test( iLevel, strID, hashArgs ):
 if locals( ).has_key( "testing" ):
 	sys.exit( )
 
-hutlabhome = '/hutlab_home/dboernig/STRING_output/'
 
 c_strID					= arepa.cwd( )
+c_Taxa                  = c_strID.split("_")[1]
+
 
 c_fileInputC    		= File( sfle.d( arepa.path_repo( ), sfle.c_strDirTmp, "stringc" ) )
 
@@ -29,15 +30,13 @@ c_fileProgC2DAT			= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "c2dat.p
 
 
 #For GeneMapper:
-#c_fileIDMapDAT      =  sfle.d(hutlabhome,c_strID + "_mapped.dat")
-#c_fileIDMapDAB      =  sfle.d(hutlabhome,c_strID + "_mapped.dab")
-#c_fileIDMapQUANT    =  sfle.d(hutlabhome,c_strID + "_mapped.quant")
-c_fileIDMapDAT      =  sfle.d(c_strID + "_mapped.dat")
-c_fileIDMapDAB      =  sfle.d(c_strID + "_mapped.dab")
-c_fileIDMapQUANT    =  sfle.d(c_strID + "_mapped.quant")
+c_fileIDMapDAT      =  c_strID + "_mapped.dat"
+c_fileIDMapDAB      =  c_strID + "_mapped.dab"
+c_fileIDMapQUANT    =  c_strID + "_mapped.quant"
 c_path_GeneMapper   =  sfle.d( arepa.path_arepa(), "GeneMapper")
 c_funcGeneMapper    =  sfle.d( c_path_GeneMapper, sfle.c_strDirSrc, "bridgemapper.py" )
-c_path_Mappingfiles =  sfle.d( arepa.path_arepa(), "GeneMapper",sfle.c_strDirEtc,"uniprotko")
+c_path_Mappingfiles =  sfle.d( arepa.path_arepa( ), "GeneMapper", sfle.c_strDirEtc, "uniprotko")
+c_fileMappingfileUniprot2KO = sfle.d(c_path_Mappingfiles, "mappingfile_allspecies_uniref2KO.map")
 c_fileMappingHuman  =  sfle.d( c_path_GeneMapper, sfle.c_strDirEtc,"Hs_Derby_20110601.bridge")
 c_funcChildrenTaxa  =  sfle.d( c_path_GeneMapper, sfle.c_strDirSrc, "getTaxidsFromChildren.py" )
 c_filetaxachildren  =  sfle.d( arepa.path_repo( ), sfle.c_strDirTmp,"taxachildren.txt")
@@ -94,29 +93,27 @@ def func_GetMappingfile(taxid):
         return "mapping_taxid"+str(c_Taxa)+".txt"
 
 
+
 #- Do the Mapping:
 def funcGeneIdMapping( target, source, env):
     strT, astrSs = sfle.ts( target, source )
+#    strFunc, strDATin, strPKL = astrSs[:3] #TODO: we don't have metadata for string!
     strFunc, strDATin = astrSs[:2]
-    c_Taxa = c_strID.split("_")[1]
+#    pMetadata = metadata.open(open(strPKL,"rb") )
+#    c_Taxa = pMetadata["taxid"]
     sys.stderr.write("+++ GENE ID Mapping +++ \n")
     ## START DETERMINE MAPPINGFILE
     c_mappingfilename = func_GetMappingfileFromDir(c_Taxa) #Normal mapping in Human: func_GetMappingfile(c_Taxa)
     c_mappingfile = sfle.d(c_path_Mappingfiles, c_mappingfilename)
     ## END DETERMINE MAPPINGFILE
-    ## START FIND TAXONOMICAL CHILDREN MAPPINGFILE IF ORIGINAL DOES NOT EXIST!
+    ## START Take general Uniprot to KO mappingfile if no mappingfile exists so far...
     if not os.path.exists(c_mappingfile):
-        sys.stderr.write("+++ Original mappingfile does not exist, try one of its taxonomical children.  +++ \n")
-        sfle.ex([c_funcChildrenTaxa, c_Taxa, c_filetaxachildren])
-        for line in open(c_filetaxachildren,"r"):
-            mapping = func_GetMappingfileFromDir(line.split("\n")[0])
-            mapping = sfle.d(c_path_Mappingfiles, mapping)
-            if os.path.exists(mapping):
-                c_mappingfile = mapping
-                break
-    ## START FIND TAXONOMICAL CHILDREN MAPPINGFILE
-    return sfle.ex([ strFunc, strDATin, strT, c_mappingfile,"[0,1]", "Kg", "Ck","None"])
-#Command(c_fileIDMapDAT, [c_funcGeneMapper, c_fileIDDAT], funcGeneIdMapping)
+        sys.stderr.write("+++ No species-specific mappingfile exists, take the general mappingfile from uniprot.  +++ \n")
+        c_mappingfile = c_fileMappingfileUniprot2KO
+    ## END Take general Uniprot to KO mappingfile if no mappingfile exists so far...
+    return sfle.ex([ strFunc, strDATin, strT, c_mappingfile,"[0,1]", "Kg", "Ck", "None"])
+#Command(c_fileIDMapDAT, [c_funcGeneMapper, c_fileIDDAT, c_fileIDPKL], funcGeneIdMapping)
+Command(c_fileIDMapDAT, [c_funcGeneMapper, c_fileIDDAT], funcGeneIdMapping)
 
 
 def funcGeneIdMapping2( target, source, env):
@@ -124,10 +121,7 @@ def funcGeneIdMapping2( target, source, env):
     strFunc, strDATin = astrSs[:2]
     sys.stderr.write("+++ GENE ID Mapping +++ \n")
     return sfle.ex([ strFunc, strDATin, strT, c_fileMappingHuman,"[0,1]", "S", "Ck","None"])
-Command(c_fileIDMapDAT, [c_funcGeneMapper, c_fileIDDAT], funcGeneIdMapping2)
-
-
-
+#Command(c_fileIDMapDAT, [c_funcGeneMapper, c_fileIDDAT], funcGeneIdMapping2)
 
 def funcDABmapped( target, source, env ):
     strT, astrSs = sfle.ts( target, source )
@@ -139,6 +133,7 @@ def funcDABmapped( target, source, env ):
 Command( c_fileIDMapDAB, [c_fileIDDAT,c_fileIDMapDAT], funcDABmapped )
 Default(c_fileIDMapDAB)
 
+
 def funcIDQUANTMapped( target, source, env ):
     strT, astrSs = sfle.ts( target, source )
     fileOut,fileMap = astrSs[:2]
@@ -148,8 +143,6 @@ def funcIDQUANTMapped( target, source, env ):
         return sfle.ex(["touch",strT])
 Command( c_fileIDMapQUANT, [c_fileIDDAT,c_fileIDMapDAT] ,funcIDQUANTMapped )
 Default ( c_fileIDMapQUANT)
-
-
 
 
 
