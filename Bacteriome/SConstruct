@@ -15,6 +15,7 @@ c_fileOutDAT             = File(sfle.d( sfle.c_strDirData, "bacteriome.dat" ))
 #For GeneMapper:
 c_fileMapDAT        	= File(sfle.d( sfle.c_strDirData, "bacteriome_mapped.dat" ))
 c_path_GeneMapper       = sfle.d( arepa.path_arepa(), "GeneMapper")
+c_strGeneTo		= sfle.readcomment( sfle.d( arepa.path_arepa(),sfle.c_strDirEtc,"geneid" ) or ["Ck"] )
 c_funcGeneMapper        = sfle.d( c_path_GeneMapper, sfle.c_strDirSrc, "bridgemapper.py" )
 c_strMappingfileEcoli   = sfle.d(arepa.path_arepa(), "GeneMapper", sfle.c_strDirEtc, "uniprotko","511145_eco_ko_uniprot.map")
 
@@ -42,7 +43,7 @@ Command( c_fileOutDAT, [c_strProgBacteriome,c_strFileBactTXT], funcBacteriomeExt
 def funcGeneIdMapping( target, source, env):
         strT, astrSs = sfle.ts( target, source )
         strFunc, strDATin  = astrSs[:2]
-        return sfle.ex([ strFunc,strDATin, strT, c_strMappingfileEcoli,  "[0,1]", "Kg", "Ck", "None"]) 
+        return sfle.ex([ strFunc,strDATin, strT, c_strMappingfileEcoli,  "[0,1]", "Kg", c_strGeneTo[0], "None"]) 
 Command( c_fileMapDAT,[c_funcGeneMapper, c_fileOutDAT ], funcGeneIdMapping)
 
 

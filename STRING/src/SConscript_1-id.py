@@ -33,6 +33,7 @@ c_fileProgC2DAT			= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "c2dat.p
 c_fileIDMapDAT      =  c_strID + "_mapped.dat"
 c_fileIDMapDAB      =  c_strID + "_mapped.dab"
 c_fileIDMapQUANT    =  c_strID + "_mapped.quant"
+c_strGeneTo         = sfle.readcomment( sfle.d( arepa.path_arepa(),sfle.c_strDirEtc,"geneid" ) or ["Ck"] )
 c_path_GeneMapper   =  sfle.d( arepa.path_arepa(), "GeneMapper")
 c_funcGeneMapper    =  sfle.d( c_path_GeneMapper, sfle.c_strDirSrc, "bridgemapper.py" )
 c_path_Mappingfiles =  sfle.d( arepa.path_arepa( ), "GeneMapper", sfle.c_strDirEtc, "uniprotko")
@@ -111,7 +112,7 @@ def funcGeneIdMapping( target, source, env):
         sys.stderr.write("+++ No species-specific mappingfile exists, take the general mappingfile from uniprot.  +++ \n")
         c_mappingfile = c_fileMappingfileUniprot2KO
     ## END Take general Uniprot to KO mappingfile if no mappingfile exists so far...
-    return sfle.ex([ strFunc, strDATin, strT, c_mappingfile,"[0,1]", "Kg", "Ck", "None"])
+    return sfle.ex([ strFunc, strDATin, strT, c_mappingfile,"[0,1]", "Kg", c_strGeneTo[0], "None"])
 #Command(c_fileIDMapDAT, [c_funcGeneMapper, c_fileIDDAT, c_fileIDPKL], funcGeneIdMapping)
 Command(c_fileIDMapDAT, [c_funcGeneMapper, c_fileIDDAT], funcGeneIdMapping)
 
@@ -120,7 +121,7 @@ def funcGeneIdMapping2( target, source, env):
     strT, astrSs = sfle.ts( target, source )
     strFunc, strDATin = astrSs[:2]
     sys.stderr.write("+++ GENE ID Mapping +++ \n")
-    return sfle.ex([ strFunc, strDATin, strT, c_fileMappingHuman,"[0,1]", "S", "Ck","None"])
+    return sfle.ex([ strFunc, strDATin, strT, c_fileMappingHuman,"[0,1]", "S", c_strGeneTo[0],"None"])
 #Command(c_fileIDMapDAT, [c_funcGeneMapper, c_fileIDDAT], funcGeneIdMapping2)
 
 def funcDABmapped( target, source, env ):

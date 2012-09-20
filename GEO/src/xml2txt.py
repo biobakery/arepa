@@ -54,3 +54,4 @@ if strTaxa:
 pSAX = xml.sax.make_parser( )
 pSAX.setContentHandler( CParser( strType, setstrTaxa ) )
 pSAX.parse( sys.stdin )
+sys.stdout.write(" ")

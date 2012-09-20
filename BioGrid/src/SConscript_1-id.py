@@ -29,6 +29,7 @@ c_fileProgC2DAT			= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "c2dat.p
 c_fileIDMapDAT      =  c_strID + "_mapped.dat"
 c_fileIDMapDAB      =  c_strID + "_mapped.dab"
 c_fileIDMapQUANT    =  c_strID + "_mapped.quant"
+c_strGeneTo         = sfle.readcomment( sfle.d( arepa.path_arepa(),sfle.c_strDirEtc,"geneid" ) or ["Ck"] )
 c_path_GeneMapper   =  sfle.d( arepa.path_arepa(), "GeneMapper")
 c_funcGeneMapper    =  sfle.d( c_path_GeneMapper, sfle.c_strDirSrc, "bridgemapper.py" )
 c_path_Mappingfiles =  sfle.d( arepa.path_arepa( ), "GeneMapper",sfle.c_strDirEtc,"uniprotko")
@@ -100,8 +101,8 @@ def funcGeneIdMapping( target, source, env):
     c_mappingfilename = func_GetMappingfileFromDir(c_Taxa) #Normal mapping in Human: func_GetMappingfile(c_Taxa)
     c_mappingfile = sfle.d(c_path_Mappingfiles, c_mappingfilename)
     ## END DETERMINE MAPPINGFILE
-    sfle.ex([ strFunc, strDATin, strT, c_mappingfile,"0", "S", "Ck","None"])
-    return sfle.ex([ strFunc, strT, strT, c_mappingfile,"1", "S", "Ck","None"])
+    sfle.ex([ strFunc, strDATin, strT, c_mappingfile,"0", "S", c_strGeneTo[0],"None"])
+    return sfle.ex([ strFunc, strT, strT, c_mappingfile,"1", "S", c_strGeneTo[0],"None"])
 Command(c_fileIDMapDAT, [c_funcGeneMapper, c_fileIDDAT, c_fileIDPKL], funcGeneIdMapping)
 
 
