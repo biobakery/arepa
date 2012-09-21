@@ -85,7 +85,7 @@ for strSet, strBase in c_hashFiles.items( ):
 		with open( strT,"w" ) as idXML:
 			astrOutTemp = zip(*query_list)[0]
 			strHeader = "".join(open(astrOutTemp[0],"r").readlines()[:3])
-			strBody = "".join([re.findall(r'<DocSum>.+</DocSum>', open(f).read(),re.S)[0] for f in astrOutTemp])
+			strBody = "".join([(re.findall(r'<DocSum>.+</DocSum>', open(f).read(),re.S) or ["\n"])[0] for f in astrOutTemp])
 			idXML.write(strHeader + strBody + "</eSummaryResult>")	
 
 	afileXMLs = Command( strOut + c_strSufXML, afilePreXMLs, funcXML )
