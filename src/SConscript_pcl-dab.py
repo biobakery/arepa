@@ -45,12 +45,12 @@ Command( [c_fileIDMappedPCL,c_fileStatus],[c_funcPclIds, c_fileIDRawPCL, c_fileM
 #- Normalize
 def funcIDNormPCL( target, source, env, iMaxLines = 100000 ):
 	strT, astrSs = sfle.ts( target, source )
-	strS = astrSs[0]
+	strS = astrSs[1] if sfle.readcomment(astrSs[1]) else astrSs[0] 
 	iLC = sfle.lc( strS )
 	return ( sfle.ex( "Normalizer -t pcl -T medmult < " + strS, strT )
 		if ( iLC < iMaxLines ) else sfle.ex( "head -n 3 < " + strS, strT ) )
 
-Command( c_fileIDNormPCL, c_fileIDMappedPCL, funcIDNormPCL )
+Command( c_fileIDNormPCL, [c_fileIDRawPCL,c_fileIDMappedPCL], funcIDNormPCL )
 
 #- Impute
 def funcIDKNNPCL( target, source, env, iMaxLines = 40000 ):

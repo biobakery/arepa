@@ -73,8 +73,8 @@ def saveColumnAsTxtFile (col, txtfile):
 
 #Saves a PCL file as a file
 def savePCLAsTxtFile (txtfile, content):
-	with open(txtfile, 'w') as file:
-		file.writelines('\t'.join(i) + '\n' for i in content)
+	with open(txtfile, 'w') as outfile:
+		outfile.writelines('\t'.join(i) + '\n' for i in content)
     
 #Write Empty file in error case to avoid trouble with scons:
 def writeEmptyFile(txtfile):
@@ -192,7 +192,7 @@ if os.path.exists(c_inputfile) and os.stat(c_inputfile)[6]!=0:
         table_in_columns = len(table_in[0])
         if table_in_columns >= len(c_columnToMap):
             for col in c_columnToMap:
-                if table_in != []:
+                if any(table_in):
                     col = int(col)
                     table_in_transp = transpose(table_in)
 		    sys.stderr.write("the length of table_in is " + str(len(table_in)) + "\n")
@@ -218,13 +218,17 @@ if os.path.exists(c_inputfile) and os.stat(c_inputfile)[6]!=0:
 		    savePCLAsTxtFile( c_outputfile, readTable( c_inputfile ) )
 		    hashMeta.update({"mapped": False})
                     break
-            if table_out != []:
+            if any(table_out):
 		#this is if it has labels; this needs to be fixed so that it handles files differently for files 
 		# that has labels and files that don't. 
                 #savePCLAsTxtFile (c_outputfile, readTable( c_inputfile)[:2] + table_out)
-		savePCLAsTxtFile(c_outputfile, handleNxMgenes(table_out, " /// " ) ) 
+		parsed_table_out = handleNxMgenes(table_out," /// ")
+		savePCLAsTxtFile(c_outputfile, parsed_table_out ) 
 		#savePCLAsTxtFile(c_outputfile, handleDoubleEntries1( handleNxMgenes(table_out, " /// " ) ) )
-		hashMeta.update({"mapped":True})
+		if any(parsed_table_out):
+			hashMeta.update({"mapped":True})
+		else:
+			hashMeta.update({"mapped":False})
             else:
                 sys.stderr.write( "+++ ERROR in GeneMapper +++ Empty output mapping. Return original file.\n")
 		savePCLAsTxtFile( c_outputfile, readTable( c_inputfile ) )
