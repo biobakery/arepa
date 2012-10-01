@@ -4,7 +4,8 @@ import arepa
 import re
 import sys
 
-c_strTaxid    = "biogrid_taxid_"
+c_repo = arepa.cwd()
+c_strTaxid  = c_repo+"_taxid_"
 c_strPMID    = "pmid_"
 c_colTaxA = "Organism Interactor A"
 c_colTaxB = "Organism Interactor B"

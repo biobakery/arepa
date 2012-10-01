@@ -6,7 +6,8 @@ import re
 import sfle
 import sys
 
-c_strTaxid     = "string_taxid_"
+c_repo = arepa.cwd()
+c_strTaxid  = c_repo+"_taxid_"
 c_strPMID     = "mode_"
 
 def symbol( hashSymbols, strValue ):

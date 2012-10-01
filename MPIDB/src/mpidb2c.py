@@ -6,7 +6,8 @@ import re
 import sfle
 import sys
 
-c_strTaxid	= "mpidb_taxid_"
+c_repo = arepa.cwd()
+c_strTaxid  = c_repo+"_taxid_"
 c_strPMID	= "pmid_"
 
 def symbol( hashSymbols, strValue ):
