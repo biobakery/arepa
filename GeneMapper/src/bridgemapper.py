@@ -130,127 +130,13 @@ def handleNxMgenes(matrix_in, pattern):
 				continue 
 	return matrix_out
 
-#def handleDoubleEntries (matrix_in):
-#	vec = []
-#	vec2 = []
-#	vec22=[]
-#    	matrix_out=[]
-#    	pattern = "___"
-#    	#formatting matrix into simple vector:
-#	for row in matrix_in:
-#        	vec.append(pattern.join(row))
-#        	vec2.append(pattern.join([row[1], row[0]]))
-#        	vec22.append(pattern.join(row[:2]))
-#    	for i,v in enumerate(vec):
-#        	for j,v2 in enumerate(vec2):
-#            		if v2 in v:
-#                		vec[j] = ""
-#        for jj,v22 in enumerate(vec22):
-#            if i != jj:
-#               if v22 in v:
-#                   vec[jj] = ""
-#    vec = filter(None,vec)
-#    #remove equal entries:
-#    vec = list(set(vec)) 
-#    #reformatting into a matrix:
-#    for v in vec:
-#        matrix_out.append(v.split(pattern))
-#    return matrix_out
-
-#def handleDoubleEntries1(matrix_in):
-#    matrix_out = []
-#    def combo2(n):
-#        return dict([('%d,%d'%(i,j),(i,j)) for j in range(1,n+1) for i in range(1,j)])
-#    def populate_double(mat):
-#        label_out = []
-#        for i,j in combo2(len(mat)).values():
-#            if isEqual(mat[i],mat[j]):
-#                label_out.append([i,j])
-#        return label_out
-#    def reduce_list(l):
-#        outl = []
-#        for item in l:
-#            if not(item[0] in outl): outl.append(item[0])
-#            else:
-#                if not(item[1] in outl): outl.append(item[1])
-#        return outl 
-#    delete_list = reduce_list(populate_double(matrix_in))
-#    sys.stderr.write("\n".join(lambda v: str(v), delete_list))
-#    for iRow in range(len(matrix_in)):
-#        if not(iRow in delete_list):
-#            matrix_out.append(matrix_in[iRow])
-#    return matrix_out 
-       
+      
 ###########################################################
 # Getting the probe set ids from the pcl file: geneids_in 
 ###########################################################
 
 #Open a blank metadata object
 hashMeta = metadata.open()
-
-####OLD Map
-#if os.path.exists(c_inputfile) and os.stat(c_inputfile)[6]!=0:
-#    if os.path.exists(c_mappingfile) and os.stat(c_mappingfile)[6]!=0:
-#	table_in = readTable(c_inputfile)
-#        table_in_columns = len(table_in[0])
-#        if table_in_columns >= len(c_columnToMap):
-#            for col in c_columnToMap:
-#                if any(table_in):
-#                    col = int(col)
-#                    table_in_transp = transpose(table_in)
-#		    sys.stderr.write("the length of table_in is " + str(len(table_in)) + "\n")
-#		    sys.stderr.write("the length of table_in_transp is " + str(len(table_in_transp)) + "\n" )
-#                    geneids_in = table_in_transp[col]
-#		    sys.stderr.write(str(len(geneids_in)) + "\n" )
-#                    geneids_out_tmp = convertGeneIds (geneids_in, c_mappingfile)
-#                    geneids_out = map(listfirstitem, geneids_out_tmp)
-#		    sys.stderr.write(str(len(geneids_out)) + "\n" )
-#                    table_geneids_replaced = transpose(replaceGeneIdsInPCLMatrix \
-#			(table_in_transp,geneids_out, col))
-#                    ## Handling NxM entry gene names from BridgeDB:
-#		    #this needs to happen so that the gene names in the other columns get deleted! 
-#                    #table_out_tmp = handleNxMgenes(table_geneids_replaced, " /// ", col)
-#                    #table_out = handleDoubleEntries(table_out_tmp)
-#		    table_out = table_geneids_replaced 
-#                    #table_out = table_out_tmp
-#		    sys.stderr.write("the length of table_out is: " + str(len(table_out)) + "\n")
-#                    #table_in = table_out
-#		    table_in = table_out
-#                else:
-#                    sys.stderr.write( "+++ ERROR in GeneMapper +++ Empty mapping. Return original file.\n")
-#		    savePCLAsTxtFile( c_outputfile, readTable( c_inputfile ) )
-#		    hashMeta.update({"mapped": False})
-#                    break
-#            if any(table_out):
-#		#this is if it has labels; this needs to be fixed so that it handles files differently for files 
-#		# that has labels and files that don't. 
-#                #savePCLAsTxtFile (c_outputfile, readTable( c_inputfile)[:2] + table_out)
-#		parsed_table_out = handleNxMgenes(table_out," /// ")
-#		savePCLAsTxtFile(c_outputfile, parsed_table_out ) 
-#		#savePCLAsTxtFile(c_outputfile, handleDoubleEntries1( handleNxMgenes(table_out, " /// " ) ) )
-#		if any(parsed_table_out):
-#			hashMeta.update({"mapped":True})
-#		else:
-#			hashMeta.update({"mapped":False})
-#            else:
-#                sys.stderr.write( "+++ ERROR in GeneMapper +++ Empty output mapping. Return original file.\n")
-#		savePCLAsTxtFile( c_outputfile, readTable( c_inputfile ) )
-#		hashMeta.update({"mapped":False})
-#        else:
-#            sys.stderr.write( "+++ ERROR in GeneMapper +++ Number of requested columns to map is \
-#		larger than the number of columns in the input data file.\n")
-#	    savePCLAsTxtFile( c_outputfile, table_in )
-#	    hashMeta.update({"mapped":False})
-#    else:
-#        sys.stderr.write("+++ ERROR in GeneMapper +++ Mapping file does not exist or is empty. \
-#		Return original file.\n")               
-#	savePCLAsTxtFile( c_outputfile, readTable( c_inputfile ) )
-#	hashMeta.update({"mapped":False})
-#else: 
-#    sys.stderr.write( "+++ ERROR in GeneMapper +++ Input file does not exist or is empty. \
-#	Return empty file.\n")
-#    savePCLAsTxtFile( c_outputfile, readTable( c_inputfile ) )
-#    hashMeta.update({"mapped":False})
 
 if os.path.exists(c_inputfile) and os.stat(c_inputfile)[6]!=0:
         if os.path.exists(c_mappingfile) and os.stat(c_mappingfile)[6]!=0:

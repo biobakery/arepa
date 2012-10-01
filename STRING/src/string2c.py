@@ -6,7 +6,7 @@ import re
 import sfle
 import sys
 
-c_strTaxid     = "taxid_"
+c_strTaxid     = "string_taxid_"
 c_strPMID     = "mode_"
 
 def symbol( hashSymbols, strValue ):

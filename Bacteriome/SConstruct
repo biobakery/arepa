@@ -13,17 +13,17 @@ c_fileOutDAT             = File(sfle.d( sfle.c_strDirData, "bacteriome.dat" ))
 
 
 #For GeneMapper:
-c_fileMapDAT        	= File(sfle.d( sfle.c_strDirData, "bacteriome_mapped.dat" ))
-c_fileMapTmp		= File(sfle.d( sfle.c_strDirData, "bacteriome_tmp.dat" ))
+c_fileMapDAT        	= File(sfle.d( sfle.c_strDirData, "bacteriome_mapped00.dat" ))
+c_fileMapDAT2		= File(sfle.d( sfle.c_strDirData, "bacteriome_mapped01.dat" ))
 c_path_GeneMapper       = sfle.d( arepa.path_arepa(), "GeneMapper")
 c_strGeneTo		= sfle.readcomment( sfle.d( arepa.path_arepa(),sfle.c_strDirEtc,"geneid" ) or ["Ck"] )
 c_funcGeneMapper        = sfle.d( c_path_GeneMapper, sfle.c_strDirSrc, "bridgemapper.py" )
 c_strMappingfileEcoli   = sfle.d(arepa.path_arepa(), "GeneMapper", sfle.c_strDirEtc, "uniprotko","511145_eco_ko_uniprot.map")
-
+c_fileProgMakeUnique    = sfle.d( arepa.path_arepa(),sfle.c_strDirSrc,"makeunique.py")
 c_fileInMeta		= sfle.d( arepa.path_repo(), sfle.c_strDirEtc, "bacteriome.txt" )
-c_fileProgMakeUnique	= sfle.d( arepa.path_arepa(),sfle.c_strDirSrc,"makeunique.py")
-c_fileOutDAB            = File(sfle.d( sfle.c_strDirData,  File( sfle.rebase(c_fileMapDAT, ".dat", ".dab" ))))
-c_fileOutQUANT          = File(sfle.d( sfle.c_strDirData,  File( sfle.rebase(c_fileMapDAT, ".dat", ".quant" ))))
+
+c_fileOutDAB            = File(sfle.d( sfle.c_strDirData,  File( sfle.rebase(c_fileMapDAT2, ".dat", ".dab" ))))
+c_fileOutQUANT          = File(sfle.d( sfle.c_strDirData,  File( sfle.rebase(c_fileMapDAT2, ".dat", ".quant" ))))
 c_fileOutPKL		= File(sfle.d( sfle.c_strDirData, "bacteriome.pkl" ))		 
 
 pE = Environment( )
@@ -45,14 +45,14 @@ def funcGeneIdMapping( target, source, env):
         strT, astrSs = sfle.ts( target, source )
         strFunc, strDATin  = astrSs[:2]
         return sfle.ex([ strFunc,strDATin, strT, c_strMappingfileEcoli,  "[0,1]", "Kg", c_strGeneTo[0], "None"]) 
-Command( c_fileMapTmp,[c_funcGeneMapper, c_fileOutDAT ], funcGeneIdMapping )
+Command( c_fileMapDAT,[c_funcGeneMapper, c_fileOutDAT ], funcGeneIdMapping)
+
 
 def funcMakeUnique( target, source, env ):
-	strT, astrSs = sfle.ts( target, source )
-	strProg, strIn = astrSs[:2]
-	return sfle.ex(["python",strProg,strIn,strT, "None"])
-
-Command( c_fileMapDAT,[c_fileProgMakeUnique,c_fileMapTmp], funcMakeUnique )
+        strT, astrSs = sfle.ts( target, source )
+        strProg, strIn = astrSs[:2]
+        return sfle.ex([strProg,strIn,strT])
+Command( c_fileMapDAT2,[c_fileProgMakeUnique,c_fileMapDAT], funcMakeUnique )
 
 def funcDAB(target, source, env):
 	strT, astrSs = sfle.ts( target, source )
@@ -61,8 +61,7 @@ def funcDAB(target, source, env):
         	return sfle.ex([" Dat2Dab -o", strT, "-i", fileMap])
 	else:
 		return sfle.ex([" Dat2Dab -o", strT, "-i", fileOut])
-Command( c_fileOutDAB, [c_fileOutDAT,c_fileMapDAT], funcDAB )
-
+Command( c_fileOutDAB, [c_fileOutDAT,c_fileMapDAT2], funcDAB )
 
 def funcMeta( target, source, env ):
 	strT, astrSs = sfle.ts( target, source )
