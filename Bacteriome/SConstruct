@@ -13,16 +13,17 @@ c_fileOutDAT             = File(sfle.d( sfle.c_strDirData, "bacteriome.dat" ))
 
 
 #For GeneMapper:
-c_fileMapDAT        	= File(sfle.d( sfle.c_strDirData, "bacteriome_mapped.dat" ))
+c_fileMapDAT        	= File(sfle.d( sfle.c_strDirData, "bacteriome_mapped00.dat" ))
+c_fileMapDAT2		= File(sfle.d( sfle.c_strDirData, "bacteriome_mapped01.dat" ))
 c_path_GeneMapper       = sfle.d( arepa.path_arepa(), "GeneMapper")
 c_strGeneTo		= sfle.readcomment( sfle.d( arepa.path_arepa(),sfle.c_strDirEtc,"geneid" ) or ["Ck"] )
 c_funcGeneMapper        = sfle.d( c_path_GeneMapper, sfle.c_strDirSrc, "bridgemapper.py" )
 c_strMappingfileEcoli   = sfle.d(arepa.path_arepa(), "GeneMapper", sfle.c_strDirEtc, "uniprotko","511145_eco_ko_uniprot.map")
-
+c_fileProgMakeUnique    = sfle.d( arepa.path_arepa(),sfle.c_strDirSrc,"makeunique.py")
 c_fileInMeta		= sfle.d( arepa.path_repo(), sfle.c_strDirEtc, "bacteriome.txt" )
 
-c_fileOutDAB            = File(sfle.d( sfle.c_strDirData,  File( sfle.rebase(c_fileMapDAT, ".dat", ".dab" ))))
-c_fileOutQUANT          = File(sfle.d( sfle.c_strDirData,  File( sfle.rebase(c_fileMapDAT, ".dat", ".quant" ))))
+c_fileOutDAB            = File(sfle.d( sfle.c_strDirData,  File( sfle.rebase(c_fileMapDAT2, ".dat", ".dab" ))))
+c_fileOutQUANT          = File(sfle.d( sfle.c_strDirData,  File( sfle.rebase(c_fileMapDAT2, ".dat", ".quant" ))))
 c_fileOutPKL		= File(sfle.d( sfle.c_strDirData, "bacteriome.pkl" ))		 
 
 pE = Environment( )
@@ -47,6 +48,12 @@ def funcGeneIdMapping( target, source, env):
 Command( c_fileMapDAT,[c_funcGeneMapper, c_fileOutDAT ], funcGeneIdMapping)
 
 
+def funcMakeUnique( target, source, env ):
+        strT, astrSs = sfle.ts( target, source )
+        strProg, strIn = astrSs[:2]
+        return sfle.ex([strProg,strIn,strT])
+Command( c_fileMapDAT2,[c_fileProgMakeUnique,c_fileMapDAT], funcMakeUnique )
+
 def funcDAB(target, source, env):
 	strT, astrSs = sfle.ts( target, source )
         fileOut,fileMap = astrSs[:2]
@@ -54,8 +61,7 @@ def funcDAB(target, source, env):
         	return sfle.ex([" Dat2Dab -o", strT, "-i", fileMap])
 	else:
 		return sfle.ex([" Dat2Dab -o", strT, "-i", fileOut])
-Command( c_fileOutDAB, [c_fileOutDAT,c_fileMapDAT], funcDAB )
-
+Command( c_fileOutDAB, [c_fileOutDAT,c_fileMapDAT2], funcDAB )
 
 def funcMeta( target, source, env ):
 	strT, astrSs = sfle.ts( target, source )
@@ -64,12 +70,12 @@ def funcMeta( target, source, env ):
 		pickle.dump({k:v for k,v in map( lambda k: k.split("\t"), sfle.readcomment( strS ) )},\
 			outputf	)
 Command( c_fileOutPKL, [c_fileInMeta], funcMeta )
-Default( c_fileOutPKL )
+#Default( c_fileOutPKL )
 
 def funcQUANT( target, source, env ):
         strT, astrSs = sfle.ts( target, source )
         strS = astrSs[0]
         return (sfle.ex("echo '0.5\t1.5' >" + strT))
 Command( c_fileOutQUANT, c_fileOutDAB ,funcQUANT )
-Default( c_fileOutQUANT )
+#Default( c_fileOutQUANT )
 

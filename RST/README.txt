@@ -149,6 +149,8 @@ Interaction Networks
 Chapter 4 Advanced Topics 
 ============================================ 
 
+Mapping status can be checked in every module by either checking the pickle metadata. 
+
 Section 4.1 Testing ARepA 
 --------------------------------------------
 

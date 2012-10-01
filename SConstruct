@@ -3,7 +3,7 @@ import sfle
 import sys
 
 c_strURLTaxonomy		= "ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz"
-c_astrExclude			= [ "ArrayExpress", "GeneMapper" 
+c_astrExclude			= [ "ArrayExpress", "GeneMapper", "RST", 
 				#,"STRING" 
 				#,"GeneMapper", "IntAct", "BioGrid",
 				#"Bacteriome", "RegulonDB", "MPIDP" 

@@ -23,10 +23,14 @@ c_fileStatus		= File( "status.txt" )
 
 c_strDirManMap		= sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, c_strManMap ) 
 c_fileIDMappedPCL   	= File( c_strID + "_00mapped.pcl" )
+c_fileIDMappedPCL2	= File( c_strID + "_01mapped.pcl" )
 
 ## Gene Mapper:
+c_strRowSkip		= "2"
 c_path_GeneMapper   	= sfle.d( arepa.path_arepa(), "GeneMapper")
+c_strGeneTo             = sfle.readcomment( sfle.d( arepa.path_arepa(),sfle.c_strDirEtc,"geneid" ) or ["H"] )
 c_funcPclIds        	= sfle.d( c_path_GeneMapper, sfle.c_strDirSrc, "bridgemapper.py" )
+c_funcMakeUnique	= sfle.d( arepa.path_arepa(), sfle.c_strDirSrc, "makeunique.py" )
 
 # If manually curated mapping file exists, use. Otherwise, use automatically generated one. 
 c_fileMap           	= reduce( lambda x,y: x or y, filter( lambda x: x==c_strID + c_strSufMap,\
@@ -38,19 +42,26 @@ def funcGeneIdMapping( target, source, env):
     astrT, astrSs = ([f.get_abspath( ) for f in a] for a in (target,source))
     strMappedPCL, strStatus =  astrT[:2]
     strFunc, strDATin, strMapfile  = astrSs[:3]
-    return sfle.ex([ strFunc,strDATin, strMappedPCL, strMapfile, "[0]", "X", "H", strStatus])
+    return sfle.ex([ strFunc,strDATin, strMappedPCL, strMapfile, "[0]", "X", c_strGeneTo[0], strStatus, c_strRowSkip])
 Command( [c_fileIDMappedPCL,c_fileStatus],[c_funcPclIds, c_fileIDRawPCL, c_fileMap], \
 	funcGeneIdMapping)
+
+#- Handle double and NxM mappings 
+def funcMakeUnique( target, source, env ):
+	strT, astrSs = sfle.ts( target, source )
+	strProg, strIn = astrSs[:2]
+	return sfle.ex([ strProg, strIn, strT ])
+Command( c_fileIDMappedPCL2,[c_funcMakeUnique, c_fileIDMappedPCL], funcMakeUnique )
 
 #- Normalize
 def funcIDNormPCL( target, source, env, iMaxLines = 100000 ):
 	strT, astrSs = sfle.ts( target, source )
-	strS = astrSs[0]
+	strS = astrSs[1] if sfle.readcomment(astrSs[1]) else astrSs[0] 
 	iLC = sfle.lc( strS )
 	return ( sfle.ex( "Normalizer -t pcl -T medmult < " + strS, strT )
 		if ( iLC < iMaxLines ) else sfle.ex( "head -n 3 < " + strS, strT ) )
 
-Command( c_fileIDNormPCL, c_fileIDMappedPCL, funcIDNormPCL )
+Command( c_fileIDNormPCL, [c_fileIDRawPCL,c_fileIDMappedPCL2], funcIDNormPCL )
 
 #- Impute
 def funcIDKNNPCL( target, source, env, iMaxLines = 40000 ):
