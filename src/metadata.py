@@ -63,6 +63,13 @@ class CMetadata:
 	def save( self, fileOut = sys.stdout ):
 
 		pickle.dump( self.m_hashData, fileOut, -1 )
+		
+	def save_text( self, fileOut = sys.stdout ):
+
+		csvw = csv.writer( fileOut, csv.excel_tab )
+		for strKey, pValue in self.items( ):
+			csvw.writerow( (strKey, "%s" % pValue) )
+
 for strKey in CMetadata.c_astrStandards:
 	def funcKey( self, strValue = None, strKey = strKey ):
 		return self._accessor( strKey, strValue )

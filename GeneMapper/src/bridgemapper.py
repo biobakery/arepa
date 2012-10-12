@@ -5,179 +5,113 @@ Main gene mapping python script
 
 #~/dboernig/arepa/GeneMapper/src/bridgemapper.py ~/dboernig/arepa/STRING/data/taxid_100226_mode_binding/taxid_100226_mode_binding.dat ~/dboernig/arepa/STRING/data/taxid_100226_mode_binding/tester.dat ~/dboernig/arepa/STRING/etc/100226_sco_ko_uniprot.map [0] Kg Ck
 
-import sys
+import argparse
 import csv
-import pickle
-import sfle
-import arepa
 import os
+import re
+import subprocess
+import sys
+import tempfile
+
 import metadata 
-import sets 
-
-if len( sys.argv ) < 7:
-        raise Exception( "Usage: bridgemapper.py <inputfile.dat> <outputfile.dat> \
-			<mappingfile> <columnlist in inputfile to be mapped> \
-			<input system code for bridgemapper> \
-			<output system code for bridgemapper> [rows skipped]" )
-
-c_inputfile 		= sys.argv[1]
-c_outputfile 		= sys.argv[2]
-c_mappingfilein 	= sys.argv[3]
-c_columnToMap 		= list(sys.argv[4])
-c_origGeneId 		= sys.argv[5]
-c_destGeneId 		= sys.argv[6]
-c_fileStatus		= sys.argv[7]
-c_iRowSkip 		= int(sys.argv[8]) if (len(sys.argv[1:]) > 7 and sys.argv[8]) else 0  
-
-#Remove the delimiter from the list of strings so that we end up with only the acutal columns in the list:
-c_columnToMap = filter( lambda a: a != ",", c_columnToMap[1:-1] )
-
-c_generatorNum		= (i for i in range(1,len(c_columnToMap)+1))
-
-c_path_GeneMapper 	= sfle.d( arepa.path_arepa(), "GeneMapper")
-c_path_geneidmapper 	= sfle.d(c_path_GeneMapper, "trunk", "batchmapper.sh")
-c_mappingfile 		= c_mappingfilein 
-c_path_mappingfiles 	= os.path.dirname(c_mappingfile)
-c_path_inputfile	= os.path.dirname(c_inputfile)
-
-if c_mappingfile.endswith(".bridge"):
-	c_mappingflag = "-g"
-elif c_mappingfile.endswith(".txt") or c_mappingfile.endswith(".map"):
-	c_mappingflag = "-t"
-
-#########################################################
-# Local functions
-#########################################################
-
-#Gets a specific column from a table file
-def readColFromTable (table,ind):
-	fullcolumn = []
-	columns = csv.reader(open(table),delimiter="\t")
-	[fullcolumn.append(col[ind]) for col in columns]
-	return fullcolumn
-
-#Reads complete table file into a list
-def readTable(table):
-	content = []
-	f = csv.reader(open(table),delimiter="\t")
-	[content.append(col) for col in f]
-	return content
-
-#Transpose a given matrix
-def transpose(matrix):
-	return [[matrix[x][y] for x in range(len(matrix))] for y in range(len(matrix[0]))]
-
-#Saves a column vector as a file
-def saveColumnAsTxtFile (col, txtfile):
-	f = open(txtfile, 'w')
-	f.writelines(["%s\n" % item for item in col])
-	f.close()
-
-#Saves a PCL file as a file
-def savePCLAsTxtFile (txtfile, content):
-	with open(txtfile, 'w') as outfile:
-		outfile.writelines('\t'.join(i) + '\n' for i in content)
-    
-#Write Empty file in error case to avoid trouble with scons:
-def writeEmptyFile(txtfile):
-	f=open(txtfile,"w")
-	f.write("")
-	f.close()
 
 #########################################################
 # GENE ID MAPPING: convert geneids_in into geneids_out
 #########################################################
-def convertGeneIds (geneids, mapfile):
-	#iCol = next(c_generatorNum)
-	inputfile = sfle.d(c_path_mappingfiles, 'geneids.txt') 
-	#inputfile = sfle.d(c_path_inputfile, 'geneids' + str(iCol) + '.txt')
-	#outputfile = sfle.d(c_path_inputfile, 'geneids' + str(iCol) + '_mapped.txt')	
-	outputfile = sfle.d(c_path_mappingfiles, 'geneids_mapped.txt') 
-	saveColumnAsTxtFile (geneids, inputfile)
-	sfle.ex([c_path_geneidmapper, " -i ", inputfile, " -is",c_origGeneId , \
-		" -os ",c_destGeneId, " -o ",outputfile, c_mappingflag , mapfile ," -mm "])
-	hashOut = {k:v for v,k in readTable(outputfile)}
-	return hashOut 
+def convertGeneIds( setstrGenes, strMap, strFrom, strTo ):
 
-def listfirstitem (l): return l[0]
+	pFrom, pTo = (tempfile.NamedTemporaryFile( ) for i in xrange( 2 ))
+	pFrom.write( "\n".join( setstrGenes ) )
+	
+	strBatchmapperSH = os.path.join( __file__, "..", "trunk", "batchmapper.sh" )
+	strMapFlag = "-g" if strMap.endswith( ".bridge" ) else "-t"
 
-##################################################################
-# Replace the probe set ids in the pcl file with the new gene ids
-##################################################################
-def replaceGeneIdsInPCLMatrix (matrix, vec, col):
-	matrix_out = matrix
-	matrix_out[col] = vec
-	return matrix_out
+	subprocess.check_call( (strBatchmapperSH, "-i", pFrom.name, "-is", strFrom,
+		"-os", strTo, "-o", pTo.name, strMapFlag, strMap,"-mm") )
 
-#########################################################
-# Handling NxM geneids 
-#########################################################
-def handleNxMgenes(matrix_in, pattern):
-	matrix_out = []
-	iCol = len(matrix_in[0])
-	for row in matrix_in:
-		crow = row
-		#gene = crow[col]
-		for i in range(iCol):
-			gene = crow[i]
-			if gene.find(pattern) != -1:
-				break
-			elif gene.strip() == "":  
-				break
-			elif i== (iCol-1):
-				matrix_out.append(row)
+	return {a[1]:a[0] for a in csv.reader( pTo, csv.excel_tab )}
+
+def bridgemapper( istm, ostm, strMap, strCols, strFrom, strTo, ostmLog, iSkip ):
+
+	strCols = strCols[1:-1]
+	aiCols = [int(s) for s in re.split( r'\s*,\s*', strCols )] if strCols else []
+	
+	#Open a blank metadata object
+	pMeta = metadata.open( )
+
+	aastrData = []
+	setstrIn = set()
+	csvr = csv.reader( istm, csv.excel_tab )
+	for astrLine in csvr:
+		aastrData.append( astrLine )
+		if csvr.line_num < iSkip:
+			continue
+		for iCol in aiCols:
+			if iCol < len( astrLine ):
+				setstrIn.add( astrLine[iCol] )
 			else:
-				continue 
-	return matrix_out
+				sys.stderr.write(" +++ ERROR in GeneMapper +++ Number of requested columns to \
+					map is larger than the number of columns in the input data file.\n")
+	
+	hashMap = None
+	# Make sure mapping file exists and has nonzero file size
+	if os.path.exists( strMap ) and ( os.stat( strMap )[6] > 0 ):
+		hashMap = convertGeneIds( setstrIn, strMap, strFrom, strTo )
+	else:
+		sys.stderr.write("+++ ERROR in GeneMapper +++ Input file does not exist or is empty. \
+			Return empty file. \n")
 
-      
-###########################################################
-# Getting the probe set ids from the pcl file: geneids_in 
-###########################################################
+	if hashMap:
+		pMeta.set( "mapped", True )
+		for iRow in xrange( iSkip, len( aastrData ) ):
+			astrRow = aastrData[iRow]
+			for iCol in aiCols:
+				if iCol < len( astrRow ):
+					strTo = hashMap.get( astrRow[iCol] )
+					if strTo:
+						astrRow[iCol] = strTo
+	else:
+		sys.stderr.write("+++Error in GeneMapper +++ Empty mapping. \
+			Return original file. \n")      
+		pMeta.set( "mapped", False )
+				
+	csvw = csv.writer( ostm, csv.excel_tab )
+	for astrLine in aastrData:
+		csvw.writerow( astrLine )
 
-#Open a blank metadata object
-hashMeta = metadata.open()
+	if ostmLog:
+		pMeta.save_text( ostmLog )
 
-if os.path.exists(c_inputfile) and os.stat(c_inputfile)[6]!=0:
-        if os.path.exists(c_mappingfile) and os.stat(c_mappingfile)[6]!=0:
-                table_header, table_in = readTable(c_inputfile)[:c_iRowSkip], readTable(c_inputfile)[c_iRowSkip:]
-                table_in_columns = len(table_in[0])
-                if table_in_columns >= len(c_columnToMap):
-                        table_in_transp = zip(*table_in)
-                        columns_to_map = [list(table_in_transp[int(i)]) for i in c_columnToMap]
-                        names_to_map = set(reduce(lambda x,y: x+y,columns_to_map,[])) 
-                        astrNames = [x for x in names_to_map]
-                        hashMap = convertGeneIds(astrNames,c_mappingfile)
-                        table_geneids_replaced = zip(*[map(lambda x: hashMap[x] if any(hashMap[x]) else x \
-				,table_in_transp[iCol]) if str(iCol) in c_columnToMap else table_in_transp[iCol] \
-                                for iCol in range(len(table_in_transp))])
-			table_out = table_header + table_geneids_replaced if any(table_header) else \
-				table_geneids_replaced
-                        if any(table_out):    
-                                savePCLAsTxtFile(c_outputfile,table_out)
-                                hashMeta.update({"mapped":True})
-                        else:
-                                sys.stderr.write("+++Error in GeneMapper +++ Empty mapping. \
-                                        Return original file. \n")      
-                                savePCLAsTxtFile( c_outputfile, readTable(c_inputfile) )
-                                hashMeta.update({"mapped":False})       
-                else:
-                        sys.stderr.write(" +++ ERROR in GeneMapper +++ Number of requested columns to \
-				map is larger than the number of columns in the input data file.\n")
-                        savePCLAasTxtFile( c_outputfile, readTable(c_inputfile))
-                        hashMeta.update({"mapped":False})
-        else:
-                sys.stderr.write("+++ ERROR in GeneMapper +++ Mapping file does not exist or is empty. \
-                        Return original file. \n")
-                savePCLAsTxtFile( c_outputfile, readTable(c_inputfile) )
-                hashMeta.update({"mapped":False})
-else:
-        sys.stderr.write("+++ ERROR in GeneMapper +++ Input file does not exist or is empty. \
-                Return empty file. \n")
-        savePCLAsTxtFile( c_outputfile, readTable(c_inputfile) )
-        hashMeta.update({"mapped":False})
+argp = argparse.ArgumentParser( prog = "bridgemapper.py",
+	description = """Maps gene IDs from one or more tab-delimited text columns from and to specified formats.""" )
+argp.add_argument( "istm",		metavar = "input.dat",
+	type = argparse.FileType( "r" ),	nargs = "?",	default = sys.stdin,
+	help = "Input tab-delimited text file with one or more columns" )
+argp.add_argument( "ostm",		metavar = "output.dat",
+	type = argparse.FileType( "w" ),	nargs = "?",	default = sys.stdout,
+	help = "Input tab-delimited text file with mapped columns" )
+argp.add_argument( "-m",		dest = "strMap",	metavar = "mapping.txt",
+	type = str,					required = True,
+	help = "Required mapping file in tab-delimited BridgeMapper format" )
+argp.add_argument( "-c",		dest = "strCols",	metavar = "columns",
+	type = str,				default = "[]",
+	help = "Columns to map, formatted as [1,2,3]" )
+argp.add_argument( "-f",		dest = "strFrom",	metavar = "from_format",
+	type = str,				default = "X",
+	help = "BridgeMapper single-character type code for input format" )
+argp.add_argument( "-t",		dest = "strTo",		metavar = "to_format",
+	type = str,				default = "H",
+	help = "BridgeMapper single-character type code for output format" )
+argp.add_argument( "-s",		dest = "iSkip",		metavar = "skip_rows",
+	type = int,					default = 0,
+	help = "Number of header rows to skip at top of file" )
+argp.add_argument( "-l",		dest = "ostmLog",	metavar = "log.txt",
+	type = argparse.FileType( "w" ),
+	help = "Optional log file containing output mapping status" )
 
-#Save Metadata
-if c_fileStatus!="None":
-	with open( c_fileStatus, "w" ) as outputf:
-		outputf.write( "\t".join( ["mapped",str(hashMeta.get("mapped"))] ) )
+def _main( ):
+	args = argp.parse_args( )
+	bridgemapper( args.istm, args.ostm, args.strMap, args.strCols, args.strFrom, args.strTo, args.ostmLog, args.iSkip )
+
+if __name__ == "__main__":
+	_main( )
