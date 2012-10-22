@@ -35,7 +35,7 @@ c_fileMappingHuman  =  sfle.d( c_path_GeneMapper, sfle.c_strDirEtc,"Hs_Derby_201
 c_funcChildrenTaxa  =  sfle.d( c_path_GeneMapper, sfle.c_strDirSrc, "getTaxidsFromChildren.py" )
 c_filetaxachildren  =  sfle.d( arepa.path_repo( ), sfle.c_strDirTmp,"taxachildren.txt")
 
-
+c_stringIntactGeneID = "S"
 
 pE = DefaultEnvironment( )
 
@@ -100,23 +100,12 @@ def funcGeneIdMapping( target, source, env):
     c_mappingfilename = func_GetMappingfileFromDir(c_Taxa) #Normal mapping in Human: func_GetMappingfile(c_Taxa)
     c_mappingfile = sfle.d(c_path_Mappingfiles, c_mappingfilename)
     ## END DETERMINE MAPPINGFILE
-    ## START FIND TAXONOMICAL CHILDREN MAPPINGFILE IF ORIGINAL DOES NOT EXIST!
-    #if not os.path.exists(c_mappingfile):
-    #    sys.stderr.write("+++ Original mappingfile does not exist, try one of its taxonomical children.  +++ \n")
-    #    sfle.ex([c_funcChildrenTaxa, c_Taxa, c_filetaxachildren])
-    #    for line in open(c_filetaxachildren,"r"):
-    #        mapping = func_GetMappingfileFromDir(line.split("\n")[0])
-    #        mapping = sfle.d(c_path_Mappingfiles, mapping)
-    #        if os.path.exists(mapping):
-    #            c_mappingfile = mapping
-    #            break
-    ## END FIND TAXONOMICAL CHILDREN MAPPINGFILE
     ## START Take general Uniprot to KO mappingfile if no mappingfile exists so far...
     if not os.path.exists(c_mappingfile):
         sys.stderr.write("+++ No species-specific mappingfile exists, take the general mappingfile from uniprot.  +++ \n")
         c_mappingfile = c_fileMappingfileUniprot2KO
     ## END Take general Uniprot to KO mappingfile if no mappingfile exists so far...
-    return sfle.ex([ strFunc, strDATin, strT, c_mappingfile,"[0,1]", "S", c_strGeneTo[0], "None"])
+    return sfle.ex([ strFunc, strDATin, strT, c_mappingfile,"[0,1]", c_stringIntactGeneID, c_strGeneTo[0], "None"])
 Command(c_fileIDMapDAT, [c_funcGeneMapper, c_fileIDDAT, c_fileIDPKL], funcGeneIdMapping)
 
 
@@ -124,7 +113,7 @@ def funcGeneIdMapping2( target, source, env):
     strT, astrSs = sfle.ts( target, source )
     strFunc, strDATin = astrSs[:2]
     sys.stderr.write("+++ GENE ID Mapping +++ \n")
-    return sfle.ex([ strFunc, strDATin, strT, c_fileMappingHuman,"[0,1]", "S", c_strGeneTo[0],"None"])
+    return sfle.ex([ strFunc, strDATin, strT, c_fileMappingHuman,"[0,1]", c_stringIntactGeneID, c_strGeneTo[0],"None"])
 #Command(c_fileIDMapDAT, [c_funcGeneMapper, c_fileIDDAT], funcGeneIdMapping2)
 
 
