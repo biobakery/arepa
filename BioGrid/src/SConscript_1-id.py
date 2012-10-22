@@ -34,13 +34,11 @@ c_path_GeneMapper   =  sfle.d( arepa.path_arepa(), "GeneMapper")
 c_funcGeneMapper    =  sfle.d( c_path_GeneMapper, sfle.c_strDirSrc, "bridgemapper.py" )
 c_path_Mappingfiles =  sfle.d( arepa.path_arepa( ), "GeneMapper",sfle.c_strDirEtc,"uniprotko")
 c_fileMappingHuman  =  sfle.d( c_path_GeneMapper, sfle.c_strDirEtc,"Hs_Derby_20110601.bridge")
-c_fileMappingMouse  =  sfle.d( c_path_GeneMapper, sfle.c_strDirEtc,"Mm_Derby_20100601.bridge")
-c_fileMappingYeast  = sfle.d( c_path_GeneMapper, sfle.c_strDirEtc,"Sc_Derby_20110603.bridge")
 c_fileMappingfileUniprot2KO = sfle.d(c_path_Mappingfiles, "mappingfile_allspecies_uniref2KO.map")
 c_funcChildrenTaxa  =  sfle.d( c_path_GeneMapper, sfle.c_strDirSrc, "getTaxidsFromChildren.py" )
 c_filetaxachildren  =  sfle.d( arepa.path_repo( ), sfle.c_strDirTmp,"taxachildren.txt")
 
-c_stringBiogridGeneID   = "H"
+
 
 pE = DefaultEnvironment( )
 
@@ -89,15 +87,26 @@ def func_GetMappingfileFromDir(taxid):
 
 
 def func_GetMappingfile(taxid):
-    if (taxid == "9606") or (taxid == "63221") or (taxid == "741158"):
+    if taxid == "9606":
         return c_fileMappingHuman
-    elif (taxid == "10090") or (taxid == "10091") or (taxid == "10092") or (taxid == "35531") or (taxid == "39442") or (taxid == "46456") or (taxid == "57486") or (taxid == "80274") or (taxid == "116058") or (taxid == "179238") or (taxid == "477815") or (taxid == "477816") or (taxid == "947985"):
-        return c_fileMappingMouse
-    elif (taxid == "4932"):
-        return c_fileMappingYeast
     else:
-        return None
+        return "mapping_taxid"+str(c_Taxa)+".txt"
 
+
+#- Do the Mapping:
+#def funcGeneIdMapping( target, source, env):
+#    strT, astrSs = sfle.ts( target, source )
+#    strFunc, strDATin, strPKL = astrSs[:3]
+#    pMetadata = metadata.open(open(strPKL,"rb") )
+#    c_Taxa = pMetadata["taxid"]
+#    sys.stderr.write("+++ GENE ID Mapping +++ \n")
+#    ## START DETERMINE MAPPINGFILE
+#    c_mappingfilename = func_GetMappingfileFromDir(c_Taxa) #Normal mapping in Human: func_GetMappingfile(c_Taxa)
+#    c_mappingfile = sfle.d(c_path_Mappingfiles, c_mappingfilename)
+#    ## END DETERMINE MAPPINGFILE
+#    sfle.ex([ strFunc, strDATin, strT, c_mappingfile,"0", "S", c_strGeneTo[0],"None"])
+#    return sfle.ex([ strFunc, strT, strT, c_mappingfile,"1", "S", c_strGeneTo[0],"None"])
+#Command(c_fileIDMapDAT, [c_funcGeneMapper, c_fileIDDAT, c_fileIDPKL], funcGeneIdMapping)
 
 
 #- Do the Mapping:
@@ -114,20 +123,16 @@ def funcGeneIdMapping( target, source, env):
         sys.stderr.write("+++ No species-specific mappingfile exists, take the general mappingfile from uniprot.  +++ \n")
         c_mappingfile = c_fileMappingfileUniprot2KO
         ## END Take general Uniprot to KO mappingfile if no mappingfile exists so far...
-    return sfle.ex([ strFunc, strDATin, strT, c_mappingfile,"[0,1]", c_stringBiogridGeneID, c_strGeneTo[0], "None"])
-#Command(c_fileIDMapDAT, [c_funcGeneMapper, c_fileIDDAT, c_fileIDPKL], funcGeneIdMapping)
+    return sfle.ex([ strFunc, strDATin, strT, c_mappingfile,"[0,1]", "S", c_strGeneTo[0], "None"])
+Command(c_fileIDMapDAT, [c_funcGeneMapper, c_fileIDDAT, c_fileIDPKL], funcGeneIdMapping)
 
 
-def funcGeneIdMapping_predefinedMappingfiles( target, source, env):
+def funcGeneIdMapping2( target, source, env):
     strT, astrSs = sfle.ts( target, source )
-    strFunc, strDATin, strPKL = astrSs[:3]
-    pMetadata = metadata.open(open(strPKL,"rb") )
-    c_Taxa = pMetadata["taxid"]
-    c_mappingfilename = func_GetMappingfile(c_Taxa)
+    strFunc, strDATin = astrSs[:2]
     sys.stderr.write("+++ GENE ID Mapping +++ \n")
-    return sfle.ex([ strFunc, strDATin, strT, c_mappingfilename,"[0,1]", c_stringBiogridGeneID, c_strGeneTo[0],"None"])
-Command(c_fileIDMapDAT, [c_funcGeneMapper, c_fileIDDAT, c_fileIDPKL], funcGeneIdMapping_predefinedMappingfiles)
-
+    return sfle.ex([ strFunc, strDATin, strT, c_fileMappingHuman,"[0,1]", "S", c_strGeneTo[0],"None"])
+#Command(c_fileIDMapDAT, [c_funcGeneMapper, c_fileIDDAT], funcGeneIdMapping2)
 
 
 def funcDABmapped( target, source, env ):
