@@ -19,10 +19,15 @@ c_logfilezip		= File(sfle.d(sfle.c_strDirTmp, "unzip.log"))
 c_fileGZKegg		= File(sfle.d( c_dirKegg, "kegg.gz" ) )
 c_fileUniprotKO		= File(sfle.d( c_dirUniprotKO, "uniprotko.gz" )) 
 
-c_fileHSMappingfileURL	= "http://bridgedb.org/data/gene_database/Hs_Derby_20110601.bridge"
 c_dirMappingfiles       = sfle.d(sfle.c_strDirEtc)
-c_fileHSMappingfile	= File(sfle.d(c_dirMappingfiles, os.path.basename(c_fileHSMappingfileURL))) 
 
+##Predefined mappingfiles from Bridgedb for human,  mouse and yeast:
+c_fileHSMappingfileURL	= "http://bridgedb.org/data/gene_database/Hs_Derby_20110601.bridge"
+c_fileMMMappingfileURL	= "http://bridgedb.org/data/gene_database/Mm_Derby_20100601.bridge"
+c_fileSCMappingfileURL	= "http://bridgedb.org/data/gene_database/Sc_Derby_20110603.bridge"
+c_fileHSMappingfile	= File(sfle.d(c_dirMappingfiles, os.path.basename(c_fileHSMappingfileURL))) 
+c_fileMMMappingfile     = File(sfle.d(c_dirMappingfiles, os.path.basename(c_fileMMMappingfileURL)))
+c_fileSCMappingfile     = File(sfle.d(c_dirMappingfiles, os.path.basename(c_fileSCMappingfileURL)))
 
 pE = Environment( )
 
@@ -32,6 +37,12 @@ pE = Environment( )
 
 sfle.download(pE, c_fileHSMappingfileURL, c_fileHSMappingfile)
 NoClean(c_fileHSMappingfile)
+sfle.download(pE, c_fileMMMappingfileURL, c_fileMMMappingfile)
+NoClean(c_fileMMMappingfile)
+sfle.download(pE, c_fileSCMappingfileURL, c_fileSCMappingfile)
+NoClean(c_fileSCMappingfile)
+
+
 
 def funcCheckoutTrunk( target, source, env ):
         strT, astrSs = sfle.ts( target, source )
