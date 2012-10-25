@@ -94,9 +94,9 @@ Command( [c_fileIDSeriesTXTGZ, c_fileRDataTXT, c_fileRMetadataTXT, c_fileRPlatfo
 
 #Series2Metadata 
 sfle.pipe( pE, c_fileIDSeriesTXTGZ, c_fileProgSeries2Metadata, c_fileIDPKL,
-	[[False, c_strID]] + ( [[True, c_fileInputManCurTXT]] \
-		if os.path.exists( str(c_fileInputManCurTXT) ) else [] ) + \
-		[[True, c_fileStatus]] )
+	[[False, c_strID]]  + [[True, c_fileStatus]] + \
+		( [[True, c_fileInputManCurTXT]] \
+		if os.path.exists( str(c_fileInputManCurTXT) ) else [] ) )
 
 #Create Tables 
 Command( [c_fileExpTable, c_fileCondTable] ,[c_fileProgPkl2Metadata, c_fileIDPKL], \
