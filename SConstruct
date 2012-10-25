@@ -4,9 +4,9 @@ import sys
 
 c_strURLTaxonomy		= "ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz"
 c_astrExclude			= [ "ArrayExpress", "GeneMapper", "RST", 
-				#,"STRING" 
-				#,"GeneMapper", "IntAct", "BioGrid",
-				#"Bacteriome", "RegulonDB", "MPIDP" 
+				"STRING", 
+				 "IntAct", "BioGrid", "MPIDB",
+				#"Bacteriome", "RegulonDB", 
 					]
 c_fileInputTaxa			= File( sfle.d( sfle.c_strDirEtc, "taxa" ) )
 c_fileTaxIDs			= File( sfle.d( sfle.c_strDirTmp, "taxids" ) )
