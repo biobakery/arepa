@@ -3,6 +3,7 @@
 import collections
 import pickle
 import sys
+import csv
 
 class CMetadata:
 	c_astrStandards	= ["curated", "taxid", "type", "pmid", "platform", "title", "gloss", "channels", "conditions"]
@@ -67,7 +68,7 @@ class CMetadata:
 	def save_text( self, fileOut = sys.stdout ):
 
 		csvw = csv.writer( fileOut, csv.excel_tab )
-		for strKey, pValue in self.items( ):
+		for strKey, pValue in self.m_hashData.items( ):
 			csvw.writerow( (strKey, "%s" % pValue) )
 
 for strKey in CMetadata.c_astrStandards:

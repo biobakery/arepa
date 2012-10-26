@@ -1,0 +1,292 @@
+BridgeDB System Code	Identifier Type	Example
+A	TAIR	AT1G01030
+Ag	Agilent	A_24_P98555
+Bc	BioCyc	EcoCyc:MON0-2657
+Bg	BioGrid	31623
+C	Cint	null
+Ca	CAS	null
+Cc	CCDS	CCDS43989
+Ce	ChEBI	CHEBI:36927
+Ch	HMDB	HMDB00001
+Ck	Kegg Compound	C12345
+Cp	PubChem	100101
+Cpc	PubChem-compound	100101
+Cps	PubChem-substance	100101
+Cs	Chemspider	56586
+D	SGD	S000028457
+E	EC Number	1.1.1.1
+Ec	Ecoli	null
+Em	EMBL	X58356
+En	Ensembl	ENSG00000139618
+EnAg	Ensembl Mosquito	AGAP006864
+EnAt	Gramene Arabidopsis	ATMG01360-TAIR-G
+EnBs	Ensembl B. subtilis	EBBACG00000000013
+EnBt	Ensembl Cow	ENSBTAG00000043548
+EnCe	Ensembl C. elegans	Y42H9B.1
+EnCf	Ensembl Dog	ENSCAFG00000025860
+EnDm	Ensembl Fruitfly	FBgn0032956
+EnDr	Ensembl Zebrafish	ENSDARG00000024771
+EnEc	Ensembl E. coli	EBESCG00000000010
+EnGg	Ensembl Chicken	ENSGALG00000021736
+EnHs	Ensembl Human	ENSG00000139618
+EnMm	Ensembl Mouse	ENSMUSG00000017167
+EnMx	Ensembl M. tuberculosis	EBMYCG00000003122
+EnOj	Gramene Rice	osa-MIR171a
+EnPt	Ensembl Chimp	ENSPTRG00000036034
+EnQc	Ensembl Horse	ENSECAG00000026160
+EnRn	Ensembl Rat	ENSRNOG00000016648
+EnSc	Ensembl Yeast	YGR147C
+EnSs	Ensembl Pig	ENSSSCG00000004244
+EnXt	Ensembl Xenopus	ENSXETG00000029448
+EnZm	Gramene Maize	GRMZM2G174107
+F	FlyBase	FBgn0011293
+G	GenBank	null
+Ge	CodeLink	GE86325
+Gg	Gramene Genes DB	GR:0060184
+Gl	Gramene Literature	6200
+Gp	Gramene Pathway	AAH72400
+Gw	Gene Wiki	1017
+H	HGNC	DAPK1
+Hac	HGNC Accession number	HGNC:2674
+Hs	HsGene	null
+I	InterPro	IPR000100
+Il	Illumina	ILMN_5668
+Ip	IPI	IPI00000001
+Ir	IRGSP Gene	Os12g0561000
+Kg	KEGG Genes	syn:ssr3451
+L	Entrez Gene	100010
+M	MGI	MGI:2442292
+Mb	miRBase Sequence	MI0000001
+Mbm	miRBase mature sequence	MIMAT0000001
+Mg	MaizeGDB	acc1
+N	NASC Gene	ATMG00960-TAIR-G
+Nw	NuGO wiki	HMDB00001
+O	Other	null
+Ob	Oryzabase	468
+Om	OMIM	603903
+Os	Rice Ensembl Gene	LOC_Os04g54800
+Pd	PDB	2gc4
+Pf	Pfam	PF01234
+Pl	PlantGDB	PUT-157a-Vitis_vinifera-37378
+Q	RefSeq	NP_012345
+R	RGD	2018
+Re	Reactome	REACT_1590
+Rf	Rfam	RF00066
+S	Uniprot/TrEMBL	P62158
+T	GeneOntology	GO:0006915
+Tb	TubercuList	Rv0064
+Ti	TIGR	12012.t00308
+U	UniGene	Hs.553708
+Uc	UCSC Genome Browser	uc001tyh.1
+W	WormBase	WBGene00000001
+Wc	Wheat gene catalog	341
+Wg	WikiGenes	7157
+Wi	Wikipedia	Acetate
+Wn	Wheat gene names	5S-Rrna-D1_(Triticum)
+Wp	WikiPathways	WP100
+Wr	Wheat gene refs	WGS-95-1333
+X	Affy	1851_s_at
+Z	ZFIN	ZDB-GENE-041118-11
+	Pathway Commons	485991
+	MycoBrowser tuberculosis	Rv1908c
+	REBASE	101
+	Database of Interacting Proteins	DIP-743N
+	Gramene QTL	CQG5
+	Unit Ontology	UO:0000080
+	Pseudomonas Genome Database	PSEEN0001
+	TTD Drug	DAP000773
+	MycoBrowser leprae	ML0224
+	GEO	GDS1234
+	MIRIAM Registry resource	MIR:00100005
+	BIND	null
+	KiSAO	KISAO_0000057
+	CTD Chemical	D001151
+	MycoBrowser smegmatis	MSMEG_3769
+	ChEMBL compound	CHEMBL308052
+	NeuroLex	Birnlex_721
+	Chemical Component Dictionary	AB0
+	Ensembl Metazoa	FBtr0084214
+	GeneFarm	4892
+	BioModels Database	BIOMD0000000048
+	ClinicalTrials.gov	NCT00222573
+	Transport Classification Database	5.A.1.1.1
+	ArrayExpress	E-MEXP-1712
+	KEGG Glycan	G00123
+	Ligand Expo	ABC
+	arXiv	0807.4956v1
+	HOMD Taxonomy	811
+	dbSNP	121909098
+	NITE Biological Research Center Catalogue	00001234
+	SABIO-RK EC Record	2.7.1.1
+	DrugBank	DB00001
+	Protein Modification Ontology	MOD:00001
+	GiardiaDB	GL50803_102438
+	ChEMBL target	CHEMBL3467
+	MEROPS	S01.001
+	Cell Cycle Ontology	CCO:P0000023
+	TAIR Gene	Gene:2200934
+	CluSTr	HUMAN:55140:308.6
+	ISBN	9781584885658
+	TAIR Protein	AASequence:1009107926
+	Sol Genomics Network	0001
+	PaleoDB	83088
+	KEGG Orthology	K00001
+	Brenda Tissue Ontology	BTO:0000146
+	CryptoDB	cgd7_230
+	LIPID MAPS	LMFA01030001
+	BDGP insertion DB	KG09531
+	NeuroMorpho	Rosa2
+	2D-PAGE protein	P39172
+	PRIDE	1
+	MIRIAM Registry collection	MIR:00000008
+	Ensembl Plants	AT1G73965
+	TriTrypDB	Tb927.8.620
+	ISFinder	ISA1083-2
+	GABI	2679240
+	RESID	AA0001
+	Enzyme Nomenclature	1.1.1.1
+	KEGG Drug	D00123
+	ProtClustDB	O80725
+	KEGG Pathway	hsa00620
+	MINT	MINT-10000
+	Protein Model Database	PM0012345
+	Xenbase	922462
+	EcoGene	EG10173
+	Gramene Taxonomy	GR_tax:013681
+	Orphanet	85163
+	PubChem-bioassay	1018
+	CSA	1a05
+	JWS	curien
+	ICD	C34
+	Gramene genes	GR:0080039
+	Taxonomy	9606
+	MycoBrowser marinum	MMAR_2462
+	DisProt	DP00001
+	GeneDB	Cj1536c
+	HCVDB	M58335
+	CAZy	GT10
+	PubMed Central	PMC3084216
+	PATO	PATO:0001998
+	Compulyeast	O08709
+	Integrated Microbial Genomes Gene	638309541
+	MatrixDB	P00747_P07355
+	Melanoma Molecular Map Project Biomaps	37
+	ChemIDplus	000057272
+	H-InvDb Protein	HIP000030660
+	Unipathway	UPA00206
+	Ensembl Bacteria	EBESCT00000015660
+	SABIO-RK Reaction	75
+	PROSITE	PS00001
+	MicrosporidiaDB	ECU03_0820i
+	IMEx	IM-12080-80
+	EDAM Ontology	EDAM:0001163
+	IntAct	EBI-2307691
+	PMP	1000011778810
+	CATH domain	1cukA01
+	dbProbe	1000000
+	TTD Target	TTDS00056
+	NCIt	C80519
+	Conserved Domain Database	cd00400
+	Protein Ontology	PR:000000563
+	CTD Disease	D053716
+	VectorBase	ISCW007415
+	Ensembl Fungi	CADAFLAT00006211
+	3DMET	B00162
+	DOI	10.1038/nbt1156
+	AGD	AGR144C
+	PharmGKB Drug	PA448710
+	UniSTS	456789
+	UniParc	UPI000000000A
+	PIRSF	PIRSF000100
+	SABIO-RK Kinetic Record	5046
+	Small Molecule Pathway Database	SMP00001
+	PeptideAtlas	PAp00000009
+	HSSP	102l
+	Database of Quantitative Cellular Signaling: Pathway	131
+	PhosphoSite Protein	12300
+	PhosphoSite Residue	2842
+	Rhea	12345
+	Ontology of Physics for Biology	OPB_00573
+	GlycomeDB	1
+	MycoBank	349124
+	sequence ontology	SO:0000704
+	ArachnoServer	AS000060
+	Cell Ontology	CL:0000232
+	H-InvDb Locus	HIX0004394
+	Systems Biology Ontology	SBO:0000262
+	SWISS-MODEL	P23298
+	PANTHER	PTHR12345
+	Molecular Modeling Database	50885
+	PharmGKB Pathways	PA146123006
+	NCI Pathway Interaction Database: Pathway	pi3kcipathway
+	Aclame	mge:2
+	LipidBank	BBA0001
+	Signaling Gateway	A001094
+	BioNumbers	104674
+	Ensembl Protists	PFC0120w
+	AntWeb	casent0106247
+	T3DB	T3D0001
+	ProDom	PD10000
+	SubtiWiki	BSU29180
+	SPRINT	PR00001
+	Peroxibase	5282
+	GOA	P12345
+	BeetleBase	TC010103
+	SubstrateDB	1915
+	Evidence Code	ECO:0000006
+	HOVERGEN	HBG004341
+	BioPortal	1046
+	SMART	SM00015
+	GreenGenes	100000
+	Microbial Protein Interaction Database	172
+	PhylomeDB	Phy000CLXM_RAT
+	GRIN Plant Taxonomy	19333
+	PlasmoDB	PF11_0344
+	Gramene protein	78073
+	Database of Quantitative Cellular Signaling: Model	57
+	PubMed	16333295
+	iRefWeb	617102
+	Candida Genome Database	CAL0003079
+	BioSystems	001
+	Japan Collection of Microorganisms	17254
+	Anatomical Therapeutic Chemical	A10BA02
+	eggNOG	veNOG12876
+	Ontology for Biomedical Investigations	OBI_0000225
+	Genatlas	HBB
+	H-InvDb Transcript	HIT000195363
+	Integrated Microbial Genomes Taxon	648028003
+	OrthoDB	Q9P0K8
+	BioCatalogue	614
+	MaizeGDB Locus	25011
+	EchoBASE	EB0170
+	MACiE	M0001
+	Wormpep	CE28239
+	GPCRDB	RL3R1_HUMAN
+	PharmGKB Disease	PA447218
+	Molecular Interactions Ontology	MI:0308
+	ModelDB	45539
+	CTD Gene	101
+	IRD Segment Sequence	CY077097
+	NeuronDB	265
+	Human Disease Ontology	DOID:11337
+	ProtoNet Cluster	4349895
+	Saccharomyces genome database pathways	PWY3O-214
+	FMA	FMA:67112
+	GeneTree	ENSGT00550000074763
+	TrichDB	TVAG_386080
+	MIRIAM Resources	MIR:00000008
+	HOMD Sequence Metainformation	SEQF1003
+	HOGENOM	HBG284870
+	Relation Ontology	OBO_REL:is_a
+	KEGG Reaction	R00100
+	OMIA	1000
+	CATH superfamily	1.10.10.200
+	ToxoDB	TGME49_053730
+	Ligand-Gated Ion Channel database	5HT3Arano
+	BOLD Taxonomy	27267
+	dbEST	BP100000
+	ProtoNet ProteinCard	16941567
+	AmoebaDB	EDI_244000
+	TEDDY	TEDDY_0000066
+	ChemBank	1000000
+	CutDB	25782

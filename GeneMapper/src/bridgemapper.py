@@ -12,7 +12,6 @@ import re
 import subprocess
 import sys
 import tempfile
-
 import metadata 
 
 #########################################################
@@ -23,12 +22,12 @@ def convertGeneIds( setstrGenes, strMap, strFrom, strTo ):
 	pFrom, pTo = (tempfile.NamedTemporaryFile( ) for i in xrange( 2 ))
 	pFrom.write( "\n".join( setstrGenes ) )
 	
-	strBatchmapperSH = os.path.join( __file__, "..", "trunk", "batchmapper.sh" )
+	#strBatchmapperSH = os.path.join( __file__, "..", "trunk", "batchmapper.sh" )
+	strBatchmapperSH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "trunk/batchmapper.sh")
 	strMapFlag = "-g" if strMap.endswith( ".bridge" ) else "-t"
 
-	subprocess.check_call( (strBatchmapperSH, "-i", pFrom.name, "-is", strFrom,
+	subprocess.check_call( ("sh",strBatchmapperSH, "-i", pFrom.name, "-is", strFrom,\
 		"-os", strTo, "-o", pTo.name, strMapFlag, strMap,"-mm") )
-
 	return {a[1]:a[0] for a in csv.reader( pTo, csv.excel_tab )}
 
 def bridgemapper( istm, ostm, strMap, strCols, strFrom, strTo, ostmLog, iSkip ):
@@ -70,15 +69,17 @@ def bridgemapper( istm, ostm, strMap, strCols, strFrom, strTo, ostmLog, iSkip ):
 					strTo = hashMap.get( astrRow[iCol] )
 					if strTo:
 						astrRow[iCol] = strTo
+					else:
+						astrRow[iCol] = ""
 	else:
 		sys.stderr.write("+++Error in GeneMapper +++ Empty mapping. \
 			Return original file. \n")      
 		pMeta.set( "mapped", False )
 				
 	csvw = csv.writer( ostm, csv.excel_tab )
+	#make sure that if the mapping is empty for one of the columns, delete the entire row
 	for astrLine in aastrData:
-		csvw.writerow( astrLine )
-
+		if all(astrLine): csvw.writerow( astrLine )
 	if ostmLog:
 		pMeta.save_text( ostmLog )
 

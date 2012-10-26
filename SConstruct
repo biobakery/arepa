@@ -2,6 +2,19 @@ import arepa
 import sfle
 import sys
 
+c_strURLTaxonomy		= "ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz"
+c_astrExclude			= [ "ArrayExpress", "GeneMapper", "RST", 
+				#,"STRING" 
+				#,"GeneMapper", "IntAct", "BioGrid",
+				#"Bacteriome", "RegulonDB", "MPIDP" 
+					]
+c_fileInputTaxa			= File( sfle.d( sfle.c_strDirEtc, "taxa" ) )
+c_fileTaxIDs			= File( sfle.d( sfle.c_strDirTmp, "taxids" ) )
+c_fileTaxdumpTXT		= File( sfle.d( sfle.c_strDirTmp, "taxdump.txt" ) )
+c_fileTaxdumpTARGZ		= File( sfle.d( sfle.c_strDirTmp, "taxdump.tar.gz" ) )
+c_fileProgTaxdump2TXT	= File( sfle.d( sfle.c_strDirSrc, "taxdump2txt.py" ) )
+c_fileProgTaxdump2Taxa	= File( sfle.d( sfle.c_strDirSrc, "taxdump2taxa.py" ) )
+
 Decider( "MD5-timestamp" )
 pE = DefaultEnvironment( )
 

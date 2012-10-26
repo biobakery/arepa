@@ -37,7 +37,7 @@ c_funcChildrenTaxa  =  sfle.d( c_path_GeneMapper, sfle.c_strDirSrc, "getTaxidsFr
 c_filetaxachildren  =  sfle.d( arepa.path_repo( ), sfle.c_strDirTmp,"taxachildren.txt")
 
 
-
+c_stringMPIDBGeneID = "S"
 
 pE = DefaultEnvironment( )
 
@@ -106,7 +106,7 @@ def funcGeneIdMapping( target, source, env):
         sys.stderr.write("+++ No species-specific mappingfile exists, take the general mappingfile from uniprot.  +++ \n")
         c_mappingfile = c_fileMappingfileUniprot2KO
     ## END Take general Uniprot to KO mappingfile if no mappingfile exists so far...
-    return sfle.ex([ strFunc, strDATin, strT, c_mappingfile,"[0,1]", "S", c_strGeneTo[0], "None"])
+    return sfle.ex([ strFunc, strDATin, strT, c_mappingfile,"[0,1]", c_stringMPIDBGeneID, c_strGeneTo[0], "None"])
 Command(c_fileIDMapDAT, [c_funcGeneMapper, c_fileIDDAT, c_fileIDPKL], funcGeneIdMapping)
 
 
@@ -114,7 +114,7 @@ def funcGeneIdMapping2( target, source, env):
     strT, astrSs = sfle.ts( target, source )
     strFunc, strDATin = astrSs[:2]
     sys.stderr.write("+++ GENE ID Mapping +++ \n")
-    return sfle.ex([ strFunc, strDATin, strT, c_fileMappingHuman,"[0,1]", "S", c_strGeneTo[0],"None"])
+    return sfle.ex([ strFunc, strDATin, strT, c_fileMappingHuman,"[0,1]", c_stringMPIDBGeneID, c_strGeneTo[0],"None"])
 #Command(c_fileIDMapDAT, [c_funcGeneMapper, c_fileIDDAT], funcGeneIdMapping2)
 
 

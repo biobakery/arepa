@@ -10,8 +10,8 @@ c_strSufTEX				= ".tex"
 
 c_fileInputREADMETXT	= "README.txt"
 
-c_fileProgRST2HTML		= "rst2html" 
-c_fileProgRST2LATEX		= "rst2latex"
+c_fileProgRST2HTML		= "rst2html.py" 
+c_fileProgRST2LATEX		= "rst2latex.py"
 c_fileProgPDFLATEX		= "pdflatex"
 
 pE = DefaultEnvironment( )
