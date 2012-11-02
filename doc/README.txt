@@ -91,8 +91,10 @@ the absolute path of arepa). For instance, the author's local version of arepa i
 
 $ cd ~
 $ touch .bashrc 
-$ echo 'export PATH=/Users/ysupmoon/hg/arepa/src:$PATH' | cat >> .bashrc 
-$ echo 'export PYTHONPATH=/Users/ysupmoon/hg/arepa/src:$PYTHONPATH | cat >> .bashrc 
+$ echo 'export PATH=/Users/ysupmoon/hg/arepa/src:$PATH' \
+$ | cat >> .bashrc 
+$ echo 'export PYTHONPATH=/Users/ysupmoon/hg/arepa/src:$PYTHONPATH' \
+$ | cat >> .bashrc 
 
 This should append those two lines to the end of the .bashrc file. 
 We are almost there! We now move on to initializing the necessary components before we tell arepa to run. 
@@ -153,17 +155,23 @@ sub-directories maintain the same essential structure. Essentially, this amounts
 
 Here is a table describing the nature of each repository. 
 
-+----------------------------------------------------------------------------------------------------+
++-----------------+---------------------+---------------+------------------+-------------------------+
 | Database        | data type           | # Species     | # Interactions   | Ref                     |
-+====================================================================================================+
++=================+=====================+===============+==================+=========================+
 | Bacteriome      | physical assoc.     | 1             | 3,888            | {PMID:17942431}         |
++-----------------+---------------------+---------------+------------------+-------------------------+
 | BioGRID         | physical assoc.     | 32            | 349,696          | {PMID:21071413}         |
++-----------------+---------------------+---------------+------------------+-------------------------+
 | IntAct          | physical assoc.     | 278           | 239,940          | {PMID:22121220}         |
-| MPIDB           | physical assoc.     | 250           | 24,295           | {PMID:18556668}         | 
++-----------------+---------------------+---------------+------------------+-------------------------+
+| MPIDB           | physical assoc.     | 250           | 24,295           | {PMID:18556668}         |
++-----------------+---------------------+---------------+------------------+-------------------------+ 
 | RegulonDB       | regulatory assoc.   | 1             | 4,096            | {PMID:21051347}         |
++-----------------+---------------------+---------------+------------------+-------------------------+
 | STRING          | functional assoc.   | 1,133         | 1,640,707        | {PMID:21045058}         |
++-----------------+---------------------+---------------+------------------+-------------------------+
 | GEO             | gene expression     | 1,967         |                  | {PMID:21097893}         |
-+----------------------------------------------------------------------------------------------------+ 
++-----------------+---------------------+---------------+------------------+-------------------------+ 
 
 
 1.1 Input  
@@ -337,9 +345,9 @@ NB: All questions should be directed to jmoon@hsph.harvard.edu.
 *Solution*
  All configuration information is in the **etc** folder of every directory. See the chapter on specific modules for more details on configuration information for a particualr repository. 
 
-5. My 
+5. My organisms/datasets are not being downloaded! 
 
-10. How do I cite ARepA? 
+6. How do I cite ARepA? 
 
 
 Acknowledgements 

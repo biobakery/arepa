@@ -24,6 +24,8 @@ c_fileMapDAT            = File(sfle.d( sfle.c_strDirData, "regulondb_mapped.dat"
 c_path_GeneMapper       = sfle.d( arepa.path_arepa(), "GeneMapper")
 c_funcGeneMapper        = sfle.d( c_path_GeneMapper, sfle.c_strDirSrc, "bridgemapper.py" )
 c_strMappingfileEcoli   = sfle.d( c_path_GeneMapper, sfle.c_strDirEtc, "uniprotko","511145_eco_colibri-eco.list.map")
+c_strGeneTo             = sfle.readcomment( sfle.d( arepa.path_arepa(),sfle.c_strDirEtc,"geneid" ) or ["H"] )
+c_fileStatus		= File("data/status.txt")
 
 
 pE = Environment( )
@@ -45,10 +47,13 @@ Command( c_fileOutDAT, [c_strProgRegDB,c_strFileRegDBTXT], funcRegulonDBExtracte
 
 
 def funcGeneIdMapping( target, source, env):
-        strT, astrSs = sfle.ts( target, source )
-        strFunc, strDATin = astrSs[:2]
-        return sfle.ex([ strFunc,strDATin, strT, c_strMappingfileEcoli, "[0,1]", "H", "Ck","None"]) 
-Command( c_fileMapDAT,[c_funcGeneMapper, c_fileOutDAT ], funcGeneIdMapping)
+        astrTs, astrSs = ([f.get_abspath() for f in a] for a in (target,source))
+        strT, strStatus = astrTs[:2]
+	strFunc, strDATin = astrSs[:2]
+        return sfle.ex([ strFunc,strDATin, strT, "-m", c_strMappingfileEcoli, "-c", "[0,1]", "-f", "Ck", "-t", c_strGeneTo[0],"-l", strStatus]) 
+Command( [c_fileMapDAT, c_fileStatus], [c_funcGeneMapper, c_fileOutDAT ], funcGeneIdMapping)
+
+# "Ck" was the "geneto" before 
 
 #def funcDAB(target, source, env):
 #	strT, astrSs = sfle.ts( target, source )

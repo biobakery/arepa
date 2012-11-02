@@ -42,7 +42,8 @@ def funcGeneIdMapping( target, source, env):
     astrT, astrSs = ([f.get_abspath( ) for f in a] for a in (target,source))
     strMappedPCL, strStatus =  astrT[:2]
     strFunc, strDATin, strMapfile  = astrSs[:3]
-    return sfle.ex([ strFunc,strDATin, strMappedPCL, strMapfile, "[0]", "X", c_strGeneTo[0], strStatus, c_strRowSkip])
+    return sfle.ex([ strFunc,strDATin, strMappedPCL, "-m", strMapfile, "-c", "[0]", "-f", "X", "-t", c_strGeneTo[0], \
+	"-l", strStatus, "-s", c_strRowSkip])
 Command( [c_fileIDMappedPCL,c_fileStatus],[c_funcPclIds, c_fileIDRawPCL, c_fileMap], \
 	funcGeneIdMapping)
 
@@ -50,7 +51,7 @@ Command( [c_fileIDMappedPCL,c_fileStatus],[c_funcPclIds, c_fileIDRawPCL, c_fileM
 def funcMakeUnique( target, source, env ):
 	strT, astrSs = sfle.ts( target, source )
 	strProg, strIn = astrSs[:2]
-	return sfle.ex([ strProg, strIn, strT ])
+	return sfle.ex([ strProg, strIn, strT, "-s", c_strRowSkip ])
 Command( c_fileIDMappedPCL2,[c_funcMakeUnique, c_fileIDMappedPCL], funcMakeUnique )
 
 #- Normalize

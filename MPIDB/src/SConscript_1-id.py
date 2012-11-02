@@ -35,7 +35,7 @@ c_fileMappingfileUniprot2KO = sfle.d(c_path_Mappingfiles, "mappingfile_allspecie
 c_fileMappingHuman  =  sfle.d( c_path_GeneMapper, sfle.c_strDirEtc,"Hs_Derby_20110601.bridge")
 c_funcChildrenTaxa  =  sfle.d( c_path_GeneMapper, sfle.c_strDirSrc, "getTaxidsFromChildren.py" )
 c_filetaxachildren  =  sfle.d( arepa.path_repo( ), sfle.c_strDirTmp,"taxachildren.txt")
-
+c_fileStatus	    = File("status.txt")
 
 c_stringMPIDBGeneID = "S"
 
@@ -94,7 +94,8 @@ def func_GetMappingfile(taxid):
 
 #- Do the Mapping:
 def funcGeneIdMapping( target, source, env):
-    strT, astrSs = sfle.ts( target, source )
+    astrTs, astrSs = ([f.get_abspath() for f in a] for a in (target,source))
+    strT, strStatus = astrTs[:2]
     strFunc, strDATin, strPKL = astrSs[:3]
     pMetadata = metadata.open(open(strPKL,"rb") )
     c_Taxa = pMetadata["taxid"]
@@ -106,8 +107,8 @@ def funcGeneIdMapping( target, source, env):
         sys.stderr.write("+++ No species-specific mappingfile exists, take the general mappingfile from uniprot.  +++ \n")
         c_mappingfile = c_fileMappingfileUniprot2KO
     ## END Take general Uniprot to KO mappingfile if no mappingfile exists so far...
-    return sfle.ex([ strFunc, strDATin, strT, c_mappingfile,"[0,1]", c_stringMPIDBGeneID, c_strGeneTo[0], "None"])
-Command(c_fileIDMapDAT, [c_funcGeneMapper, c_fileIDDAT, c_fileIDPKL], funcGeneIdMapping)
+    return sfle.ex([ strFunc, strDATin, strT, "-m",c_mappingfile,"-c","[0,1]", "-f",c_stringMPIDBGeneID, "-t",c_strGeneTo[0], "-l", strStatus])
+Command([c_fileIDMapDAT, c_fileStatus], [c_funcGeneMapper, c_fileIDDAT, c_fileIDPKL], funcGeneIdMapping)
 
 
 def funcGeneIdMapping2( target, source, env):
