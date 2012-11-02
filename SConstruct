@@ -41,7 +41,7 @@ def funcTaxdumpTXT( target, source, env ):
 Command( c_fileTaxdumpTXT, [c_fileProgTaxdump2TXT, c_fileTaxdumpTARGZ], funcTaxdumpTXT )
 
 afileTaxIDs = sfle.pipe( pE, c_fileTaxdumpTXT, c_fileProgTaxdump2Taxa, c_fileTaxIDs,
-	[[True, c_fileInputTaxa]] )
+	[[c_fileInputTaxa]] )
 
 #===============================================================================
 # Main SConscript on subdirectories

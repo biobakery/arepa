@@ -3,61 +3,49 @@ import os
 import sys
 import sfle
 
-pE = Environment( )
+pE = DefaultEnvironment( )
 
 #------------------------------------------------------------------------------
 
-c_URL					= "http://svn.bigcat.unimaas.nl/bridgedb/trunk/"
-c_fileHSMappingfileURL	= "http://bridgedb.org/data/gene_database/Hs_Derby_20110601.bridge"
+c_strURL				= "http://svn.bigcat.unimaas.nl/bridgedb/trunk/"
 
-c_dirProg				= sfle.d("trunk")
-c_dirKegg				= sfle.d(arepa.path_repo( ), sfle.c_strDirEtc, "kegg" )
-c_dirUniprotKO			= sfle.d(arepa.path_repo( ), sfle.c_strDirEtc, "uniprotko" )
+c_dirKegg				= Dir(sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, "kegg" ))
+c_dirUniprotKO			= Dir(sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, "uniprotko" ))
 
-c_fileGZKegg		= File(sfle.d( c_dirKegg, "kegg.gz" ) )
-c_fileUniprotKO		= File(sfle.d( c_dirUniprotKO, "uniprotko.gz" )) 
-
-c_dirMappingfiles       = sfle.d(sfle.c_strDirEtc)
+c_fileKeggGZ			= sfle.d( pE, c_dirKegg, "kegg.gz" )
+c_fileUniprotKO			= sfle.d( pE, c_dirUniprotKO, "uniprotko.gz" ) 
+c_fileCheckLOG			= sfle.d( pE, sfle.c_strDirTmp, "checkout.log" )
+c_fileCompLOG			= sfle.d( pE, sfle.c_strDirTmp, "compile.log" )
+c_fileUnzipLOG			= sfle.d( pE, sfle.c_strDirTmp, "unzip.log" )
 
 ##Predefined mappingfiles from Bridgedb for human,  mouse and yeast:
-c_fileHSMappingfileURL	= "http://bridgedb.org/data/gene_database/Hs_Derby_20110601.bridge"
-c_fileMMMappingfileURL	= "http://bridgedb.org/data/gene_database/Mm_Derby_20100601.bridge"
-c_fileSCMappingfileURL	= "http://bridgedb.org/data/gene_database/Sc_Derby_20110603.bridge"
-c_fileHSMappingfile	= File(sfle.d(c_dirMappingfiles, os.path.basename(c_fileHSMappingfileURL))) 
-c_fileMMMappingfile     = File(sfle.d(c_dirMappingfiles, os.path.basename(c_fileMMMappingfileURL)))
-c_fileSCMappingfile     = File(sfle.d(c_dirMappingfiles, os.path.basename(c_fileSCMappingfileURL)))
-
-pE = Environment( )
+c_astrMappingFiles		= ["Hs_Derby_20110601.bridge", "Mm_Derby_20100601.bridge", "Sc_Derby_20110603.bridge"]
+c_strMappingURL			= "http://bridgedb.org/data/gene_database/"
 
 #===============================================================================
 # Check out last version of the tool and compile
 #===============================================================================
 
-sfle.download(pE, c_fileHSMappingfileURL, c_fileHSMappingfile)
-NoClean(c_fileHSMappingfile)
-sfle.download(pE, c_fileMMMappingfileURL, c_fileMMMappingfile)
-NoClean(c_fileMMMappingfile)
-sfle.download(pE, c_fileSCMappingfileURL, c_fileSCMappingfile)
-NoClean(c_fileSCMappingfile)
-
-
+for strMappingFile in c_astrMappingFiles:
+	sfle.download( pE, c_strMappingURL + strMappingFile,
+		sfle.d( sfle.c_strDirEtc, strMappingFile ) )
 
 def funcCheckoutTrunk( target, source, env ):
 	strT, astrSs = sfle.ts( target, source )
-	return ( sfle.ex(["svn checkout", c_URL]) or
+	return ( sfle.ex(["svn checkout", c_strURL]) or
 		sfle.ex(["sed", "-i.orig", "'s/^java -jar/java -Xmx1024m -jar/g'", c_progBatchmapper]) or
 		sfle.ex("echo checked out OK", strT) )
-Command(c_logfilecheck, c_fileHSMappingfile, funcCheckoutTrunk )
+Command( c_fileCheckLOG, None, funcCheckoutTrunk )
 
 def funcCompileTrunk( target, source, env ):
 	strT, astrSs = sfle.ts( target, source )
 	return ( sfle.ex(["ant -buildfile", c_fileBuilder]) or
 		sfle.ex("echo compiled OK", strT) )
-Command(c_logfilecomp, c_logfilecheck, funcCompileTrunk )
+Command( c_fileCompLOG, c_fileCheckLOG, funcCompileTrunk )
 
 def funcMakeMapFiles( target, source, env ):
 	strT, astrSs = sfle.ts( target, source )
 	return ( sfle.ex(["tar", "-xzf", c_fileKEGGTARGZ, "-C", c_dirKegg]) or
 		sfle.ex(["tar", "-xzf",c_fileUniprotKOTARGZ, "-C", c_dirUniprotKO]) or
 		sfle.ex("echo Unzipped OK", strT) )
-Command( c_logfilezip, c_logfilecomp, funcMakeMapFiles )
+Command( c_fileUnzipLOG, c_fileCompLOG, funcMakeMapFiles )
