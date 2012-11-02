@@ -112,7 +112,18 @@ argp.add_argument( "-l",		dest = "ostmLog",	metavar = "log.txt",
 
 def _main( ):
 	args = argp.parse_args( )
-	bridgemapper( args.istm, args.ostm, args.strMap, args.strCols, args.strFrom, args.strTo, args.ostmLog, args.iSkip )
+	if args.strFrom == args.strTo:
+		#if the two gene identifier types are the same, return the input file 
+		aastrData = [x for x in csv.reader(args.istm,csv.excel_tab)]
+		csvw = csv.writer( args.ostm, csv.excel_tab )
+		for astrLine in aastrData:
+			csvw.writerow( astrLine )	
+		if args.ostmLog:
+			pMeta = metadata.open()
+			pMeta.set("mapped", True)			
+			pMeta.save_text( args.ostmLog )
+	else:
+		bridgemapper( args.istm, args.ostm, args.strMap, args.strCols, args.strFrom, args.strTo, args.ostmLog, args.iSkip )
 
 if __name__ == "__main__":
 	_main( )

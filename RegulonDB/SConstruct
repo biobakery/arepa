@@ -50,7 +50,7 @@ def funcGeneIdMapping( target, source, env):
         astrTs, astrSs = ([f.get_abspath() for f in a] for a in (target,source))
         strT, strStatus = astrTs[:2]
 	strFunc, strDATin = astrSs[:2]
-        return sfle.ex([ strFunc,strDATin, strT, "-m", c_strMappingfileEcoli, "-c", "[0,1]", "-f", "Ck", "-t", c_strGeneTo[0],"-l", strStatus]) 
+        return sfle.ex([ strFunc,strDATin, strT, "-m", c_strMappingfileEcoli, "-c", "[0,1]", "-f", "H", "-t", c_strGeneTo[0],"-l", strStatus]) 
 Command( [c_fileMapDAT, c_fileStatus], [c_funcGeneMapper, c_fileOutDAT ], funcGeneIdMapping)
 
 # "Ck" was the "geneto" before 
