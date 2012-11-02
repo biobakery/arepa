@@ -13,23 +13,23 @@ if locals( ).has_key( "testing" ):
 
 c_strID				= arepa.cwd().replace("-RAW","")
 c_strURLGEO			= 'ftp.ncbi.nih.gov'
-c_strURLGEOsupp			= 'pub/geo/DATA/supplementary/samples/'
-c_strURLSupp 			= 'ftp://' + c_strURLGEO + '/' + c_strURLGEOsupp 
-c_strFileGSM			= "../GSM.txt"
-c_strFilePCL			= "../" + c_strID + ".pcl" 
+c_strURLGEOsupp		= 'pub/geo/DATA/supplementary/samples/'
+c_strURLSupp 		= 'ftp://' + c_strURLGEO + '/' + c_strURLGEOsupp 
+c_strFileGSM		= "../GSM.txt"
+c_strFilePCL		= "../" + c_strID + ".pcl" 
 
 c_listTs			= sfle.readcomment( c_strFileGSM )
-c_fileProgReadCel		= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "readCel.R" ) )
-c_fileProgProcessRaw		= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "preprocessRaw.R" ) )
-c_strInputRData			= arepa.cwd() + ".RData"
-c_strOutputRData		= c_strInputRData.replace("-RAW", "") 
+c_fileProgReadCel	= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "readCel.R" ) )
+c_fileProgProcessRaw	= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "preprocessRaw.R" ) )
+c_strInputRData		= arepa.cwd() + ".RData"
+c_strOutputRData	= c_strInputRData.replace("-RAW", "") 
 
-c_filePPfun            		= File( sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, "preprocess"))
+c_filePPfun			= File( sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, "preprocess"))
 c_strPPfun			= sfle.readcomment( c_filePPfun )[0] if \
-				sfle.readcomment( c_filePPfun ) else "affy::rma"
+						sfle.readcomment( c_filePPfun ) else "affy::rma"
 
-c_fileExpTable			= File( "../" + c_strID + "_exp_metadata.txt" )
-c_fileCondTable			= File( "../" + c_strID + "_cond_metadata.txt" )
+c_fileExpTable		= File( "../" + c_strID + "_exp_metadata.txt" )
+c_fileCondTable		= File( "../" + c_strID + "_cond_metadata.txt" )
  
 pE = DefaultEnvironment( )
 Import( "hashArgs" )
@@ -39,7 +39,7 @@ Import( "hashArgs" )
 def funcDownloadRAW( alistTs ):
 	def nnnModify( strID ):
 		strStrip = re.findall(r'GSM\d+', strID )[0]	
-        	strNNN = strStrip[0:len(strStrip)-3] + "nnn/"
+		strNNN = strStrip[0:len(strStrip)-3] + "nnn/"
 		return strNNN, strStrip 
 	for GSMCEL in alistTs:
 		GSMid = str( GSMCEL ).split(".")[0]
@@ -48,10 +48,10 @@ def funcDownloadRAW( alistTs ):
 
 #Get a single RData input file from the CEL files
 def funcRawMap( target, source, env ):
-        astrTs, astrSs = ([f.get_abspath( ) for f in a] for a in (target, source))
-        strOutputRData = astrTs[0]
+	astrTs, astrSs = ([f.get_abspath( ) for f in a] for a in (target, source))
+	strOutputRData = astrTs[0]
 	strIn, astrCel = astrSs[0], astrSs[1:]
-        return sfle.ex( [sfle.cat( strIn ), " | R --no-save --args", strOutputRData] + astrCel)
+	return sfle.ex( [sfle.cat( strIn ), " | R --no-save --args", strOutputRData] + astrCel)
 	
 #Take the RData file produced by funcRawMap and process
 
