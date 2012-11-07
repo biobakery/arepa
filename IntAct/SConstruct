@@ -5,17 +5,15 @@ import sys
 
 c_iMinimum			= 10
 c_strSufTXT			= ".txt"
-c_strURLIntact		= "ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psimitab/intact-clustered.zip"
+c_strURLIntact			= "ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psimitab/intact-clustered.zip"
 
-#------------------------------------------------------------------------------ 
+c_fileInputTaxIDs		= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
 
-c_fileInputTaxIDs	= sfle.d( arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
+c_fileIntactZIP			= sfle.d( pE, sfle.c_strDirTmp, "intact-clustered.zip" )
+c_fileIntactTXT			= sfle.d( pE, sfle.c_strDirTmp, "intact.txt" )
+c_fileIntactC			= sfle.d( pE, sfle.c_strDirTmp, "intactc" )
 
-c_fileIntactZIP		= sfle.d( sfle.c_strDirTmp, "intact-clustered.zip" )
-c_fileIntactTXT		= sfle.d( sfle.c_strDirTmp, "intact.txt" )
-c_fileIntactC		= sfle.d( sfle.c_strDirTmp, "intactc" )
-
-c_fileProgIntact2C	= sfle.d( sfle.c_strDirSrc, "intact2c.py" )
+c_fileProgIntact2C	= sfle.d( pE, sfle.c_strDirSrc, "intact2c.py" )
 
 pE = DefaultEnvironment( )
 
@@ -24,7 +22,6 @@ pE = DefaultEnvironment( )
 #===============================================================================
 
 sfle.download( pE, c_strURLIntact, c_fileIntactZIP )
-NoClean( c_fileIntactZIP )
 
 #===============================================================================
 # Extract intact.txt from intact.zip
@@ -40,7 +37,7 @@ Command( c_fileIntactTXT, c_fileIntactZIP, funcIntactTXT )
 #===============================================================================
 
 afileIntactC = sfle.pipe( pE, c_fileIntactTXT, c_fileProgIntact2C,
-	c_fileIntactC, [[False, c_iMinimum], [True, c_fileInputTaxIDs]] )
+	c_fileIntactC, [[c_iMinimum], [True, c_fileInputTaxIDs]] )
 
 #===============================================================================
 # Pass the IDs from intactc to child directories

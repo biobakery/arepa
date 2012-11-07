@@ -9,10 +9,10 @@ c_strURL			= "http://www.jcvi.org/mpidb/download.php?&pname=&species_txtbox=&spe
 
 #------------------------------------------------------------------------------ 
 
-c_fileInputTaxIDs	= sfle.d( arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
-c_fileMPIDPTXT		= sfle.d( sfle.c_strDirTmp, "MPIDB.tab" )
-c_fileC			= sfle.d( sfle.c_strDirTmp, "mpidbc" )
-c_fileProg2C		= sfle.d( sfle.c_strDirSrc, "mpidb2c.py" )
+c_fileInputTaxIDs	= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
+c_fileMPIDPTXT		= sfle.d( pE, sfle.c_strDirTmp, "MPIDB.tab" )
+c_fileC			= sfle.d( pE, sfle.c_strDirTmp, "mpidbc" )
+c_fileProg2C		= sfle.d( pE, sfle.c_strDirSrc, "mpidb2c.py" )
 
 
 pE = DefaultEnvironment( )
@@ -22,14 +22,12 @@ pE = DefaultEnvironment( )
 #===============================================================================
 
 sfle.download( pE, c_strURL, c_fileMPIDPTXT )
-NoClean( c_fileMPIDPTXT )
-
 
 #===============================================================================
 # Process intact.txt into the more compact intactc
 #===============================================================================
 
-afileC = sfle.pipe( pE, c_fileMPIDPTXT, c_fileProg2C,c_fileC, [[False, c_iMinimum], [True, c_fileInputTaxIDs]] )
+afileC = sfle.pipe( pE, c_fileMPIDPTXT, c_fileProg2C,c_fileC, [[c_iMinimum], [True, c_fileInputTaxIDs]] )
 
 #===============================================================================
 # Pass the IDs from intactc to child directories

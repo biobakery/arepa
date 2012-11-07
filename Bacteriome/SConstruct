@@ -6,53 +6,47 @@ import pickle
 
 pE = DefaultEnvironment( )
 
-c_strURL				= "http://www.compsysbio.org/bacteriome/dataset/combined_interactions.txt"
-c_strInputTaxIDs		= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
+c_strURL			= "http://www.compsysbio.org/bacteriome/dataset/combined_interactions.txt"
+c_strInputTaxIDs		= sfle.d( arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
+c_fileBactTXT       	 	= sfle.d( pE, sfle.c_strDirTmp, os.path.basename(c_strURL))
+c_fileProgBacteriome		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "bacteriome.py" ) 
+c_fileProgUnpickle		= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "unpickle.py" )
+c_fileOutDAT             	= sfle.d( pE, sfle.c_strDirData, "bacteriome.dat" ) 
 
-#BUGBUG: fix this, duplicated everywhere, need to centralize
-#For GeneMapper:
-c_fileMapDAT			= sfle.d( pE, sfle.c_strDirData, "bacteriome_mapped00.dat" )
-c_fileMapDAT2			= sfle.d( pE, sfle.c_strDirData, "bacteriome_mapped01.dat" )
-c_strDirGeneMapper		= sfle.d( arepa.path_arepa(), "GeneMapper" )
-c_astrGeneTo			= sfle.readcomment( sfle.d( arepa.path_arepa(), sfle.c_strDirEtc, "geneid" ) or ["Ck"] )
-c_fileProgGeneMapper	= sfle.d( pE, c_strDirGeneMapper, sfle.c_strDirSrc, "bridgemapper.py" )
-c_fileMappingEcoli   	= sfle.d( pE, arepa.path_arepa(), "GeneMapper", sfle.c_strDirEtc, "uniprotko","511145_eco_ko_uniprot.map" )
-c_fileInMeta			= sfle.d( pE, sfle.c_strDirEtc, "bacteriome.txt" )
+#GeneMapping 
+c_fileInputSConscriptGM		= sfle.d( pE, arepa.path_arepa(),sfle.c_strDirSrc,"SConscript_genemapping.py") 
+c_fileInputSConscriptDAB	= sfle.d( pE, arepa.path_arepa(), sfle.c_strDirSrc, "SConscript_dat-dab.py" )
 
-c_fileBactTXT			= sfle.d( pE, sfle.c_strDirTmp, os.path.basename(c_strURL) )
-c_fileStatus			= sfle.d( pE, sfle.c_strDirData, "status.txt" )
-c_fileOutDAB			= File(str(c_fileMapDAT2).replace( ".dat", ".dab" ))
-c_fileOutQUANT			= File(str(c_fileMapDAT2).replace( ".dat", ".quant" ))
-c_fileOutDAT			= sfle.d( pE, sfle.c_strDirData, "bacteriome.dat" )
-c_fileOutPKL			= sfle.d( pE, sfle.c_strDirData, "bacteriome.pkl" )		 
+c_strGeneFrom			= "Kg"
+c_strMappingfileEcoli   	= sfle.d(arepa.path_arepa(), "GeneMapper", sfle.c_strDirEtc, "uniprotko","511145_eco_ko_uniprot.map")
 
-c_fileProgBacteriome	= sfle.d( pE, sfle.c_strDirSrc, "bacteriome.py" )
-c_fileProgMakeUnique	= sfle.d( pE, arepa.path_arepa(), sfle.c_strDirSrc, "makeunique.py" )
+c_fileInMeta		= sfle.d( pE, arepa.path_repo(), sfle.c_strDirEtc, "bacteriome.txt" )
+c_fileOutDAB            = sfle.d( pE, sfle.c_strDirData, sfle.rebase(c_fileOutDAT, ".dat", ".dab" ))
+c_fileOutQUANT          = sfle.d( pE, sfle.c_strDirData, sfle.rebase(c_fileOutDAT, ".dat", ".quant" ))
+c_fileOutPKL		= sfle.d( pE, sfle.c_strDirData, "bacteriome.pkl" )		 
+c_fileStatus		= sfle.d( pE, sfle.c_strDirData, "status.txt" )
 
+#===============================================================================
 # Download the source text file
-sfle.download( pE, c_strURL, c_fileBactTXT )
+#===============================================================================
+sfle.download( pE,c_strURL,c_fileBactTXT )
 
-sfle.op( pE, c_fileProgBacteriome, [[c_fileBactTXT], [True, c_fileOutDAT]] )
+#Extractor 
+sfle.op( pE, c_fileProgBacteriome, [[c_fileBactTXT], [True,c_fileOutDAT]] )
 
-sfle.op( pE, c_fileProgGeneMapper, [[c_fileOutDAT], [True, c_fileMapDAT],
-	"-m", [c_fileMappingEcoli], "-c", "[0, 1]", "-f", "Kg", "-t", c_astrGeneTo[0], "-l", [True, c_fileStatus]] )
+#Launch gene mapping 
 
-sfle.op( pE, c_fileProgMakeUnique, [[c_fileMapDAT], [True, c_fileMapDAT2]] )
+execfile(str(c_fileInputSConscriptGM)) 
+astrMapped = funcGeneIDMapping( pE, c_fileOutDAT, c_strMappingfileEcoli, c_fileStatus ) 
 
-def funcDAB(target, source, env):
-	strT, astrSs = sfle.ts( target, source )
-	strOut, strMap = astrSs[:2]
-	return sfle.ex( ("Dat2Dab", "-o", strT, "-i", ( strOut if sfle.isempty( fileMap ) else strMap )) )
-Command( c_fileOutDAB, [c_fileOutDAT, c_fileMapDAT2], funcDAB )
+#Make identifiers unique 
+astrUnique = funcMakeUnique( pE, astrMapped[0] )
 
-#BUGBUG: this should be in an external script
-def funcMeta( target, source, env ):
-	strT, astrSs = sfle.ts( target, source )
-	strS, strStatus = astrSs[:2]
-	with open( strT,"wb" ) as outputf:
-		pickle.dump({k:v for k,v in
-			map( lambda k: k.split("\t"), sfle.readcomment( strS ) + sfle.readcomment( strStatus ) )},
-			outputf	)
-Command( c_fileOutPKL, [c_fileInMeta, c_fileStatus], funcMeta )
+sfle.pipe( pE, c_fileInMeta, c_fileProgUnpickle, c_fileOutPKL, ["-r","-l", [c_fileStatus]] )
 
-sfle.scmd( pE, "echo '0.5\t1.5'", c_fileOutQUANT )
+execfile(str(c_fileInputSConscriptDAB))
+
+#DAT to DAB
+astrDAB = funcDAB( pE, c_fileOutDAB, [c_fileOutDAT, astrUnique[0]] )
+funcQUANT( pE, c_fileOutQUANT )
+

@@ -4,72 +4,39 @@ import sys
 import sfle
 import pickle
 
-#------------------------------------------------------------------------------
-
-c_URL			= "http://regulondb.ccg.unam.mx/data/network_tf_gene.txt"
+c_strURL		= "http://regulondb.ccg.unam.mx/data/network_tf_gene.txt"
 c_strInputTaxIDs	= sfle.d( arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
-c_strFileRegDBTXT       = File(sfle.d( sfle.c_strDirTmp, os.path.basename(c_URL)))
-c_strProgRegDB  	= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "regulondb.py" ) )
+c_fileRegDBTXT       	= sfle.d( pE, sfle.c_strDirTmp, os.path.basename(c_URL))
+c_fileProgRegDB  	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "regulondb.py" ) 
 
-c_fileInMeta		= sfle.d( sfle.c_strDirEtc, "regulondb.txt" )
+c_fileInMeta		= sfle.d( pE, sfle.c_strDirEtc, "regulondb.txt" )
 
-c_fileOutDAT            = sfle.d( sfle.c_strDirData, "regulondb.dat" )
-c_fileOutDAB            = sfle.d( sfle.c_strDirData,  File( sfle.rebase(c_fileOutDAT, ".dat", ".dab" )))
-c_fileOutQUANT          = sfle.d( sfle.c_strDirData,  File( sfle.rebase(c_fileOutDAT, ".dat", ".quant" )))
-c_fileOutPKL		= sfle.d( sfle.c_strDirData, "regulondb.pkl" )
+c_fileOutDAT            = sfle.d( pE, sfle.c_strDirData, "regulondb.dat" )
+c_fileOutDAB            = sfle.d( pE, sfle.c_strDirData,  File( sfle.rebase(c_fileOutDAT, ".dat", ".dab" )))
+c_fileOutQUANT          = sfle.d( pE, sfle.c_strDirData,  File( sfle.rebase(c_fileOutDAT, ".dat", ".quant" )))
+c_fileOutPKL		= sfle.d( pE, sfle.c_strDirData, "regulondb.pkl" )
 
 
 #For GeneMapper:
-c_fileMapDAT            = File(sfle.d( sfle.c_strDirData, "regulondb_mapped.dat" ))
+c_fileMapDAT            = sfle.d( pE, sfle.c_strDirData, "regulondb_mapped.dat" )
 c_path_GeneMapper       = sfle.d( arepa.path_arepa(), "GeneMapper")
-c_funcGeneMapper        = sfle.d( c_path_GeneMapper, sfle.c_strDirSrc, "bridgemapper.py" )
 c_strMappingfileEcoli   = sfle.d( c_path_GeneMapper, sfle.c_strDirEtc, "uniprotko","511145_eco_colibri-eco.list.map")
-c_strGeneTo             = sfle.readcomment( sfle.d( arepa.path_arepa(),sfle.c_strDirEtc,"geneid" ) or ["H"] )
-c_fileStatus		= File("data/status.txt")
+c_strGeneFrom 		= "H"
+c_astrGeneTo            = sfle.readcomment( sfle.d( arepa.path_arepa(),sfle.c_strDirEtc,"geneid" ) or ["H"] )
+c_fileStatus		= sfle.d(pE, "data/status.txt")
 
-
-pE = Environment( )
+pE = DefaultEnvironment( )
 
 #===============================================================================
 # Download the source text file
 #===============================================================================
 sfle.download( pE,c_URL,c_strFileRegDBTXT )
-NoClean( c_strFileRegDBTXT )
 
+#extract stuff 
+sfle.op( pE, c_strProgRegDB, [[c_strFileRegDBTXT], [True,c_fileOutDAT]] )
 
-#===============================================================================
-
-def funcRegulonDBExtracter(target, source, env):
-	strT, astrSs = sfle.ts( target, source )
-        strProg,strIn = astrSs[:2]
-	return 	sfle.ex([strProg, strIn, strT])
-Command( c_fileOutDAT, [c_strProgRegDB,c_strFileRegDBTXT], funcRegulonDBExtracter )
-
-
-def funcGeneIdMapping( target, source, env):
-        astrTs, astrSs = ([f.get_abspath() for f in a] for a in (target,source))
-        strT, strStatus = astrTs[:2]
-	strFunc, strDATin = astrSs[:2]
-        return sfle.ex([ strFunc,strDATin, strT, "-m", c_strMappingfileEcoli, "-c", "[0,1]", "-f", "H", "-t", c_strGeneTo[0],"-l", strStatus]) 
-Command( [c_fileMapDAT, c_fileStatus], [c_funcGeneMapper, c_fileOutDAT ], funcGeneIdMapping)
-
-# "Ck" was the "geneto" before 
-
-#def funcDAB(target, source, env):
-#	strT, astrSs = sfle.ts( target, source )
-#        strIn = astrSs[0]
-#        return sfle.ex([" Dat2Dab -o", strT, "-i", strIn])
-#afileDAB = Command( c_fileOutDAB, c_fileOutDAT, funcDAB )
-
-def funcDAB(target, source, env):
-        strT, astrSs = sfle.ts( target, source )
-        fileOut,fileMap = astrSs[:2]
-        if os.stat(fileMap)[6]!=0:
-                return sfle.ex([" Dat2Dab -o", strT, "-i", fileMap])
-        else:
-                return sfle.ex([" Dat2Dab -o", strT, "-i", fileOut])
-Command( c_fileOutDAB, [c_fileOutDAT,c_fileMapDAT], funcDAB )
-
+#execfile()
+funcGeneIDMapping( c_fileMapDAT, c_strMappingfileEcoli, c_fileStatus )
 
 def funcMeta( target, source, env ):
         strT, astrSs = sfle.ts( target, source )
@@ -78,12 +45,4 @@ def funcMeta( target, source, env ):
                 pickle.dump({k:v for k,v in map( lambda k: k.split("\t"), sfle.readcomment( strS ) )},\
                         outputf )
 Command( c_fileOutPKL, [c_fileInMeta], funcMeta )
-Default( c_fileOutPKL )
-
-def funcQUANT( target, source, env ):
-        strT, astrSs = sfle.ts( target, source )
-        strS = astrSs[0]
-        return (sfle.ex("echo '0.5\t1.5' >" + strT))
-Command( c_fileOutQUANT, c_fileOutDAB ,funcQUANT )
-Default( c_fileOutQUANT )
 
