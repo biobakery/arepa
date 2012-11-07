@@ -47,6 +47,9 @@ def funcMakeUnique( pE, strDATin ):
 	strT = strBase[:-2]+iCount+strExt
     	return sfle.op(pE, c_fileProgMakeUnique, [[strDATin], [True,strT]])
 
+# must check metadata in order to see what organism it is ... then do the mapping 
+# this will change some of the code I wrote before 
+
 
 '''
 

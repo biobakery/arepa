@@ -12,6 +12,7 @@ def test( iLevel, strID, hashArgs ):
 if locals( ).has_key( "testing" ):
 	sys.exit( )
 
+pE 				= DefaultEnvironment( )
 c_strID				= arepa.cwd( )
 
 c_fileInputBioGridC		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirTmp, "biogridc.txt" ) 
@@ -36,8 +37,6 @@ c_fileMappingfileUniprot2KO 	= sfle.d( pE, c_path_Mappingfiles, "mappingfile_all
 c_fileStatus        		= sfle.d( pE,"status.txt" )
 
 c_strGeneIDFrom  		= "H"
-
-pE = DefaultEnvironment( )
 
 afileIDTXT = sfle.pipe( pE, c_fileInputBioGridC, c_fileProgC2Metadata, c_fileIDPKL, [[c_strID]] )
 

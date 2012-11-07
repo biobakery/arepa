@@ -14,7 +14,9 @@ c_fileProgUnpickle		= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "unpick
 c_fileOutDAT             	= sfle.d( pE, sfle.c_strDirData, "bacteriome.dat" ) 
 
 #GeneMapping 
-c_fileInputSConscript		= sfle.d( pE, arepa.path_arepa(),sfle.c_strDirSrc,"SConscript_genemapping.py") 
+c_fileInputSConscriptGM		= sfle.d( pE, arepa.path_arepa(),sfle.c_strDirSrc,"SConscript_genemapping.py") 
+c_fileInputSConscriptDAB	= sfle.d( pE, arepa.path_arepa(), sfle.c_strDirSrc, "SConscript_dat-dab.py" )
+
 c_strGeneFrom			= "Kg"
 c_strMappingfileEcoli   	= sfle.d(arepa.path_arepa(), "GeneMapper", sfle.c_strDirEtc, "uniprotko","511145_eco_ko_uniprot.map")
 
@@ -34,19 +36,17 @@ sfle.op( pE, c_fileProgBacteriome, [[c_fileBactTXT], [True,c_fileOutDAT]] )
 
 #Launch gene mapping 
 
-execfile(str(c_fileInputSConscript)) 
+execfile(str(c_fileInputSConscriptGM)) 
 astrMapped = funcGeneIDMapping( pE, c_fileOutDAT, c_strMappingfileEcoli, c_fileStatus ) 
 
 #Make identifiers unique 
 astrUnique = funcMakeUnique( pE, astrMapped[0] )
 
-#Create Dab Object
-def funcDAB(target, source, env):
-        strT, astrSs = sfle.ts( target, source )
-        strOut, strMap = astrSs[:2]
-        return sfle.ex( ("Dat2Dab", "-o", strT, "-i", ( strOut if sfle.isempty( strMap ) else strMap )) )
-Command( c_fileOutDAB, [c_fileOutDAT, astrUnique[0]], funcDAB ) 
-
 sfle.pipe( pE, c_fileInMeta, c_fileProgUnpickle, c_fileOutPKL, ["-r","-l", [c_fileStatus]] )
 
-sfle.scmd( pE, "echo '0.5\t1.5'", c_fileOutQUANT )
+execfile(str(c_fileInputSConscriptDAB))
+
+#DAT to DAB
+astrDAB = funcDAB( pE, c_fileOutDAB, [c_fileOutDAT, astrUnique[0]] )
+funcQUANT( pE, c_fileOutQUANT )
+

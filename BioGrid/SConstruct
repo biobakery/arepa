@@ -4,6 +4,7 @@ import sys
 import sfle
 import csv
 
+pE			= DefaultEnvironment( )
 c_iMinimum		= 10
 c_strURL		= "http://thebiogrid.org/downloads/archives/Release%20Archive/BIOGRID-3.1.83/BIOGRID-ALL-3.1.83.tab2.zip"
 
@@ -15,7 +16,6 @@ c_fileProgBioGrid	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "biogrid.p
 c_fileProgBioGrid2C    	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "biogrid2c.py" ) 
 c_strTXT                = sfle.c_strSufTXT
 
-pE = DefaultEnvironment()
 
 #===============================================================================
 # Download the Biogrid.zip source file
@@ -25,10 +25,12 @@ sfle.download( pE,c_URL,c_strFileBioGridZIP )
 #===============================================================================
 # Extract BIOGRID-ALL-3.1.83.tab2.txt from BIOGRID-ALL-3.1.83.tab2.zip
 #===============================================================================
-def funcBioGridTXT( target, source, env ):
-	strT, astrSs = sfle.ts( target, source )
-	return sfle.ex(( "unzip", "-p", astrSs[0]), strT )
-Command( c_strFileBioGridTXT, c_strFileBioGridZIP, funcBioGridTXT )
+#def funcBioGridTXT( target, source, env ):
+#	strT, astrSs = sfle.ts( target, source )
+#	return sfle.ex(( "unzip", "-p", astrSs[0]), strT )
+#Command( c_strFileBioGridTXT, c_strFileBioGridZIP, funcBioGridTXT )
+#
+sfle.sop( pE, "unzip", ["-p", [c_strFileBioGridZIP], [True, c_strFileBioGridTXT]] )
 
 #===============================================================================
 # Reformat text file for easier text parsing
