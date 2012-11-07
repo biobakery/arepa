@@ -34,11 +34,9 @@ def readTableWithoutHeader(table):
                 content.append(col)
     return content
 
-
 #Transpose a given matrix
 def transpose(matrix):
     return [[matrix[x][y] for x in range(len(matrix))] for y in range(len(matrix[0]))]
-
 
 #Saves a matrix as a file
 def saveMatrixAsTxtFile (txtfile, content):
@@ -63,6 +61,4 @@ for bi in IntB:
     IntBb.append(bi.lower())
 Scores = table_in_transp[cols_scores]
 saveMatrixAsTxtFile(c_resfile, transpose([IntAa, IntBb, Scores]))
-
-
 

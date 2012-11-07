@@ -7,17 +7,15 @@ c_iMinimum			= 1
 c_strSufTXT			= ".txt"
 c_strURL			= "http://string-db.org/newstring_download/protein.actions.v9.0.txt.gz"
 
-#------------------------------------------------------------------------------ 
+c_fileInputTaxIDs		= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
 
-c_fileInputTaxIDs	= sfle.d( arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
+c_fileZIP			= sfle.d( pE, sfle.c_strDirTmp, "string.txt.gz" )
+c_fileTXT			= sfle.d( pE, sfle.c_strDirTmp, "string.txt" )
+c_fileC1                	= sfle.d( pE, sfle.c_strDirTmp, "stringc1" )
+c_fileC				= sfle.d( pE, sfle.c_strDirTmp, "stringc" )
 
-c_fileZIP		= sfle.d( sfle.c_strDirTmp, "string.txt.gz" )
-c_fileTXT		= sfle.d( sfle.c_strDirTmp, "string.txt" )
-c_fileC1                = sfle.d( sfle.c_strDirTmp, "stringc1" )
-c_fileC			= sfle.d( sfle.c_strDirTmp, "stringc" )
-
-c_fileProg2C1           = sfle.d( sfle.c_strDirSrc, "string2c_1.py" )
-c_fileProg2C		= sfle.d( sfle.c_strDirSrc, "string2c.py" )
+c_fileProg2C1           	= sfle.d( pE, sfle.c_strDirSrc, "string2c_1.py" )
+c_fileProg2C			= sfle.d( pE, sfle.c_strDirSrc, "string2c.py" )
 
 pE = DefaultEnvironment( )
 
@@ -26,30 +24,20 @@ pE = DefaultEnvironment( )
 #===============================================================================
 
 sfle.download( pE, c_strURL, c_fileZIP )
-NoClean( c_fileZIP )
 
 #===============================================================================
 # Extract txt from zip
 #===============================================================================
 
-def funcTXT( target, source, env ):
-	strT, astrSs = sfle.ts( target, source )
-	return  sfle.ex( " ".join(( "gunzip", astrSs[0])), strT )
-Command( c_fileTXT, c_fileZIP, funcTXT )
+sfle.sop( pE, "gunzip" [[c_fileZIP],[True,c_fileTXT]] )
 
 #===============================================================================
 # Process txt into the more compact txtc
 #===============================================================================
 
+sfle.op( pE, c_fileProg2C1, [[c_fileTXT], [True, c_fileC1]] )
 
-def func2C1( target, source, env ):
-        strT, astrSs = sfle.ts( target, source )
-        strIn, strProg = astrSs[:2]
-        return sfle.ex([strProg, strIn, strT ])
-Command(c_fileC1, [c_fileTXT, c_fileProg2C1], func2C1)
-
-
-afileC = sfle.pipe( pE, c_fileC1, c_fileProg2C,c_fileC, [[False, c_iMinimum], [True, c_fileInputTaxIDs]] )
+afileC = sfle.pipe( pE, c_fileC1, c_fileProg2C, c_fileC, [[c_iMinimum], [True, c_fileInputTaxIDs]] )
 
 #===============================================================================
 # Pass the IDs from intactc to child directories
