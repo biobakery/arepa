@@ -37,7 +37,7 @@ sfle.op( pE, c_fileProgBacteriome, [[c_fileBactTXT], [True,c_fileOutDAT]] )
 #Launch gene mapping 
 
 execfile(str(c_fileInputSConscriptGM)) 
-astrMapped = funcGeneIDMapping( pE, c_fileOutDAT, c_strMappingfileEcoli, c_fileStatus ) 
+astrMapped = funcGeneIDMapping( pE, c_fileOutDAT, c_fileStatus, c_strMappingfileEcoli ) 
 
 #Make identifiers unique 
 astrUnique = funcMakeUnique( pE, astrMapped[0] )

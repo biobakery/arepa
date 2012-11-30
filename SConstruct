@@ -3,7 +3,7 @@ import sfle
 import sys
 
 c_strURLTaxonomy		= "ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz"
-c_astrExclude			= [ "ArrayExpress", "GeneMapper", "RST", 
+c_astrExclude			= [ "ArrayExpress", "GeneMapper",  
 				#,"STRING" 
 				#,"GeneMapper", "IntAct", "BioGrid",
 				#"Bacteriome", "RegulonDB", "MPIDP" 
@@ -19,7 +19,6 @@ Decider( "MD5-timestamp" )
 pE = DefaultEnvironment( )
 
 c_strURLTaxonomy		= "ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz"
-c_astrExclude			= ["GeneMapper"]
 c_fileInputTaxa			= sfle.d( pE, sfle.c_strDirEtc, "taxa" )
 c_fileTaxIDs			= sfle.d( pE, sfle.c_strDirTmp, "taxids" )
 c_fileTaxdumpTXT		= sfle.d( pE, sfle.c_strDirTmp, "taxdump.txt" )

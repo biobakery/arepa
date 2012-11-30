@@ -23,17 +23,16 @@ c_fileProgC2Metadata			= sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "c2metada
 c_fileProgC2DAT				= sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "c2dat.py" ) )
 
 #For GeneMapper:
-c_fileIDMapDAT      			=  c_strID + "_mapped.dat" 
-c_fileIDMapDAB      			=  c_strID + "_mapped.dab"
-c_fileIDMapQUANT    			=  c_strID + "_mapped.quant"
-c_strGeneTo         			=  sfle.readcomment( sfle.d( arepa.path_arepa(),sfle.c_strDirEtc,"geneid" ) or ["Ck"] )
-c_path_GeneMapper   			=  sfle.d( pE, arepa.path_arepa(), "GeneMapper")
-c_funcGeneMapper    			=  sfle.d( pE, c_path_GeneMapper, sfle.c_strDirSrc, "bridgemapper.py" )
+c_fileIDMapDAT      			=  sfle.d( pE, c_strID + "_mapped.dat" )
+c_fileIDMapDAB      			=  sfle.d( pE, c_strID + "_mapped.dab" )
+c_fileIDMapQUANT    			=  sfle.d( pE, c_strID + "_mapped.quant" )
+#c_strGeneTo         			=  sfle.readcomment( sfle.d( arepa.path_arepa(),sfle.c_strDirEtc,"geneid" ) or ["Ck"] )
+
 c_path_Mappingfiles 			=  sfle.d( pE, arepa.path_arepa( ), "GeneMapper", sfle.c_strDirEtc, "uniprotko")
 c_fileMappingfileUniprot2KO 		=  sfle.d( pE, c_path_Mappingfiles, "mappingfile_allspecies_uniref2KO.map")
 c_fileMappingHuman  			=  sfle.d( pE, c_path_GeneMapper, sfle.c_strDirEtc,"Hs_Derby_20110601.bridge")
-c_funcChildrenTaxa  			=  sfle.d( pE, c_path_GeneMapper, sfle.c_strDirSrc, "getTaxidsFromChildren.py" )
-c_filetaxachildren  			=  sfle.d( pE, arepa.path_repo( ), sfle.c_strDirTmp,"taxachildren.txt")
+#c_funcChildrenTaxa  			=  sfle.d( pE, c_path_GeneMapper, sfle.c_strDirSrc, "getTaxidsFromChildren.py" )
+#c_filetaxachildren  			=  sfle.d( pE, arepa.path_repo( ), sfle.c_strDirTmp,"taxachildren.txt")
 c_fileStatus 	    			=  sfle.d(pE, "status.txt")
 
 c_strGeneIDFrom 			= "S"

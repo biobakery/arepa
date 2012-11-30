@@ -38,4 +38,4 @@ strTaxID = mtch.group( 1 )
 setPairs = set()
 mpidb.read( sys.stdin, strTarget, callback, [setPairs, strTaxID, {}] )
 for astrGenes in setPairs:
-	print( "\t".join( list(astrGenes) + ["1"] ) )
+	sys.stdout.write( "\t".join( list(astrGenes) + ["1"] ) + "\n" )

@@ -22,7 +22,6 @@ def convertGeneIds( setstrGenes, strMap, strFrom, strTo ):
 	pFrom, pTo = (tempfile.NamedTemporaryFile( ) for i in xrange( 2 ))
 	pFrom.write( "\n".join( setstrGenes ) )
 	
-	#strBatchmapperSH = os.path.join( __file__, "..", "trunk", "batchmapper.sh" )
 	strBatchmapperSH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "trunk/batchmapper.sh")
 	strMapFlag = "-g" if strMap.endswith( ".bridge" ) else "-t"
 
@@ -54,7 +53,7 @@ def bridgemapper( istm, ostm, strMap, strCols, strFrom, strTo, ostmLog, iSkip ):
 	
 	hashMap = None
 	# Make sure mapping file exists and has nonzero file size
-	if os.path.exists( strMap ) and ( os.stat( strMap )[6] > 0 ):
+	if strMap and os.path.exists( strMap ) and ( os.stat( strMap )[6] > 0 ):
 		hashMap = convertGeneIds( setstrIn, strMap, strFrom, strTo )
 	else:
 		sys.stderr.write("+++ ERROR in GeneMapper +++ Input file does not exist or is empty. \
@@ -92,7 +91,7 @@ argp.add_argument( "ostm",		metavar = "output.dat",
 	type = argparse.FileType( "w" ),	nargs = "?",	default = sys.stdout,
 	help = "Input tab-delimited text file with mapped columns" )
 argp.add_argument( "-m",		dest = "strMap",	metavar = "mapping.txt",
-	type = str,					required = True,
+	type = str,					required = False,
 	help = "Required mapping file in tab-delimited BridgeMapper format" )
 argp.add_argument( "-c",		dest = "strCols",	metavar = "columns",
 	type = str,				default = "[]",
@@ -114,13 +113,23 @@ def _main( ):
 	args = argp.parse_args( )
 	if args.strFrom == args.strTo:
 		#if the two gene identifier types are the same, return the input file 
-		aastrData = [x for x in csv.reader(args.istm,csv.excel_tab)]
+		pAastrData = csv.reader(args.istm,csv.excel_tab)
 		csvw = csv.writer( args.ostm, csv.excel_tab )
-		for astrLine in aastrData:
+		for astrLine in pAastrData:
 			csvw.writerow( astrLine )	
 		if args.ostmLog:
 			pMeta = metadata.open()
 			pMeta.set("mapped", True)			
+			pMeta.save_text( args.ostmLog )
+	elif not(args.strMap):
+		#if there is no map file specified 
+		pAastrData = csv.reader(args.istm,csv.excel_tab)
+		csvw = csv.writer( args.ostm, csv.excel_tab )
+		for astrLine in pAastrData:
+			csvw.writerow( astrLine )	
+		if args.ostmLog:
+			pMeta = metadata.open()
+			pMeta.set("mapped",False)
 			pMeta.save_text( args.ostmLog )
 	else:
 		bridgemapper( args.istm, args.ostm, args.strMap, args.strCols, args.strFrom, args.strTo, args.ostmLog, args.iSkip )

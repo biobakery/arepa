@@ -4,45 +4,48 @@ import sys
 import sfle
 import pickle
 
+pE = DefaultEnvironment( )
+
 c_strURL		= "http://regulondb.ccg.unam.mx/data/network_tf_gene.txt"
-c_strInputTaxIDs	= sfle.d( arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
-c_fileRegDBTXT       	= sfle.d( pE, sfle.c_strDirTmp, os.path.basename(c_URL))
+c_fileInputTaxIDs	= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
+c_fileRegDBTXT       	= sfle.d( pE, sfle.c_strDirTmp, os.path.basename(c_strURL))
 c_fileProgRegDB  	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "regulondb.py" ) 
+c_fileProgUnpickle      = sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "unpickle.py" )
 
 c_fileInMeta		= sfle.d( pE, sfle.c_strDirEtc, "regulondb.txt" )
 
 c_fileOutDAT            = sfle.d( pE, sfle.c_strDirData, "regulondb.dat" )
-c_fileOutDAB            = sfle.d( pE, sfle.c_strDirData,  File( sfle.rebase(c_fileOutDAT, ".dat", ".dab" )))
-c_fileOutQUANT          = sfle.d( pE, sfle.c_strDirData,  File( sfle.rebase(c_fileOutDAT, ".dat", ".quant" )))
+c_fileOutDAB            = sfle.d( pE, sfle.c_strDirData,  sfle.rebase(str(c_fileOutDAT), ".dat", ".dab" ))
+c_fileOutQUANT          = sfle.d( pE, sfle.c_strDirData,  sfle.rebase(str(c_fileOutDAT), ".dat", ".quant" ))
 c_fileOutPKL		= sfle.d( pE, sfle.c_strDirData, "regulondb.pkl" )
 
-
 #For GeneMapper:
-c_fileMapDAT            = sfle.d( pE, sfle.c_strDirData, "regulondb_mapped.dat" )
-c_path_GeneMapper       = sfle.d( arepa.path_arepa(), "GeneMapper")
-c_strMappingfileEcoli   = sfle.d( c_path_GeneMapper, sfle.c_strDirEtc, "uniprotko","511145_eco_colibri-eco.list.map")
-c_strGeneFrom 		= "H"
-c_astrGeneTo            = sfle.readcomment( sfle.d( arepa.path_arepa(),sfle.c_strDirEtc,"geneid" ) or ["H"] )
-c_fileStatus		= sfle.d(pE, "data/status.txt")
+c_fileInputSConscriptGM         = sfle.d( pE, arepa.path_arepa(),sfle.c_strDirSrc,"SConscript_genemapping.py")
+c_fileInputSConscriptDAB        = sfle.d( pE, arepa.path_arepa(), sfle.c_strDirSrc, "SConscript_dat-dab.py" )
 
-pE = DefaultEnvironment( )
+c_strGeneFrom 			= "H"
+c_strMappingfileEcoli   	= sfle.d(arepa.path_arepa(), "GeneMapper", sfle.c_strDirEtc, "uniprotko","511145_eco_colibri-eco.list.map")
+c_fileStatus		= sfle.d(pE, sfle.c_strDirData, "status.txt")
 
 #===============================================================================
 # Download the source text file
 #===============================================================================
-sfle.download( pE,c_URL,c_strFileRegDBTXT )
 
-#extract stuff 
-sfle.op( pE, c_strProgRegDB, [[c_strFileRegDBTXT], [True,c_fileOutDAT]] )
+sfle.download( pE,c_strURL,c_fileRegDBTXT )
 
-#execfile()
-funcGeneIDMapping( c_fileMapDAT, c_strMappingfileEcoli, c_fileStatus )
+#Extractor 
+sfle.op( pE, c_fileProgRegDB, [[c_fileRegDBTXT], [True,c_fileOutDAT]] )
 
-def funcMeta( target, source, env ):
-        strT, astrSs = sfle.ts( target, source )
-        strS = astrSs[0]
-        with open( strT,"wb" ) as outputf:
-                pickle.dump({k:v for k,v in map( lambda k: k.split("\t"), sfle.readcomment( strS ) )},\
-                        outputf )
-Command( c_fileOutPKL, [c_fileInMeta], funcMeta )
+#Launch gene mapping 
+execfile(str(c_fileInputSConscriptGM))
+astrMapped = funcGeneIDMapping( pE, c_fileOutDAT, c_fileStatus, c_strMappingfileEcoli )
 
+#Make identifiers unique 
+astrUnique = funcMakeUnique( pE, astrMapped[0] )
+sfle.pipe( pE, c_fileInMeta, c_fileProgUnpickle, c_fileOutPKL, ["-r","-l",[c_fileStatus]] )
+
+execfile(str(c_fileInputSConscriptDAB))
+
+#DAT to DAB 
+astrDAB = funcDAB( pE, c_fileOutDAB, [c_fileOutDAT, astrUnique[0]] )
+funcQUANT( pE, c_fileOutQUANT ) 

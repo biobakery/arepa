@@ -25,6 +25,10 @@ c_fileIDQUANT           	= sfle.d( pE, c_strID + ".quant" )
 c_fileProgC2Metadata		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "c2metadata.py" ) 
 c_fileProgC2DAT			= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "c2dat.py" ) 
 
+#GeneMapping 
+c_fileInputSConscriptGM         = sfle.d( pE, arepa.path_arepa(),sfle.c_strDirSrc,"SConscript_genemapping.py")
+c_fileInputSConscriptDAB        = sfle.d( pE, arepa.path_arepa(), sfle.c_strDirSrc, "SConscript_dat-dab.py" )
+
 #For GeneMapper:
 c_fileIDMapDAT      		=  c_strID + "_mapped.dat"
 c_fileIDMapDAB      		=  c_strID + "_mapped.dab"
@@ -46,6 +50,6 @@ sfle.pipe( pE, c_fileInputBioGridC, c_fileProgC2DAT, c_fileIDDAT, [[c_strID]] )
 #- Gene id mapping from Uniprot to Genesymbols
 ##############################################
 
-funcGeneIDMapping( c_fileDATin, c_fileMappingHuman, c_fileStatus )
+funcGeneIDMapping( c_fileDAT, c_fileMappingHuman, c_fileStatus )
 
 #do stuff for dat/dab, quant. 

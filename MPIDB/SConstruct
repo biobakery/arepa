@@ -3,6 +3,8 @@ import os
 import sfle
 import sys
 
+pE = DefaultEnvironment( )
+
 c_iMinimum			= 10
 c_strSufTXT			= ".txt"
 c_strURL			= "http://www.jcvi.org/mpidb/download.php?&pname=&species_txtbox=&species_select=&dbsource=&cvname=&confidence_structure=&confidence_method=&confidence_interologs=&confidence_purification=&confidence_evidences=&submit=Search&__utma=79309195.414799375.1333565465.1333565465.1333565465.1&__utmb=79309195.13.10.1333565465&__utmc=79309195&__utmz=79309195.1333565465.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none)&__unam=fb61bf3-1367eb4bad2-7e187f47-1"
@@ -15,8 +17,6 @@ c_fileC			= sfle.d( pE, sfle.c_strDirTmp, "mpidbc" )
 c_fileProg2C		= sfle.d( pE, sfle.c_strDirSrc, "mpidb2c.py" )
 
 
-pE = DefaultEnvironment( )
-
 #===============================================================================
 # Download the  source file
 #===============================================================================
@@ -27,7 +27,7 @@ sfle.download( pE, c_strURL, c_fileMPIDPTXT )
 # Process intact.txt into the more compact intactc
 #===============================================================================
 
-afileC = sfle.pipe( pE, c_fileMPIDPTXT, c_fileProg2C,c_fileC, [[c_iMinimum], [True, c_fileInputTaxIDs]] )
+afileC = sfle.pipe( pE, c_fileMPIDPTXT, c_fileProg2C, c_fileC, [c_iMinimum, [c_fileInputTaxIDs]] )
 
 #===============================================================================
 # Pass the IDs from intactc to child directories
