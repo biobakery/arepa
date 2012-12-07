@@ -121,7 +121,7 @@ def _main( ):
 			pMeta = metadata.open()
 			pMeta.set("mapped", True)			
 			pMeta.save_text( args.ostmLog )
-	elif not(args.strMap):
+	elif not(args.strMap) or not(os.stat(str(args.strMap))[6]):
 		#if there is no map file specified 
 		pAastrData = csv.reader(args.istm,csv.excel_tab)
 		csvw = csv.writer( args.ostm, csv.excel_tab )

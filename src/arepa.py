@@ -84,10 +84,18 @@ def taxid2org( strTaxID ):
 	hashTaxID2Org, hashOrg2TaxID = _taxdump( )
 	return hashTaxID2Org.get( strTaxID )
 
-def org2taxid( strOrg ):
-
+def org2taxid( strOrg, fApprox = False ):
+	"""fApprox flag turns on approximate taxid acquisition; 
+	includes subspecies. Modified: returns list, not string  
+	"""
 	hashTaxID2Org, hashOrg2TaxID = _taxdump( )
-	return hashOrg2TaxID.get( strOrg )
+	if fApprox:
+		astrApproxTaxIDs = filter(lambda s: strOrg in s,hashOrg2TaxID.keys())
+		return [hashOrg2TaxID[k] for k in astrApproxTaxIDs] 
+	else:
+		return [hashOrg2TaxID.get( strOrg )]
+
+#BUGBUG: clean this up -- this is old code by Curtis and is largely defunct. 
 
 def geneid( strIn, strTaxID, strTarget = "Entrez Gene", strURLBase = "http://localhost:8183" ):
 	

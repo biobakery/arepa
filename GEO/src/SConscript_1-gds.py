@@ -12,11 +12,13 @@ def test( iLevel, strID, hashArgs ):
 if locals( ).has_key( "testing" ):
 	sys.exit( )
 
-c_strID					= arepa.cwd( )
-c_fileIDTXT				= File( c_strID + ".txt" )
-c_fileIDSOFTGZ			= File( c_strID + ".soft.gz" )
-
 pE = DefaultEnvironment( )
+
+c_strID				= arepa.cwd( )
+c_fileIDTXT			= sfle.d( pE, c_strID + ".txt" )
+c_fileIDSOFTGZ			= sfle.d( pE, c_strID + ".soft.gz" )
+
+
 Import( "hashArgs" )
 
 #===============================================================================
@@ -24,7 +26,6 @@ Import( "hashArgs" )
 #===============================================================================
 
 sfle.download( pE, hashArgs["c_strURLGDS"] + os.path.basename( str(c_fileIDSOFTGZ) ) )
-NoClean( c_fileIDSOFTGZ )
 
 def funcGPLsTXT( target, source, env ):
 	strT, astrSs = sfle.ts( target, source )

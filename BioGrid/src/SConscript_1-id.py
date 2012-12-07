@@ -30,26 +30,34 @@ c_fileInputSConscriptGM         = sfle.d( pE, arepa.path_arepa(),sfle.c_strDirSr
 c_fileInputSConscriptDAB        = sfle.d( pE, arepa.path_arepa(), sfle.c_strDirSrc, "SConscript_dat-dab.py" )
 
 #For GeneMapper:
-c_fileIDMapDAT      		=  c_strID + "_mapped.dat"
-c_fileIDMapDAB      		=  c_strID + "_mapped.dab"
-c_fileIDMapQUANT    		=  c_strID + "_mapped.quant"
+#c_fileIDMapDAT      		=  c_strID + "_mapped.dat"
+#c_fileIDMapDAB      		=  c_strID + "_mapped.dab"
+#c_fileIDMapQUANT    		=  c_strID + "_mapped.quant"
 
-c_path_Mappingfiles 		=  sfle.d( pE, arepa.path_arepa( ), "GeneMapper",sfle.c_strDirEtc,"uniprotko")
-c_fileMappingHuman  		=  sfle.d( pE, c_path_GeneMapper, sfle.c_strDirEtc,"Hs_Derby_20110601.bridge")
+#c_path_Mappingfiles 		=  sfle.d( pE, arepa.path_arepa( ), "GeneMapper",sfle.c_strDirEtc,"uniprotko")
+#c_fileMappingHuman  		=  sfle.d( pE, c_path_GeneMapper, sfle.c_strDirEtc,"Hs_Derby_20110601.bridge")
 
-c_fileMappingfileUniprot2KO 	= sfle.d( pE, c_path_Mappingfiles, "mappingfile_allspecies_uniref2KO.map")
+#c_fileMappingfileUniprot2KO 	= sfle.d( pE, c_path_Mappingfiles, "mappingfile_allspecies_uniref2KO.map")
 c_fileStatus        		= sfle.d( pE,"status.txt" )
 
-c_strGeneIDFrom  		= "H"
+c_strGeneFrom  		= "H"
 
-afileIDTXT = sfle.pipe( pE, c_fileInputBioGridC, c_fileProgC2Metadata, c_fileIDPKL, [[c_strID]] )
-
-sfle.pipe( pE, c_fileInputBioGridC, c_fileProgC2DAT, c_fileIDDAT, [[c_strID]] ) 
+afileIDDAT = sfle.pipe( pE, c_fileInputBioGridC, c_fileProgC2DAT, c_fileIDDAT, [c_strID] )
 
 ##############################################
 #- Gene id mapping from Uniprot to Genesymbols
 ##############################################
+#Launch gene mapping 
+execfile(str(c_fileInputSConscriptGM))
+astrMapped = funcGeneIDMapping( pE, c_fileIDDAT, c_fileStatus, None )
 
-funcGeneIDMapping( c_fileDAT, c_fileMappingHuman, c_fileStatus )
+#Make identifiers unique 
+astrUnique = funcMakeUnique( pE, astrMapped[0] )
 
-#do stuff for dat/dab, quant. 
+afileIDTXT = sfle.pipe( pE, c_fileInputBioGridC, c_fileProgC2Metadata, c_fileIDPKL,[c_strID,[c_fileStatus]] )
+
+execfile(str(c_fileInputSConscriptDAB))
+
+#DAT to DAB
+astrDAB = funcDAB( pE, c_fileIDDAB, [c_fileIDDAT, astrUnique[0]] )
+funcQUANT( pE, c_fileIDQUANT )

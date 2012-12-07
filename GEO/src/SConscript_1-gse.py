@@ -9,14 +9,14 @@ def test( iLevel, strID, hashArgs ):
 	return ( iLevel == 1 ) and ( strID.find( "GSE" ) == 0 )
 if locals( ).has_key( "testing" ):
 	sys.exit( )
+pE = DefaultEnvironment( )
 
 c_strID						= arepa.cwd( )
 c_strHost					= "ftp.ncbi.nih.gov"
 c_strPath					= "pub/geo/DATA/SeriesMatrix/"
 
-c_fileIDTXT					= File( c_strID + ".txt" )
+c_fileIDTXT					= sfle.d( pE, c_strID + ".txt" )
 
-pE = DefaultEnvironment( )
 Import( "hashArgs" )
 
 #==============================================================================

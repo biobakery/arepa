@@ -16,7 +16,6 @@ c_fileOutDAT             	= sfle.d( pE, sfle.c_strDirData, "bacteriome.dat" )
 #GeneMapping 
 c_fileInputSConscriptGM		= sfle.d( pE, arepa.path_arepa(),sfle.c_strDirSrc,"SConscript_genemapping.py") 
 c_fileInputSConscriptDAB	= sfle.d( pE, arepa.path_arepa(), sfle.c_strDirSrc, "SConscript_dat-dab.py" )
-
 c_strGeneFrom			= "Kg"
 c_strMappingfileEcoli   	= sfle.d(arepa.path_arepa(), "GeneMapper", sfle.c_strDirEtc, "uniprotko","511145_eco_ko_uniprot.map")
 

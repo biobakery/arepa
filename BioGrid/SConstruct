@@ -9,7 +9,7 @@ c_iMinimum		= 10
 c_strURL		= "http://thebiogrid.org/downloads/archives/Release%20Archive/BIOGRID-3.1.83/BIOGRID-ALL-3.1.83.tab2.zip"
 
 c_fileInputTaxIDs	= sfle.d( arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
-c_fileBioGridZIP	= sfle.d( pE, sfle.c_strDirTmp, os.path.basename(c_URL))
+c_fileBioGridZIP	= sfle.d( pE, sfle.c_strDirTmp, os.path.basename(c_strURL))
 c_fileBioGridTXT     	= sfle.d( pE, sfle.c_strDirTmp, "biogrid_downloaded.txt" )
 c_fileBioGridC		= sfle.d( pE, sfle.c_strDirTmp, "biogridc.txt" )
 c_fileProgBioGrid	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "biogrid.py" ) 
@@ -20,25 +20,19 @@ c_strTXT                = sfle.c_strSufTXT
 #===============================================================================
 # Download the Biogrid.zip source file
 #===============================================================================
-sfle.download( pE,c_URL,c_strFileBioGridZIP )
+sfle.download( pE,c_strURL,c_fileBioGridZIP )
 
 #===============================================================================
 # Extract BIOGRID-ALL-3.1.83.tab2.txt from BIOGRID-ALL-3.1.83.tab2.zip
 #===============================================================================
-#def funcBioGridTXT( target, source, env ):
-#	strT, astrSs = sfle.ts( target, source )
-#	return sfle.ex(( "unzip", "-p", astrSs[0]), strT )
-#Command( c_strFileBioGridTXT, c_strFileBioGridZIP, funcBioGridTXT )
-#
-sfle.sop( pE, "unzip", ["-p", [c_strFileBioGridZIP], [True, c_strFileBioGridTXT]] )
+
+sfle.scmd( pE, "unzip", c_fileBioGridTXT, ["-p", [c_fileBioGridZIP]] )
 
 #===============================================================================
 # Reformat text file for easier text parsing
 #===============================================================================
 
-#afileBioGridC = sfle.pipe( pE, c_strFileBioGridTXT, c_strProgBioGrid2C, c_strFileBioGridC,  [[False, c_iMinimum], [True, c_strInputTaxIDs]] )
-
-afileBioGridC = sfle.pipe( pE, c_fileBioGridTXT, c_fileProgBioGrid2C, c_fileBioGridC,  [[c_iMinimum], [True, c_strInputTaxIDs]] )
+afileBioGridC = sfle.pipe( pE, c_fileBioGridTXT, c_fileProgBioGrid2C, c_fileBioGridC,  [c_iMinimum, [c_fileInputTaxIDs]] )
 
 #===============================================================================
 # Pass the IDs  to child directories

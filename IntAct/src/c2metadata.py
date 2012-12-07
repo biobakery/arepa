@@ -3,6 +3,7 @@
 import intact
 import metadata
 import sys
+import csv 
 
 def metadatum( funcMetadata, astrTokens, iIndex ):
 
@@ -21,10 +22,17 @@ def callback( pMetadata, strAs, strBs, strAltAs, strAltBs, strSynAs, strSynBs, s
 	metadatum( pMetadata.type, [strTypes.lower( )], 2 )
 	metadatum( pMetadata.platform, [strMethods], 2 )
 
-if len( sys.argv ) != 2:
+if len( sys.argv ) < 2:
 	raise Exception( "Usage: c2metadata.py <id> < <intactc>" )
+
 strTarget = sys.argv[1]
+strStatus = sys.argv[2] if len(sys.argv[1:]) > 1 else None 
+
 
 pMetadata = metadata.open( )
 intact.read( sys.stdin, strTarget, callback, pMetadata )
+if strStatus:
+        strMapped, strBool = [x for x in csv.reader(open(strStatus),csv.excel_tab)][0]
+        fMapped = True if strBool == "True" else False 
+        pMetadata.set(strMapped, fMapped)
 pMetadata.save( sys.stdout )

@@ -5,6 +5,8 @@ import sfle
 import sys
 import urllib
 
+pE = DefaultEnvironment( )
+
 c_iMaxTaxa			= 100
 c_strPre			= "_pre"
 c_strSufTXT			= ".txt"
@@ -29,21 +31,19 @@ c_strURLGPL			= c_strURL + "annotation/platforms/"
 c_strHost 			= "ftp.ncbi.nih.gov"
 c_strPathAnnot 		= "pub/geo/DATA/annotation/platforms/"
 
-c_fileInputInclude	= sfle.d( sfle.c_strDirEtc, "include" )
-c_fileInputExclude	= sfle.d( sfle.c_strDirEtc, "exclude" )
-c_fileInputTaxIDs	= sfle.d( arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
+c_fileInputInclude	= sfle.d( pE, sfle.c_strDirEtc, "include" )
+c_fileInputExclude	= sfle.d( pE, sfle.c_strDirEtc, "exclude" )
+c_fileInputTaxIDs	= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
 
-c_fileTmpAnnot		= sfle.d( arepa.path_repo( ), sfle.c_strDirTmp, "annot" + c_strSufTXT ) 
+c_fileTmpAnnot		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirTmp, "annot" + c_strSufTXT ) 
 
 c_hashFiles			= {
-	"GDS"					: "gds",
-	"GSE"					: "gse",
-	"GPL+NOT+GSE+NOT+GSM"	: "gpl"
-}		
+				"GDS"					: "gds",
+				"GSE"					: "gse",
+				"GPL+NOT+GSE+NOT+GSM"			: "gpl"
+				}		
 
 c_fileProgXML2TXT	= sfle.d( sfle.c_strDirSrc, "xml2txt.py" )
-
-pE = DefaultEnvironment( )
 
 #===============================================================================
 # Download the lists of GDS, GSE, and GPL IDs

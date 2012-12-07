@@ -3,6 +3,8 @@ import os
 import sfle
 import sys
 
+pE = DefaultEnvironment( )
+
 c_iMinimum			= 1
 c_strSufTXT			= ".txt"
 c_strURL			= "http://string-db.org/newstring_download/protein.actions.v9.0.txt.gz"
@@ -17,8 +19,6 @@ c_fileC				= sfle.d( pE, sfle.c_strDirTmp, "stringc" )
 c_fileProg2C1           	= sfle.d( pE, sfle.c_strDirSrc, "string2c_1.py" )
 c_fileProg2C			= sfle.d( pE, sfle.c_strDirSrc, "string2c.py" )
 
-pE = DefaultEnvironment( )
-
 #===============================================================================
 # Download the zip source file
 #===============================================================================
@@ -29,7 +29,7 @@ sfle.download( pE, c_strURL, c_fileZIP )
 # Extract txt from zip
 #===============================================================================
 
-sfle.sop( pE, "gunzip" [[c_fileZIP],[True,c_fileTXT]] )
+sfle.scmd( pE, "gunzip", c_fileTXT, [[c_fileZIP]] )
 
 #===============================================================================
 # Process txt into the more compact txtc

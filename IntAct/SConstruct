@@ -3,6 +3,9 @@ import os
 import sfle
 import sys
 
+
+pE = DefaultEnvironment( )
+
 c_iMinimum			= 10
 c_strSufTXT			= ".txt"
 c_strURLIntact			= "ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psimitab/intact-clustered.zip"
@@ -13,9 +16,7 @@ c_fileIntactZIP			= sfle.d( pE, sfle.c_strDirTmp, "intact-clustered.zip" )
 c_fileIntactTXT			= sfle.d( pE, sfle.c_strDirTmp, "intact.txt" )
 c_fileIntactC			= sfle.d( pE, sfle.c_strDirTmp, "intactc" )
 
-c_fileProgIntact2C	= sfle.d( pE, sfle.c_strDirSrc, "intact2c.py" )
-
-pE = DefaultEnvironment( )
+c_fileProgIntact2C		= sfle.d( pE, sfle.c_strDirSrc, "intact2c.py" )
 
 #===============================================================================
 # Download the intact.zip source file
@@ -27,17 +28,19 @@ sfle.download( pE, c_strURLIntact, c_fileIntactZIP )
 # Extract intact.txt from intact.zip
 #===============================================================================
 
-def funcIntactTXT( target, source, env ):
-	strT, astrSs = sfle.ts( target, source )
-	return sfle.ex( ("unzip", "-p", astrSs[0]), strT )
-Command( c_fileIntactTXT, c_fileIntactZIP, funcIntactTXT )
+#def funcIntactTXT( target, source, env ):
+#	strT, astrSs = sfle.ts( target, source )
+#	return sfle.ex( ("unzip", "-p", astrSs[0]), strT )
+#Command( c_fileIntactTXT, c_fileIntactZIP, funcIntactTXT )
+
+sfle.scmd( pE, "unzip", c_fileIntactTXT, ["-p", [c_fileIntactZIP]] )
 
 #===============================================================================
 # Process intact.txt into the more compact intactc
 #===============================================================================
 
 afileIntactC = sfle.pipe( pE, c_fileIntactTXT, c_fileProgIntact2C,
-	c_fileIntactC, [[c_iMinimum], [True, c_fileInputTaxIDs]] )
+	c_fileIntactC, [c_iMinimum, [c_fileInputTaxIDs]] )
 
 #===============================================================================
 # Pass the IDs from intactc to child directories
