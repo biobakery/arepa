@@ -16,16 +16,16 @@ pE = DefaultEnvironment( )
 
 c_strSufMap         	= ".map"
 c_strManMap         	= "manual_mapping"
-c_fileIDNormPCL		= File( c_strID + "_01norm.pcl" )
-c_fileIDPCL		= File( c_strID + ".pcl" )
-c_fileIDDAB		= File( c_strID + ".dab" )
-c_fileIDQUANT       	= File( c_strID + ".quant" )
-c_fileIDPKL         	= File( c_strID + ".pkl" )
-c_fileStatus		= File( "status.txt" )
+c_fileIDNormPCL		= sfle.d( pE, c_strID + "_01norm.pcl" )
+c_fileIDPCL		= sfle.d( pE, c_strID + ".pcl" )
+c_fileIDDAB		= sfle.d( pE, c_strID + ".dab" )
+c_fileIDQUANT       	= sfle.d( pE, c_strID + ".quant" )
+c_fileIDPKL         	= sfle.d( pE, c_strID + ".pkl" )
+c_fileStatus		= sfle.d( pE, "status.txt" )
 
 c_strDirManMap		= sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, c_strManMap ) 
-c_fileIDMappedPCL  	= File( c_strID + "_00mapped.pcl" )
-c_fileIDMappedPCL2	= File( c_strID + "_01mapped.pcl" )
+c_fileIDMappedPCL  	= sfle.d( pE, c_strID + "_00mapped.pcl" )
+c_fileIDMappedPCL2	= sfle.d( pE, c_strID + "_01mapped.pcl" )
 
 ## Gene Mapper:
 c_fileInputSConscriptGM = sfle.d( pE, arepa.path_arepa(),sfle.c_strDirSrc,"SConscript_genemapping.py")
@@ -37,45 +37,24 @@ c_strGeneTo         	= sfle.readcomment( sfle.d( arepa.path_arepa(),sfle.c_strDi
 c_funcPclIds       	= sfle.d( c_path_GeneMapper, sfle.c_strDirSrc, "bridgemapper.py" )
 c_funcMakeUnique	= sfle.d( arepa.path_arepa(), sfle.c_strDirSrc, "makeunique.py" )
 
-#If manually curated mapping file exists, use. Otherwise, use automatically generated one. 
-c_fileMap           	= reduce( lambda x,y: x or y, filter( lambda x: x==c_strID + c_strSufMap,\
-				glob.glob(sfle.d(c_strDirManMap,"*" + c_strSufMap)) ),None ) \
-				or File(c_strID + "_map.txt")
-
+#Load GeneMapper SConscript 
 execfile( str(c_fileInputSConscriptGM) )
 
-astrMapped = funcGeneIDMapping( pE, c_fileIDMappedPCL, c_fileStatus, None, c_strCOL, c_strSkip )
+#Perform Gene Mapping 
+astrMapped = funcGeneIDMapping( pE, c_fileIDRawPCL, c_fileStatus, None, c_strCOL, c_strSkip )
 
-#- Gene id mapping
-#def funcGeneIdMapping( target, source, env):
-#    astrT, astrSs = ([f.get_abspath( ) for f in a] for a in (target,source))
-#    strMappedPCL, strStatus =  astrT[:2]
-#    strFunc, strDATin, strMapfile  = astrSs[:3]
-#    return sfle.ex([ strFunc,strDATin, strMappedPCL, "-m", strMapfile, "-c", "[0]", "-f", "X", "-t", c_strGeneTo[0], \
-#	"-l", strStatus, "-s", c_strRowSkip])
-#Command( [c_fileIDMappedPCL,c_fileStatus],[c_funcPclIds, c_fileIDRawPCL, c_fileMap], \
-#	funcGeneIdMapping)
-
-astrUnique = funcMakeUnique( pE, astrMapped[0] ) 
-
-
-#- Handle double and NxM mappings 
-#def funcMakeUnique( target, source, env ):
-#	strT, astrSs = sfle.ts( target, source )
-#	strProg, strIn = astrSs[:2]
-#	return sfle.ex([ strProg, strIn, strT, "-s", c_strRowSkip ])
-
-#Command( c_fileIDMappedPCL2,[c_funcMakeUnique, c_fileIDMappedPCL], funcMakeUnique )
+#Get rid of duplicate identifiers 
+astrUnique = funcMakeUnique( pE, astrMapped[0], c_strSkip ) 
 
 #- Normalize
 def funcIDNormPCL( target, source, env, iMaxLines = 100000 ):
 	strT, astrSs = sfle.ts( target, source )
-	strS = astrSs[1] if sfle.readcomment(astrSs[1]) else astrSs[0] 
+	strS = astrSs[1] if sfle.readcomment(astrSs[1]) > int(c_strSkip) else astrSs[0] 
 	iLC = sfle.lc( strS )
 	return ( sfle.ex( "Normalizer -t pcl -T medmult < " + strS, strT )
 		if ( iLC < iMaxLines ) else sfle.ex( "head -n 3 < " + strS, strT ) )
 
-Command( c_fileIDNormPCL, [c_fileIDRawPCL,c_fileIDMappedPCL2], funcIDNormPCL )
+Command( c_fileIDNormPCL, [c_fileIDRawPCL, astrUnique[0]], funcIDNormPCL )
 
 #- Impute
 def funcIDKNNPCL( target, source, env, iMaxLines = 40000 ):

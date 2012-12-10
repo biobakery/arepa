@@ -63,7 +63,7 @@ def funcGeneIDMapping( pE, strDATin, strLOGout, strMAPin = None, strCOL =  "[0,1
 					strMAPin = strMAPname 	
 	strBase, strExt = os.path.splitext(str(strDATin))
 	strCount = funcCounter(c_piCounter)    	
-	strT = strBase+c_strMapped+strCount+strExt
+	strT = strBase.split("_")[0] +c_strMapped+strCount+strExt
 	if strMAPin:
     		return sfle.op( pE, c_funcGeneMapper, [[strDATin], [True,strT],"-m",[strMAPin],
 			"-c",strCOL,"-f", c_strGeneFrom,"-t",c_astrGeneTo[0],"-s", 
@@ -72,9 +72,8 @@ def funcGeneIDMapping( pE, strDATin, strLOGout, strMAPin = None, strCOL =  "[0,1
 		return sfle.op( pE, c_funcGeneMapper, [[strDATin], [True,strT],"-c",strCOL,"-f", 
 			c_strGeneFrom,"-t",c_astrGeneTo[0],"-s", strSkip, "-l",[True, strLOGout]] )	
 
-def funcMakeUnique( pE, strDATin ):
-	strSkip = "0" if c_strRepo != "GEO" else "2" 
+def funcMakeUnique( pE, strDATin, strSkip = "0" ):
 	strBase, strExt = os.path.splitext(str(strDATin))
 	iCount = funcCounter(c_piCounter)
-	strT = strBase[:-2]+iCount+strExt
+	strT = strBase.split("_")[0] + c_strMapped +iCount+strExt
     	return sfle.op(pE, c_fileProgMakeUnique, [[strDATin], [True,strT],"-s", strSkip])

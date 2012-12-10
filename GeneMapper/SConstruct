@@ -7,10 +7,10 @@ pE = DefaultEnvironment( )
 
 #------------------------------------------------------------------------------
 
-c_strURL				= "http://svn.bigcat.unimaas.nl/bridgedb/trunk/"
+c_strURL			= "http://svn.bigcat.unimaas.nl/bridgedb/trunk/"
 
-c_dirProg				= sfle.d("trunk")
-c_dirKegg				= sfle.d(arepa.path_repo( ), sfle.c_strDirEtc, "kegg" )
+c_dirProg			= sfle.d("trunk")
+c_dirKegg			= sfle.d(arepa.path_repo( ), sfle.c_strDirEtc, "kegg" )
 c_dirUniprotKO			= sfle.d(arepa.path_repo( ), sfle.c_strDirEtc, "uniprotko" )
 c_strRevision			= "626"
 
