@@ -31,7 +31,7 @@ c_strURLGPL             = hashArgs["c_strURLGPL"]
 c_strHost               = "ftp.ncbi.nih.gov"
 c_strPath               = "pub/geo/DATA/annotation/platforms/"
 c_fileIDAnnot           = sfle.d( pE, c_strID + ".annot.gz" )
-c_fileIDMap             = sfle.d( pE, c_strID + "_map.txt" )
+c_fileIDMap             = sfle.d( pE, c_strID + ".map" )
 
 c_fileStatus		= sfle.d( pE, "status.txt" )
 c_fileTXTGSM		= sfle.d( pE, "GSM.txt" )
@@ -106,6 +106,7 @@ fileGeneMap = sfle.pipe( pE, c_fileIDAnnot, c_fileProgAnnot2Map, c_fileIDMap )
 
 #Clean Microarray Data -- Imputation, Normalization, Gene Mapping    
 execfile( str( c_fileInputSConscript ) )
+funcPCL2DAB( pE, c_fileIDRawPCL )
 
 def scanner( fileExclude = None, fileInclude = None ):
 	setstrExclude = set(readcomment( fileExclude ) if fileExclude else [])

@@ -47,12 +47,13 @@ def funcGeneIDMapping( pE, fileDATin, strGeneFrom, strLOGout, strMAPin = None, a
 	try:
 		int(strMAPin)
 		strTaxa, strMAPin = strMAPin, None
-	except ValueError, TypeError:
+	except (ValueError, TypeError):
 		strTaxa = None
 	if not(strMAPin):
 		strDirAuto = c_strDirData if ( c_strID == c_strPathRepo ) else "" 
 		strAutoMAPtmp = sfle.d( strDirAuto, c_strID + c_strSufMap )
-		strAutoMAP = strAutoMAPtmp if os.path.exists( strAutoMAPtmp ) else None 
+		strAutoMAP = strAutoMAPtmp if os.path.exists( strAutoMAPtmp ) else None
+		sys.stderr.write( str( strAutoMAP ) + "\n" ) 
 		strMAPin = reduce( lambda x, y: x or y,
 			filter( lambda x: c_strID in x,
 			glob.glob( sfle.d( c_strDirManMap, "*" + c_strSufMap ) ) ), strAutoMAP )

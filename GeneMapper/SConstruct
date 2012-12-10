@@ -31,9 +31,9 @@ c_strMappingURL			= "http://bridgedb.org/data/gene_database/"
 # Check out last version of the tool and compile
 #===============================================================================
 
-for strMappingFile in c_astrMappingFiles:
-	sfle.download( pE, c_strMappingURL + strMappingFile,
-		sfle.d( sfle.c_strDirEtc, strMappingFile ) )
+#for strMappingFile in c_astrMappingFiles:
+#	sfle.download( pE, c_strMappingURL + strMappingFile,
+#		sfle.d( sfle.c_strDirEtc, strMappingFile ) )
 
 def funcCheckoutTrunk( target, source, env ):
 	strT, astrSs = sfle.ts( target, source )
