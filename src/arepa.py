@@ -61,9 +61,21 @@ c_strProgSConstruct		= sfle.d( path_arepa( ), sfle.c_strDirSrc, "SConstruct.py" 
 # Gene ID conversion
 #===============================================================================
 
-def mapfrom_genename( ):
+def genemapper( ):
+
+	return sfle.d( path_arepa( ), sfle.c_strDirSrc, "SConscript_genemapping.py" )
+
+def genemap_genename( ):
 	
 	return "H"
+
+def genemap_uniref( ):
+	
+	return "S"
+
+def genemap_probeids( ):
+	
+	return "X"
 
 s_lockTaxdump	= threading.Lock( )
 s_hashTaxID2Org	= None

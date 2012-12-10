@@ -12,8 +12,9 @@ import os
 import metadata
 import glob 
 
-c_strSufMap		 	= ".map"
-c_strManMap		 	= "manual_mapping"
+c_aiCOL				= [0]
+c_iSkip				= 2
+
 c_fileIDNormPCL		= sfle.d( pE, c_strID + "_01norm.pcl" )
 c_fileIDPCL			= sfle.d( pE, c_strID + ".pcl" )
 c_fileIDDAB			= sfle.d( pE, c_strID + ".dab" )
@@ -21,22 +22,11 @@ c_fileIDQUANT		= sfle.d( pE, c_strID + ".quant" )
 c_fileIDPKL		 	= sfle.d( pE, c_strID + ".pkl" )
 c_fileStatus		= sfle.d( pE, "status.txt" )
 
-c_strDirManMap		= sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, c_strManMap ) 
 c_fileIDMappedPCL	= sfle.d( pE, c_strID + "_00mapped.pcl" )
 c_fileIDMappedPCL2	= sfle.d( pE, c_strID + "_01mapped.pcl" )
 
-## Gene Mapper:
-c_fileInputSConscriptGM = sfle.d( pE, arepa.path_arepa(),sfle.c_strDirSrc,"SConscript_genemapping.py")
-c_aiCOL				= [0]
-c_iSkip				= 2
-c_path_GeneMapper 	= sfle.d( arepa.path_arepa(), "GeneMapper")
-c_strGeneFrom		= "X"
-c_strGeneTo		 	= sfle.readcomment( sfle.d( arepa.path_arepa(),sfle.c_strDirEtc,"geneid" ) or ["H"] )
-c_funcPclIds	 	= sfle.d( c_path_GeneMapper, sfle.c_strDirSrc, "bridgemapper.py" )
-c_funcMakeUnique	= sfle.d( arepa.path_arepa(), sfle.c_strDirSrc, "makeunique.py" )
-
 #Load GeneMapper SConscript 
-execfile( str(c_fileInputSConscriptGM) )
+execfile( arepa.genemapper( ) )
 
 #- Normalize
 def funcIDNormPCL( target, source, env, iMaxLines = 100000 ):
@@ -72,8 +62,8 @@ def funcIDQUANT( target, source, env ):
 def funcPCL2DAB( pE, fileIDRawPCL ):
 
 	#Perform Gene Mapping 
-	astrMapped = funcGeneIDMapping( pE, fileIDRawPCL, c_strGeneFrom, c_fileStatus, 
-		None, c_aiCOL, c_iSkip )
+	astrMapped = funcGeneIDMapping( pE, fileIDRawPCL, arepa.mapfrom_probeids( ),
+		c_fileStatus, None, c_aiCOL, c_iSkip )
 	#Get rid of duplicate identifiers 
 	astrUnique = funcMakeUnique( pE, astrMapped[0], c_iSkip ) 
 

@@ -37,7 +37,7 @@ sfle.op( pE, c_fileProgRegDB, [[c_fileRegDBTXT], [True,c_fileOutDAT]] )
 
 #Launch gene mapping 
 execfile(str(c_fileInputSConscriptGM))
-astrMapped = funcGeneIDMapping( pE, c_fileOutDAT, arepa.mapfrom_genename( ), c_fileStatus,
+astrMapped = funcGeneIDMapping( pE, c_fileOutDAT, arepa.genemap_genename( ), c_fileStatus,
 	arepa.org2taxid( "Escherichia coli str. K-12 substr. MG1655" ) )
 # Note that this must currently correspond to the "best" mapping file from GeneMapper
 # For whatever reason, this is hard-coded to the type strain, not the species

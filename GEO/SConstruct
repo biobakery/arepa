@@ -5,8 +5,6 @@ import sfle
 import sys
 import urllib
 
-pE = DefaultEnvironment( )
-
 c_iMaxTaxa			= 100
 c_strPre			= "_pre"
 c_strSufTXT			= ".txt"
@@ -31,19 +29,21 @@ c_strURLGPL			= c_strURL + "annotation/platforms/"
 c_strHost 			= "ftp.ncbi.nih.gov"
 c_strPathAnnot 		= "pub/geo/DATA/annotation/platforms/"
 
-c_fileInputInclude	= sfle.d( pE, sfle.c_strDirEtc, "include" )
-c_fileInputExclude	= sfle.d( pE, sfle.c_strDirEtc, "exclude" )
-c_fileInputTaxIDs	= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
+c_fileInputInclude	= sfle.d( sfle.c_strDirEtc, "include" )
+c_fileInputExclude	= sfle.d( sfle.c_strDirEtc, "exclude" )
+c_fileInputTaxIDs	= sfle.d( arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
 
-c_fileTmpAnnot		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirTmp, "annot" + c_strSufTXT ) 
+c_fileTmpAnnot		= sfle.d( arepa.path_repo( ), sfle.c_strDirTmp, "annot" + c_strSufTXT ) 
 
 c_hashFiles			= {
-				"GDS"					: "gds",
-				"GSE"					: "gse",
-				"GPL+NOT+GSE+NOT+GSM"			: "gpl"
-				}		
+	"GDS"					: "gds",
+	"GSE"					: "gse",
+	"GPL+NOT+GSE+NOT+GSM"	: "gpl"
+}		
 
 c_fileProgXML2TXT	= sfle.d( sfle.c_strDirSrc, "xml2txt.py" )
+
+pE = DefaultEnvironment( )
 
 #===============================================================================
 # Download the lists of GDS, GSE, and GPL IDs
@@ -69,11 +69,10 @@ for strSet, strBase in c_hashFiles.items( ):
 				break
 		
 		astrXMLs = []
-		for iCur in xrange( 1, iCount + 1, c_iIncrement ):
+		for i in xrange( int(1 + ( ( iCount - 1 ) / c_iIncrement )) ):
+			iCur = 1 + ( c_iIncrement * i )
 			strCur = re.sub( r'\.[^.]*$', ( "%d" % iCur ) + sfle.c_strSufXML, strT )
-			#BUGBUG: debug this
-			#use sfle.download for this 
-			sfle.ex( ("curl", '-g', '"' + ( c_strURLSum % ( iCur, strKey, strEnv ) ) + '"'), strCur )
+			sfle.ex( ("curl", '"' + ( c_strURLSum % ( iCur, strKey, strEnv ) ) + '"'), strCur )
 			astrXMLs.append( strCur )
 
 		#Merge XMLs and save  
@@ -83,8 +82,8 @@ for strSet, strBase in c_hashFiles.items( ):
 				if iCur:
 					astrLines = astrLines[3:]
 				if ( iCur + 1 ) < len( astrXMLs ):
-					astrLines = astrLines[:-3]
-				ostm.write( "\n".join( astrLines ) )
+					astrLines = astrLines[:-2]
+				ostm.write( "".join( astrLines ) )
 
 	afileXMLs = Command( strOut + c_strSufXML, afilePreXMLs, funcXML )
 	NoClean( afileXMLs )

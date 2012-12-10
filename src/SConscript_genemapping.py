@@ -24,7 +24,7 @@ c_strSufMap 			= ".map"
 c_strDirManMap			= sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, "manual_mapping" )
 
 c_strMapped				= "_mapped" 
-c_astrGeneTo			= sfle.readcomment( sfle.d( arepa.path_arepa(),sfle.c_strDirEtc,"geneid" ) or ["H"] ) 
+c_astrGeneTo			= sfle.readcomment( sfle.d( arepa.path_arepa(),sfle.c_strDirEtc,"geneid" ) or [arepa.genemap_genename( )] ) 
 
 c_strPathGeneMapper		= sfle.d( arepa.path_arepa(), "GeneMapper" )
 c_strPathUniprotKO		= sfle.d( c_strPathGeneMapper, sfle.c_strDirEtc, "uniprotko" )
@@ -52,8 +52,7 @@ def funcGeneIDMapping( pE, fileDATin, strGeneFrom, strLOGout, strMAPin = None, a
 	if not(strMAPin):
 		strDirAuto = c_strDirData if ( c_strID == c_strPathRepo ) else "" 
 		strAutoMAPtmp = sfle.d( strDirAuto, c_strID + c_strSufMap )
-		strAutoMAP = strAutoMAPtmp if os.path.exists( strAutoMAPtmp ) else None
-		sys.stderr.write( str( strAutoMAP ) + "\n" ) 
+		strAutoMAP = strAutoMAPtmp if os.path.exists( strAutoMAPtmp ) else None 
 		strMAPin = reduce( lambda x, y: x or y,
 			filter( lambda x: c_strID in x,
 			glob.glob( sfle.d( c_strDirManMap, "*" + c_strSufMap ) ) ), strAutoMAP )
