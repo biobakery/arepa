@@ -22,7 +22,7 @@ c_filePPfun			= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirEtc, "preprocess")
 c_strPPfun 			= sfle.readcomment( c_filePPfun )[0]
 
 c_fileStatus			= sfle.d( pE, "status.txt" )
-c_fileIDMap			= sfle.d( pE, c_strID + "_map.txt" )
+c_fileIDMap			= sfle.d( pE, c_strID + ".map" )
 c_fileIDPKL			= sfle.d( pE, c_strID + ".pkl" )
 c_fileGPLTXTGZ			= sfle.d( pE, c_strGPL + ".annot.gz" )
 c_fileIDRawPCL			= sfle.d( pE, c_strID + "_00raw.pcl" )
@@ -46,7 +46,7 @@ Import( "hashArgs" )
 sfle.download( pE, hashArgs["c_strURLGPL"] + os.path.basename( str( c_fileGPLTXTGZ ) ) )
 
 #Produce mapping files for gene mapping 
-sfle.pipe( pE, c_fileGPLTXTGZ, c_fileProgAnnot2Map, c_fileIDMap )
+sfle.sink( pE, c_fileGPLTXTGZ, c_fileProgAnnot2Map, [[True,c_fileIDMap]] )
 
 #Get metadata from soft file 
 sfle.pipe( pE, c_fileInputSOFTGZ, c_fileProgSOFT2Metadata, c_fileIDPKL,
@@ -64,3 +64,4 @@ sfle.ssink( pE, str(c_fileProgProcessRaw), "R --no-save --args", [[c_fileIDRawPC
 
 #Clean microarray data -- Impute, Normalize, Gene Mapping 
 execfile( str(c_fileInputSConscript) )
+funcPCL2DAB( pE, c_fileIDRawPCL )

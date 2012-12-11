@@ -42,7 +42,8 @@ def bridgemapper( istm, ostm, strMap, strCols, strFrom, strTo, ostmLog, iSkip ):
 	csvr = csv.reader( istm, csv.excel_tab )
 	for astrLine in csvr:
 		aastrData.append( astrLine )
-		if csvr.line_num < iSkip:
+		if csvr.line_num < iSkip+1:
+			print astrLine 
 			continue
 		for iCol in aiCols:
 			if iCol < len( astrLine ):
@@ -77,8 +78,11 @@ def bridgemapper( istm, ostm, strMap, strCols, strFrom, strTo, ostmLog, iSkip ):
 				
 	csvw = csv.writer( ostm, csv.excel_tab )
 	#make sure that if the mapping is empty for one of the columns, delete the entire row
-	for astrLine in aastrData:
-		if all(astrLine): csvw.writerow( astrLine )
+	for i,astrLine in enumerate(aastrData):
+		if i < iSkip:
+			csvw.writerow( astrLine )
+		else:
+			if all(astrLine): csvw.writerow( astrLine )
 	if ostmLog:
 		pMeta.save_text( ostmLog )
 

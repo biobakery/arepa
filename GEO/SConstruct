@@ -90,10 +90,12 @@ for strSet, strBase in c_hashFiles.items( ):
 
 # Process XML into the more compact gds/gse/gpl.txt
 	afileCur = sfle.pipe( pE, afileXMLs[0], c_fileProgXML2TXT, strOut + c_strSufTXT,
-		[[True, strBase], [c_fileInputTaxIDs]] )
+		[strBase, [c_fileInputTaxIDs]] )
 # Save GDS and GSEs for later
 	if strBase != "gpl":
 		afileTXTs += afileCur
+
+print afileTXTs 
 
 # Parse XML into gds_all/gse_all/gpl_all.txt (text files containing all ids) 
 def getAll( target, source, env ):

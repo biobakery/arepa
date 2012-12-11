@@ -62,7 +62,7 @@ def funcIDQUANT( target, source, env ):
 def funcPCL2DAB( pE, fileIDRawPCL ):
 
 	#Perform Gene Mapping 
-	astrMapped = funcGeneIDMapping( pE, fileIDRawPCL, arepa.mapfrom_probeids( ),
+	astrMapped = funcGeneIDMapping( pE, fileIDRawPCL, arepa.genemap_probeids( ),
 		c_fileStatus, None, c_aiCOL, c_iSkip )
 	#Get rid of duplicate identifiers 
 	astrUnique = funcMakeUnique( pE, astrMapped[0], c_iSkip ) 

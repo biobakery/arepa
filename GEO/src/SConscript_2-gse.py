@@ -16,7 +16,7 @@ pE = DefaultEnvironment( )
 
 c_strID                 = arepa.cwd( )
 c_fileGPL               = sfle.d( pE, arepa.path_repo( ), sfle.c_strDirTmp, "gpl.txt" ) 
-c_fileAnnot             = sfle.d( pE, arepa.path_repo( ), sfle.c_strDirTmp, "annot.txt" ) 
+c_fileAnnotTXT		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirTmp, "annot.txt" ) 
 c_fileInputSConscript   = sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, 
                                  "SConscript_pcl-dab.py" ) 
 c_fileProgUnpickle      = sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "unpickle.py" ) 
@@ -30,7 +30,7 @@ c_fileIDPKL             = sfle.d( pE, c_strID + ".pkl" )
 c_strURLGPL             = hashArgs["c_strURLGPL"]
 c_strHost               = "ftp.ncbi.nih.gov"
 c_strPath               = "pub/geo/DATA/annotation/platforms/"
-c_fileIDAnnot           = sfle.d( pE, c_strID + ".annot.gz" )
+c_fileIDAnnotGZ           = sfle.d( pE, c_strID + ".annot.gz" )
 c_fileIDMap             = sfle.d( pE, c_strID + ".map" )
 
 c_fileStatus		= sfle.d( pE, "status.txt" )
@@ -83,26 +83,25 @@ sfle.ssink( pE, str(c_fileProgProcessRaw), "R --no-save --args", [[c_fileIDPCL],
 # Download annotation files for specific platform, if they exist 
 def getGPL( target, source, env ):
 	astrTs, astrSs = ([f.get_abspath( ) for f in a] for a in (target,source))
-	strAnnot		= astrTs[0]
-	strRMeta		= astrSs[0]
+	strAnnotGZ		= astrTs[0]
+	strAnnotTXT, strRMeta	= astrSs[:2]
 	pid = [row for row in csv.DictReader(open( strRMeta ))]\
 		[0]["platform_id"] 
 	strGPLID = c_strID.split("-")[1] if len( c_strID.split("-") ) == 2 else pid
 	listGPL = map( lambda v: v.replace(".annot.gz",""), \
-		sfle.readcomment( c_fileAnnot ) )
+		sfle.readcomment( c_fileAnnotTXT ) )
 	if strGPLID in listGPL:
 		#Annotation file exist, download
-		sfle.ex( ["wget", sfle.d( c_strURLGPL, strGPLID + ".annot.gz" ), "-O", \
-			strAnnot ] )	
+		sfle.download( pE, sfle.d( c_strURLGPL, strGPLID + ".annot.gz" ), strAnnotGZ )	
 	else:
 		#Annotation file does not exist, skip download 
-		with open( strGPLID + ".annot.gz", "w") as outputf:
+		with open( strAnnotGZ, "w") as outputf:
 			outputf.write(" ")
 
-fileAnnot = Command( c_fileIDAnnot, c_fileRMetadataTXT, getGPL ) 
+fileAnnot = Command( c_fileIDAnnotGZ, [c_fileAnnotTXT, c_fileRMetadataTXT], getGPL ) 
 
 #Produce mapping files for gene mapping; if does not exist, then nothing. 
-fileGeneMap = sfle.pipe( pE, c_fileIDAnnot, c_fileProgAnnot2Map, c_fileIDMap ) 
+fileGeneMap = sfle.sink( pE, c_fileIDAnnotGZ, c_fileProgAnnot2Map, [[True, c_fileIDMap]] ) 
 
 #Clean Microarray Data -- Imputation, Normalization, Gene Mapping    
 execfile( str( c_fileInputSConscript ) )
