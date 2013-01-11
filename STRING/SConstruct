@@ -36,7 +36,6 @@ sfle.scmd( pE, "gunzip", c_fileTXT, [[c_fileZIP]] )
 #===============================================================================
 
 sfle.op( pE, c_fileProg2C1, [[c_fileTXT], [True, c_fileC1]] )
-
 afileC = sfle.pipe( pE, c_fileC1, c_fileProg2C, c_fileC, [[c_iMinimum], [True, c_fileInputTaxIDs]] )
 
 #===============================================================================

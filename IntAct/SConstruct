@@ -28,11 +28,6 @@ sfle.download( pE, c_strURLIntact, c_fileIntactZIP )
 # Extract intact.txt from intact.zip
 #===============================================================================
 
-#def funcIntactTXT( target, source, env ):
-#	strT, astrSs = sfle.ts( target, source )
-#	return sfle.ex( ("unzip", "-p", astrSs[0]), strT )
-#Command( c_fileIntactTXT, c_fileIntactZIP, funcIntactTXT )
-
 sfle.scmd( pE, "unzip", c_fileIntactTXT, ["-p", [c_fileIntactZIP]] )
 
 #===============================================================================

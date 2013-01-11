@@ -26,26 +26,25 @@ c_fileOutPKL		= sfle.d( pE, sfle.c_strDirData, "bacteriome.pkl" )
 c_fileStatus		= sfle.d( pE, sfle.c_strDirData, "status.txt" )
 
 #===============================================================================
-# Download the source text file
+# Download the source file and process 
 #===============================================================================
-sfle.download( pE,c_strURL,c_fileBactTXT )
+sfle.download( pE, c_strURL, c_fileBactTXT )
 
 #Extractor 
 sfle.op( pE, c_fileProgBacteriome, [[c_fileBactTXT], [True,c_fileOutDAT]] )
 
 #Launch gene mapping 
-
 execfile(str(c_fileInputSConscriptGM)) 
 astrMapped = funcGeneIDMapping( pE, c_fileOutDAT, c_fileStatus, c_strMappingfileEcoli ) 
 
 #Make identifiers unique 
 astrUnique = funcMakeUnique( pE, astrMapped[0] )
 
+#Make metadata 
 sfle.pipe( pE, c_fileInMeta, c_fileProgUnpickle, c_fileOutPKL, ["-r","-l", [c_fileStatus]] )
 
-execfile(str(c_fileInputSConscriptDAB))
-
 #DAT to DAB
+execfile( str(c_fileInputSConscriptDAB) )
 astrDAB = funcDAB( pE, c_fileOutDAB, [c_fileOutDAT, astrUnique[0]] )
 funcQUANT( pE, c_fileOutQUANT )
 

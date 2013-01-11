@@ -3,8 +3,6 @@
 Main gene mapping python script
 '''
 
-#~/dboernig/arepa/GeneMapper/src/bridgemapper.py ~/dboernig/arepa/STRING/data/taxid_100226_mode_binding/taxid_100226_mode_binding.dat ~/dboernig/arepa/STRING/data/taxid_100226_mode_binding/tester.dat ~/dboernig/arepa/STRING/etc/100226_sco_ko_uniprot.map [0] Kg Ck
-
 import argparse
 import csv
 import os
