@@ -22,21 +22,18 @@ c_fileProg2C			= sfle.d( pE, sfle.c_strDirSrc, "string2c.py" )
 #===============================================================================
 # Download the zip source file
 #===============================================================================
-
 sfle.download( pE, c_strURL, c_fileZIP )
 
 #===============================================================================
 # Extract txt from zip
 #===============================================================================
-
 sfle.scmd( pE, "gunzip", c_fileTXT, [[c_fileZIP]] )
 
 #===============================================================================
 # Process txt into the more compact txtc
 #===============================================================================
-
 sfle.op( pE, c_fileProg2C1, [[c_fileTXT], [True, c_fileC1]] )
-afileC = sfle.pipe( pE, c_fileC1, c_fileProg2C, c_fileC, [[c_iMinimum], [True, c_fileInputTaxIDs]] )
+afileC = sfle.pipe( pE, c_fileC1, c_fileProg2C, c_fileC, [c_iMinimum, [c_fileInputTaxIDs]] )
 
 #===============================================================================
 # Pass the IDs from intactc to child directories

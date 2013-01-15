@@ -9,6 +9,11 @@ import sys
 import re 
 import arepa 
 
+if len(sys.argv) < 2: 
+	Exception("Usage: annot2map.py < annot.gz <strID.map>")
+
+strIDMap = sys.argv[1] 
+
 c_fileMapping	= sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, "mapping" )
 c_hashHead 	= { k:v for (k,v) in map( lambda x: map(lambda y: y.strip(), x.split("%")),\
 		sfle.readcomment( open( c_fileMapping)) ) } if sfle.readcomment(open(c_fileMapping))\
@@ -23,7 +28,7 @@ c_hashHead 	= { k:v for (k,v) in map( lambda x: map(lambda y: y.strip(), x.split
 		"GenBank Identifier"            : "GenBank_ID"
 		}
 
-strAnnotGZ = sys.stdin.read()
+strAnnotGZ = sys.stdin.read().strip() 
 
 if strAnnotGZ:
 	aHead = re.findall(r"^#(.+?)\n", strAnnotGZ, re.MULTILINE )
@@ -39,7 +44,7 @@ if strAnnotGZ:
 	strTable = re.findall(r"!platform_table_begin(.+)!platform_table_end", \
 		strAnnotGZ, re.S )[0].strip()
 	dr = csv.DictReader( strTable.split("\n"), delimiter = "\t" ) 
-	with sys.stdout as outputf:
+	with open( strIDMap, "w" )  as outputf:
 		#write header
 		outputf.write( "\t".join( [hOutDict[k] for k in aOutKeys] ) + "\n" )
 		#write data
@@ -49,4 +54,4 @@ if strAnnotGZ:
 			except Exception:
 				continue  
 else:
-	sys.stdout.write(" ") 
+	sfle.ex( ["touch", strIDMap] )

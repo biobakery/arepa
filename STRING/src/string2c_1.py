@@ -3,12 +3,9 @@ import csv
 import sys
 import os
             
-
-
 #Input Arguments:
 inputfile = sys.argv[1]
 outputfile = sys.argv[2]
-
 
 # STRING specific constants:
 c_IntA = "item_id_a"

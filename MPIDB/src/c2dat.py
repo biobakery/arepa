@@ -19,7 +19,7 @@ def callback( aArgs, strAs, strBs, strAltAs, strAltBs, strSynAs, strSynBs, strMe
 			strType, strID, strGloss = mpidb.split( strToken )
 			strCur = hashCache.get( strID )
 			if strCur == None:
-				strCur = hashCache[strID] = ( arepa.geneid( strID, strTaxID ) or strID )
+				strCur = hashCache[strID] = strID
 			if strCur:
 				strGene = strCur
 				break

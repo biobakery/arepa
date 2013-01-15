@@ -3,6 +3,7 @@
 import string1
 import metadata
 import sys
+import csv 
 
 def metadatum( funcMetadata, astrTokens, iIndex ):
 
@@ -17,7 +18,7 @@ def metadatum( funcMetadata, astrTokens, iIndex ):
 def callback( aArgs, strAs, strBs, strTaxAs, strTaxBs, strPMIDs, strScores, strSynAs, strSynBs, strMethods, strAuthors, strAltBs, strAltAs, strDBs, strIDs, strConfs ):
 	metadatum( pMetadata.taxid, [strTaxAs, strTaxBs], 1 )
 	metadatum( pMetadata.pmid, [strPMIDs], 1 )
-	metadatum( pMetadata.type, [strTypes.lower( )], 2 )
+	#metadatum( pMetadata.type, [strTypes.lower( )], 2 )
 	metadatum( pMetadata.platform, [strMethods], 2 )
 
 if len( sys.argv ) < 2:

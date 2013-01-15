@@ -6,26 +6,25 @@ import pickle
 
 pE = DefaultEnvironment( )
 
-c_strURL		= "http://regulondb.ccg.unam.mx/data/network_tf_gene.txt"
-c_fileInputTaxIDs	= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
-c_fileRegDBTXT       	= sfle.d( pE, sfle.c_strDirTmp, os.path.basename(c_strURL))
-c_fileProgRegDB  	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "regulondb.py" ) 
-c_fileProgUnpickle      = sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "unpickle.py" )
+c_strURL					= "http://regulondb.ccg.unam.mx/data/network_tf_gene.txt"
 
-c_fileInMeta		= sfle.d( pE, sfle.c_strDirEtc, "regulondb.txt" )
+c_fileInputTaxIDs			= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
+c_fileRegDBTXT	 			= sfle.d( pE, sfle.c_strDirTmp, os.path.basename(c_strURL))
+c_fileProgRegDB				= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "regulondb.py" ) 
+c_fileProgUnpickle			= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "unpickle.py" )
 
-c_fileOutDAT            = sfle.d( pE, sfle.c_strDirData, "regulondb.dat" )
-c_fileOutDAB            = sfle.d( pE, sfle.c_strDirData,  sfle.rebase(str(c_fileOutDAT), ".dat", ".dab" ))
-c_fileOutQUANT          = sfle.d( pE, sfle.c_strDirData,  sfle.rebase(str(c_fileOutDAT), ".dat", ".quant" ))
-c_fileOutPKL		= sfle.d( pE, sfle.c_strDirData, "regulondb.pkl" )
+c_fileInMeta				= sfle.d( pE, sfle.c_strDirEtc, "regulondb.txt" )
+
+c_fileOutDAT				= sfle.d( pE, sfle.c_strDirData, "regulondb.dat" )
+c_fileOutDAB				= sfle.d( pE, sfle.c_strDirData, sfle.rebase(str(c_fileOutDAT), ".dat", ".dab" ))
+c_fileOutQUANT				= sfle.d( pE, sfle.c_strDirData, sfle.rebase(str(c_fileOutDAT), ".dat", ".quant" ))
+c_fileOutPKL				= sfle.d( pE, sfle.c_strDirData, "regulondb.pkl" )
 
 #For GeneMapper:
-c_fileInputSConscriptGM         = sfle.d( pE, arepa.path_arepa(),sfle.c_strDirSrc,"SConscript_genemapping.py")
-c_fileInputSConscriptDAB        = sfle.d( pE, arepa.path_arepa(), sfle.c_strDirSrc, "SConscript_dat-dab.py" )
+c_fileInputSConscriptGM		= sfle.d( pE, arepa.path_arepa(),sfle.c_strDirSrc,"SConscript_genemapping.py")
+c_fileInputSConscriptDAB	= sfle.d( pE, arepa.path_arepa(), sfle.c_strDirSrc, "SConscript_dat-dab.py" )
 
-c_strGeneFrom 			= "H"
-c_strMappingfileEcoli   	= sfle.d(arepa.path_arepa(), "GeneMapper", sfle.c_strDirEtc, "uniprotko","511145_eco_colibri-eco.list.map")
-c_fileStatus		= sfle.d(pE, sfle.c_strDirData, "status.txt")
+c_fileStatus				= sfle.d( pE, sfle.c_strDirData, "status.txt" )
 
 #===============================================================================
 # Download the source text file
@@ -38,7 +37,10 @@ sfle.op( pE, c_fileProgRegDB, [[c_fileRegDBTXT], [True,c_fileOutDAT]] )
 
 #Launch gene mapping 
 execfile(str(c_fileInputSConscriptGM))
-astrMapped = funcGeneIDMapping( pE, c_fileOutDAT, c_fileStatus, c_strMappingfileEcoli )
+astrMapped = funcGeneIDMapping( pE, c_fileOutDAT, arepa.genemap_genename( ), c_fileStatus,
+	arepa.org2taxid( "Escherichia coli str. K-12 substr. MG1655" ) )
+# Note that this must currently correspond to the "best" mapping file from GeneMapper
+# For whatever reason, this is hard-coded to the type strain, not the species
 
 #Make identifiers unique 
 astrUnique = funcMakeUnique( pE, astrMapped[0] )

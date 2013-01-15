@@ -5,21 +5,27 @@ import sfle
 
 pE = DefaultEnvironment( )
 
+#------------------------------------------------------------------------------
+
 c_strURL				= "http://svn.bigcat.unimaas.nl/bridgedb/trunk/"
-c_strMappingURL				= "http://bridgedb.org/data/gene_database/"
-c_dirProg				= sfle.d("trunk")
-#c_dirKegg				= sfle.d(arepa.path_repo( ), sfle.c_strDirEtc, "kegg" )
-c_dirUniprotKO			= sfle.d(arepa.path_repo( ), sfle.c_strDirEtc, "uniprotko" )
 c_strRevision			= "626"
 
-#c_fileKeggGZ			= sfle.d( pE, c_dirKegg, "kegg.gz" )
-c_fileUniprotKO			= sfle.d( pE, c_dirUniprotKO, "uniprotko.gz" ) 
+#c_dirKegg				= Dir(sfle.d( pE, sfle.c_strDirEtc, "kegg" ))
+c_dirUniprotKO			= Dir(sfle.d( pE, sfle.c_strDirEtc, "uniprotko" ))
+
+c_strTrunk				= "trunk"
+c_fileInputBuilder		= sfle.d( pE, c_strTrunk, "build.xml" )
+
+c_fileBatchmapper		= sfle.d( pE, c_strTrunk, "batchmapper.sh" )
+#c_fileKEGGTARGZ			= sfle.d( pE, c_dirKegg, "kegg.tar.gz" )
+c_fileUniprotKOTARGZ	= sfle.d( pE, c_dirUniprotKO, "uniprotko.tar.gz" ) 
 c_fileCheckLOG			= sfle.d( pE, sfle.c_strDirTmp, "checkout.log" )
 c_fileCompLOG			= sfle.d( pE, sfle.c_strDirTmp, "compile.log" )
 c_fileUnzipLOG			= sfle.d( pE, sfle.c_strDirTmp, "unzip.log" )
 
 ##Predefined mappingfiles from Bridgedb for human,  mouse and yeast:
 c_astrMappingFiles		= ["Hs_Derby_20110601.bridge", "Mm_Derby_20100601.bridge", "Sc_Derby_20110603.bridge"]
+c_strMappingURL			= "http://bridgedb.org/data/gene_database/"
 
 #===============================================================================
 # Check out last version of the tool and compile
@@ -31,17 +37,15 @@ for strMappingFile in c_astrMappingFiles:
 
 def funcCheckoutTrunk( target, source, env ):
 	strT, astrSs = sfle.ts( target, source )
-	return ( sfle.ex(["svn checkout", c_URL]) or
-		sfle.ex(["sed", "-r", c_strRevision, "-i.orig", "'s/^java -jar/java -Xmx1024m -jar/g'", c_progBatchmapper]) or
+	return ( sfle.ex(["svn checkout -r", c_strRevision, c_strURL]) or
+		sfle.ex(["sed", "-i.orig", "'s/^java -jar/java -Xmx1024m -jar/g'", c_fileBatchmapper]) or
 		sfle.ex("echo checked out OK", strT) )
-
 Command( c_fileCheckLOG, None, funcCheckoutTrunk )
 
 def funcCompileTrunk( target, source, env ):
 	strT, astrSs = sfle.ts( target, source )
-	return ( sfle.ex(["ant -buildfile", c_fileBuilder]) or
+	return ( sfle.ex(["ant -buildfile", c_fileInputBuilder]) or
 		sfle.ex("echo compiled OK", strT) )
-
 Command( c_fileCompLOG, c_fileCheckLOG, funcCompileTrunk )
 
 def funcMakeMapFiles( target, source, env ):
@@ -49,5 +53,4 @@ def funcMakeMapFiles( target, source, env ):
 	return ( #sfle.ex(["tar", "-xzf", c_fileKEGGTARGZ, "-C", c_dirKegg]) or
 		sfle.ex(["tar", "-xzf",c_fileUniprotKOTARGZ, "-C", c_dirUniprotKO]) or
 		sfle.ex("echo Unzipped OK", strT) )
-
 Command( c_fileUnzipLOG, c_fileCompLOG, funcMakeMapFiles )

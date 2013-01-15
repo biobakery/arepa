@@ -11,22 +11,26 @@ import subprocess
 import sys
 import tempfile
 import metadata 
+import sys 
 
 #########################################################
 # GENE ID MAPPING: convert geneids_in into geneids_out
 #########################################################
 def convertGeneIds( setstrGenes, strMap, strFrom, strTo ):
 
-	pFrom, pTo = (tempfile.NamedTemporaryFile( ) for i in xrange( 2 ))
-	pFrom.write( "\n".join( setstrGenes ) )
-	
+	pFrom, pTo = [tempfile.NamedTemporaryFile( delete = False ) for i in xrange( 2 )]
+	pFrom.write( "\n".join( setstrGenes ) + "\n" )
+	for line in csv.reader( pFrom ): sys.stderr.write(line+'\n') #Why the hell do I need to do this? Need explanation. 
+
 	strBatchmapperSH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "trunk/batchmapper.sh")
 	strMapFlag = "-g" if strMap.endswith( ".bridge" ) else "-t"
 
 	subprocess.check_call( ("sh",strBatchmapperSH, "-i", pFrom.name, "-is", strFrom,\
 		"-os", strTo, "-o", pTo.name, strMapFlag, strMap,"-mm") )
-	return {a[1]:a[0] for a in csv.reader( pTo, csv.excel_tab )}
 
+	return {a[1]:a[0] for a in csv.reader( pTo, csv.excel_tab )}
+	
+	
 def bridgemapper( istm, ostm, strMap, strCols, strFrom, strTo, ostmLog, iSkip ):
 
 	strCols = strCols[1:-1]
@@ -40,7 +44,8 @@ def bridgemapper( istm, ostm, strMap, strCols, strFrom, strTo, ostmLog, iSkip ):
 	csvr = csv.reader( istm, csv.excel_tab )
 	for astrLine in csvr:
 		aastrData.append( astrLine )
-		if csvr.line_num < iSkip:
+		if csvr.line_num < iSkip+1:
+			print astrLine 
 			continue
 		for iCol in aiCols:
 			if iCol < len( astrLine ):
@@ -56,7 +61,8 @@ def bridgemapper( istm, ostm, strMap, strCols, strFrom, strTo, ostmLog, iSkip ):
 	else:
 		sys.stderr.write("+++ ERROR in GeneMapper +++ Input file does not exist or is empty. \
 			Return empty file. \n")
-
+	#Debugging output for hashMap 
+	#print str(hashMap)
 	if hashMap:
 		pMeta.set( "mapped", True )
 		for iRow in xrange( iSkip, len( aastrData ) ):
@@ -75,8 +81,11 @@ def bridgemapper( istm, ostm, strMap, strCols, strFrom, strTo, ostmLog, iSkip ):
 				
 	csvw = csv.writer( ostm, csv.excel_tab )
 	#make sure that if the mapping is empty for one of the columns, delete the entire row
-	for astrLine in aastrData:
-		if all(astrLine): csvw.writerow( astrLine )
+	for i,astrLine in enumerate(aastrData):
+		if i < iSkip:
+			csvw.writerow( astrLine )
+		else:
+			if all(astrLine): csvw.writerow( astrLine )
 	if ostmLog:
 		pMeta.save_text( ostmLog )
 
