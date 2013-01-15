@@ -1,4 +1,6 @@
 ## Written by Levi Waldron on Feb 7, 2012.
+## Updated by Levi Waldron on Jan 14, 2012 to populate the eset with
+## MIAME information and platform annotation.
 ##
 ## Argument 1 is the name of the input file.  This is an R image file
 ## containing the object "affybatch" which is of class AffyBatch.
@@ -17,8 +19,16 @@
 ##
 ## Sample input arguments:
 ##
-## inputargs <- c("../data/GSE10183/GSE10183/GSE10183_01norm.pcl","./testeset.RData","affy::mas5", "../data/GSE10183/GSE10183/GSE10183_exp_metadata.txt","../data/GSE10183/GSE10183/GSE10183_exp_metadata.txt")
-## inputargs <- c("../data/GSE8126/GSE8126/GSE8126_01norm.pcl","./testeset.RData","affy::mas5", "../data/GSE8126/GSE8126/GSE8126_exp_metadata.txt","../data/GSE8126/GSE8126/GSE8126_exp_metadata.txt")
+## No PMID:
+## inputargs <- c("../data/GSE10183/GSE10183/GSE10183_01norm.pcl","./testeset.RData","affy::mas5", "../data/GSE10183/GSE10183/GSE10183_exp_metadata.txt","../data/GSE10183/GSE10183/GSE10183_cond_metadata.txt")
+## Has PMID:
+## inputargs <- c("../data/GSE18655/GSE18655/GSE18655_01norm.pcl","./testeset.RData","affy::mas5", "../data/GSE18655/GSE18655/GSE18655_exp_metadata.txt","../data/GSE18655/GSE18655/GSE18655_cond_metadata.txt")
+## sub-platform:
+## inputargs <- c("../data/GSE19829/GSE19829-GPL570/GSE19829-GPL570_01norm.pcl","./testeset.RData","affy::mas5", "../data/GSE19829/GSE19829-GPL570/GSE19829-GPL570_exp_metadata.txt","../data/GSE19829/GSE19829-GPL570/GSE19829-GPL570_cond_metadata.txt")
+## GDS with sub-platform:
+## inputargs <- c("../data/GDS2782/GDS2782-GPL570/GDS2782-GPL570_00raw.pcl", "../data/GDS2782/GDS2782-GPL570/GDS2782-GPL570.RData", "affy::rma", "../data/GDS2782/GDS2782-GPL570/GDS2782-GPL570_exp_metadata.txt")
+## something
+## inputargs <- c("../data/GSE10183/GSE10183/GSE10183_01norm.pcl","./testeset.RData","affy::mas5", "../data/GSE10183/GSE10183/GSE10183_exp_metadata.txt","../data/GSE10183/GSE10183/GSE10183_cond_metadata.txt")
 
 inputargs <- commandArgs(TRUE)
 print(inputargs)
@@ -33,9 +43,13 @@ strInputConditional     <- inputargs[5]
 ##Nothing is done with these yet, but these will be used to populate the ExpressionSet:
 dfExperiment <- read.delim(strInputExperiment, as.is=TRUE)
 
-##Optional conditional metadata argument  
-if( length( inputargs ) > 4 ){
-dfConditional <- read.delim(strInputConditional, as.is=TRUE, row.names=1)
+##If dfExperiment has more than one platform, set it to the one being used here:
+if( grepl("GPL[0-9]+ GPL[0-9]+", dfExperiment$platform) ){
+    possible.platforms <- strsplit(dfExperiment$platform, split=" ")[[1]]
+    this.platform <- strsplit(dirname(strInputExperiment), split="/")[[1]]
+    this.platform <- this.platform[length(this.platform)]
+    this.platform <- strsplit(this.platform, split="-")[[1]][2]
+    dfExperiment$platform <- this.platform
 }
 
 strPackage <- strsplit(strProcessingFunction,split="::")[[1]][1]
@@ -44,12 +58,15 @@ library(strPackage,character.only=TRUE)
 
 sessionInfo()
 
-funPreprocess <- get(strsplit(strProcessingFunction,split="::")[[1]][2])
 
 if(grepl("\\.RData$",strInputData)){
-  ##input is an R object
-  load(strInputData)
-  eset <- funPreprocess(affybatch)
+    ##input is an R object
+    load(strInputData)
+    funPreprocess <- get(strsplit(strProcessingFunction,split="::")[[1]][2])
+    eset <- funPreprocess(affybatch)
+    strProcessing.used <- strProcessingFunction
+}else{
+    strProcessing.used <- "default"
 }
 
 if(grepl("\\.pcl$",strInputData)){
@@ -64,12 +81,64 @@ if(grepl("\\.pcl$",strInputData)){
   if( min( mdExprs, na.rm = TRUE ) >= 0 & max( mdExprs, na.rm = TRUE ) >= 50 ) {
     mdExprs <- log(mdExprs, base = 2)
   }
-  ##make a fake AnnotatedDataFrame until we can load the real metadata.
-  adf <- new("AnnotatedDataFrame",data=data.frame(sample=1:ncol(mdExprs),row.names=colnames(mdExprs)))
   ##Create the ExpressionSet
-  eset <- new("ExpressionSet",
-              exprs=mdExprs,
-              phenoData=adf)
+  eset <- new("ExpressionSet", exprs=mdExprs)
 }
+
+##Optional conditional metadata argument  
+if( length( inputargs ) > 4 ){
+    dfConditional <- read.delim(strInputConditional, as.is=TRUE, row.names=1)
+}else{
+    dfConditional <- data.frame(samplename=sampleNames(eset), row.names=sampleNames(eset), stringsAsFactors=FALSE)
+    warning("per-condition metadata not available.")
+}
+
+adf <- new("AnnotatedDataFrame",data=dfConditional)
+
+if( identical(sampleNames(adf), sampleNames(eset)) ){
+    phenoData(eset) <- adf
+}else{
+    stop("Samples names did not match between eset and adf.")
+}
+
+##Decorate with experiment data
+if( "pmid" %in% colnames(dfExperiment) & require(annotate)){
+    print("Querying Pubmed...")
+    experiment.miame <- pmid2MIAME(as.character(dfExperiment$pmid))
+}else{
+    experiment.miame <- new("MIAME")
+    if (!is.null(dfExperiment$Series_contact_name))
+        experiment.miame@name <- dfExperiment$Series_contact_name
+    if(!is.null(dfExperiment$title))
+        experiment.miame@title <- dfExperiment$title
+    if(!is.null(dfExperiment$Series_contact_laboratory))
+        experiment.miame@lab <- dfExperiment$Series_contact_laboratory
+    if (!is.null(dfExperiment$Series_relation))
+        experiment.miame@url <- sub("BioProject: ", "", dfExperiment$Series_relation)
+    if(!is.null(dfExperiment$gloss))
+        experiment.miame@abstract <- dfExperiment$gloss
+}
+
+if( require( GEOmetadb )){
+    if (file.exists("../../../tmp/GEOmetadb.sqlite")){
+        sqlfile <- "../../../tmp/GEOmetadb.sqlite"
+    }else{
+        dir.create("../../../tmp", showWarnings=FALSE)
+        sqlfile = getSQLiteFile(destdir="../../../tmp")
+    }
+    con = dbConnect("SQLite",sqlfile)
+    bioc.platform <- dbGetQuery(con,paste("select bioc_package from gpl where gpl='",dfExperiment$platform,"'", sep="") )[,1]
+    if(is.na(bioc.platform))
+        bioc.platform <- dfExperiment$platform
+}else{
+    bioc.platform <- dfExperiment$platform
+}
+
+experiment.miame@preprocessing <- list(strProcessing.used)
+experiment.miame@other <- dfExperiment
+
+##Now insert the experiment info into the eset:
+experimentData(eset) <- experiment.miame
+eset@annotation <- bioc.platform
 
 save(eset,file=strOutputData,compress="bzip2")
