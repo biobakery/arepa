@@ -18,4 +18,4 @@ def funcGetGSMids( ):
 	return aRet 
 
 #Execute
-sys.stdout.write( "\n".join( funcGetGSMids( ) ) + "\n" ) 
+sys.stdout.write( "\n".join( funcGetGSMids( ) ) ) 

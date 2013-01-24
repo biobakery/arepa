@@ -51,9 +51,8 @@ def funcGeneIDMapping( pE, fileDATin, strGeneFrom, strLOGout, strMAPin = None, a
 		strTaxa = None
 	if not(strMAPin):
 		strDirAuto = c_strDirData if ( c_strID == c_strPathRepo ) else "" 
-		fileAutoMAPtmp = sfle.d( pE, strDirAuto, c_strID + c_strSufMap )
-		print fileAutoMAPtmp
-		strAutoMAP = str( fileAutoMAPtmp ) if os.path.exists( str( fileAutoMAPtmp ) ) else None 
+		strAutoMAPtmp = sfle.d( strDirAuto, c_strID + c_strSufMap )
+		strAutoMAP = strAutoMAPtmp if os.path.exists( strAutoMAPtmp ) else None 
 		strMAPin = reduce( lambda x, y: x or y,
 			filter( lambda x: c_strID in x,
 			glob.glob( sfle.d( c_strDirManMap, "*" + c_strSufMap ) ) ), strAutoMAP )
@@ -78,7 +77,7 @@ def funcGeneIDMapping( pE, fileDATin, strGeneFrom, strLOGout, strMAPin = None, a
 	afileRet = sfle.op( pE, c_funcGeneMapper, [[fileDATin], [True, strT],
 		"-c", str(aiCOL), "-f", strGeneFrom, "-t", c_astrGeneTo[0],
 		"-s", iSkip, "-l", [True, strLOGout]] +
-		( ["-m", [os.path.abspath(strMAPin)]] if strMAPin else [] ) )
+		( ["-m", [strMAPin]] if strMAPin else [] ) )
 	pE.Depends( afileRet, sfle.scons_child( pE, c_strPathGeneMapper ) )
 	return afileRet
 

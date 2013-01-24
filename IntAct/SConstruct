@@ -22,13 +22,13 @@ c_fileProgIntact2C		= sfle.d( pE, sfle.c_strDirSrc, "intact2c.py" )
 # Download the intact.zip source file
 #===============================================================================
 
-sfle.download( pE, c_strURLIntact, c_fileIntactZIP )
+#sfle.download( pE, c_strURLIntact, c_fileIntactZIP )
 
 #===============================================================================
 # Extract intact.txt from intact.zip
 #===============================================================================
 
-sfle.scmd( pE, "unzip", c_fileIntactTXT, ["-p", [c_fileIntactZIP]] )
+#sfle.scmd( pE, "unzip", c_fileIntactTXT, ["-p", [c_fileIntactZIP]] )
 
 #===============================================================================
 # Process intact.txt into the more compact intactc

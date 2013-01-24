@@ -23,8 +23,9 @@ def makeunique( istm, ostm, strSplit, iCols, iSkip, ostmLog ):
 		aastrSplit = [] 
 		for astrRow in aastrDataIn:
 			astrNames, astrVals = astrRow[:iCols], astrRow[iCols:]
-			if any(astrVals) and reduce(lambda y,z: y or z, map(lambda x: x.find(strSplit)!=-1,astrNames)):
-				astrSplit = map(lambda x: x.split(strSplit),astrNames)
+			#Choice: keep rows without values  
+			if any(astrNames) and reduce(lambda y,z: y or z, map(lambda x: x.find(strSplit)!=-1,astrNames)):
+				astrSplit = map(lambda x: map(lambda y: y.strip(), x.split(strSplit)),astrNames)
 				aastrSplit += map(lambda v: list(v) + astrVals,[x for x in itertools.product(*astrSplit)]) 	
 			else:
 				aastrSplit.append(astrRow)
@@ -61,7 +62,7 @@ argp.add_argument( "ostm",              metavar = "output.dat",
         type = argparse.FileType( "w" ),        nargs = "?",    default = sys.stdout,
         help = "Input tab-delimited text file with mapped columns" )
 argp.add_argument( "-m",                dest = "strSplit",        metavar = "str_split",
-        type = str,                    	default = "///",	required = False,
+        type = str,                    	required = False,
         help = "Ambiguous field element classifier; a or b; e.g. in the case of a///b the value will be ///" )
 argp.add_argument( "-c",                dest = "iCols",       metavar = "columns",
         type = int,                     default = "2",

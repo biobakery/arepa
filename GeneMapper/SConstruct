@@ -10,14 +10,12 @@ pE = DefaultEnvironment( )
 c_strURL				= "http://svn.bigcat.unimaas.nl/bridgedb/trunk/"
 c_strRevision			= "626"
 
-#c_dirKegg				= Dir(sfle.d( pE, sfle.c_strDirEtc, "kegg" ))
 c_dirUniprotKO			= Dir(sfle.d( pE, sfle.c_strDirEtc, "uniprotko" ))
 
 c_strTrunk				= "trunk"
 c_fileInputBuilder		= sfle.d( pE, c_strTrunk, "build.xml" )
 
 c_fileBatchmapper		= sfle.d( pE, c_strTrunk, "batchmapper.sh" )
-#c_fileKEGGTARGZ			= sfle.d( pE, c_dirKegg, "kegg.tar.gz" )
 c_fileUniprotKOTARGZ	= sfle.d( pE, c_dirUniprotKO, "uniprotko.tar.gz" ) 
 c_fileCheckLOG			= sfle.d( pE, sfle.c_strDirTmp, "checkout.log" )
 c_fileCompLOG			= sfle.d( pE, sfle.c_strDirTmp, "compile.log" )
@@ -50,7 +48,6 @@ Command( c_fileCompLOG, c_fileCheckLOG, funcCompileTrunk )
 
 def funcMakeMapFiles( target, source, env ):
 	strT, astrSs = sfle.ts( target, source )
-	return ( #sfle.ex(["tar", "-xzf", c_fileKEGGTARGZ, "-C", c_dirKegg]) or
-		sfle.ex(["tar", "-xzf",c_fileUniprotKOTARGZ, "-C", c_dirUniprotKO]) or
+	return ( sfle.ex(["tar", "-xzf",c_fileUniprotKOTARGZ, "-C", c_dirUniprotKO]) or \
 		sfle.ex("echo Unzipped OK", strT) )
 Command( c_fileUnzipLOG, c_fileCompLOG, funcMakeMapFiles )
