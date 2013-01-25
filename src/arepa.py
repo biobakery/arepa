@@ -4,6 +4,7 @@ import os
 import sfle
 import sys
 import threading
+import glob 
 
 #===============================================================================
 # ARepA structural metadata
@@ -61,6 +62,9 @@ c_strProgSConstruct		= sfle.d( path_arepa( ), sfle.c_strDirSrc, "SConstruct.py" 
 # Gene ID conversion
 #===============================================================================
 
+#Constants 
+c_strDirMapping		= sfle.d( path_arepa(), "GeneMapper", sfle.c_strDirEtc, "uniprotko" )
+
 def genemapper( ):
 
 	return sfle.d( path_arepa( ), sfle.c_strDirSrc, "SConscript_genemapping.py" )
@@ -114,6 +118,10 @@ def org2taxid( strOrg, fApprox = False ):
 		return [hashOrg2TaxID[k] for k in astrApproxTaxIDs] 
 	else:
 		return hashOrg2TaxID.get( strOrg )
+
+def get_mappingfile( strTaxID, strDir = c_strDirMapping ): 
+	astrGlob =  glob.glob( sfle.d( strDir, strTaxID + "*" ) ) if strTaxID else ""    
+	return (astrGlob[0] if astrGlob else "") 
 
 #------------------------------------------------------------------------------ 
 

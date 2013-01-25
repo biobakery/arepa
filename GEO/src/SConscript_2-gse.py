@@ -5,7 +5,9 @@ import sfle
 import sys
 import csv
 import os 
+import gzip
 import metadata 
+import re 
 
 def test( iLevel, strID, hashArgs ):
 	return ( iLevel == 2 ) and ( strID.find( "GSE" ) == 0 ) 
@@ -31,7 +33,8 @@ c_strURLGPL             = hashArgs["c_strURLGPL"]
 c_strHost               = "ftp.ncbi.nih.gov"
 c_strPath               = "pub/geo/DATA/annotation/platforms/"
 c_fileIDAnnot           = sfle.d( pE, c_strID + ".annot.gz" )
-c_fileIDMap             = sfle.d( pE, c_strID + ".map" )
+c_fileIDMapRaw		= sfle.d( pE, c_strID + "_raw.map" )
+c_fileIDMap		= sfle.d( pE, c_strID + ".map" )
 
 c_fileStatus		= sfle.d( pE, "status.txt" )
 c_fileTXTGSM		= sfle.d( pE, "GSM.txt" )
@@ -52,6 +55,7 @@ c_fileProgPkl2Metadata      	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc,
 c_fileProgSeries2GSM		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "series2gsm.py" ) 
 c_fileProgProcessRaw		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "preprocessRaw.R" ) 
 c_fileProgAnnot2Map		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "annot2map.py" ) 
+c_fileProgMergeMapping		= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "merge_genemapping.py" )
 
 Import( "hashArgs" )
 
@@ -103,6 +107,17 @@ fileAnnot = Command( c_fileIDAnnot, c_fileRMetadataTXT, getGPL )
 
 #Produce mapping files for gene mapping; if does not exist, then nothing. 
 fileGeneMap = sfle.pipe( pE, c_fileIDAnnot, c_fileProgAnnot2Map, c_fileIDMap ) 
+
+def funcMergeMap( target, source, env ): 
+	strT, astrSs = sfle.ts( target, source )
+	strGZ, strRawMap, strProg = astrSs[:3] 
+	astrTaxID = re.findall(r'Series_platform_taxid\t"([0-9]*)"', 
+		gzip.open( strGZ,"rb").read( ) )
+	strMap = arepa.get_mappingfile( astrTaxID[0] )
+	return sfle.ex( [strProg, strRawMap, strMap, strT])	
+
+#Turned off for now 
+#Command( c_fileIDMap, [c_fileIDSeriesTXTGZ,c_fileIDMapRaw, c_fileProgMergeMapping], funcMergeMap )
 
 #Clean Microarray Data -- Imputation, Normalization, Gene Mapping    
 execfile( str( c_fileInputSConscript ) )
