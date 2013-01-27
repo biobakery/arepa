@@ -16,8 +16,8 @@ c_hashHead 	= { k:v for (k,v) in map( lambda x: map(lambda y: y.strip(), x.split
 		"^ID .*? platform"             	: "Affy",
 		"Entrez Gene Symbol"       	: "HGNC",
 		"Uniprot .*? Symbol"  		: "Uniprot/TrEMBL",
-		"^(Entrez)? UniGene Symbol"	: "Unigene",	
-		"Entrez Unigene Identifier"     : "Unigene_ID",
+		"^(Entrez)? UniGene Symbol"	: "UniGene",	
+		"Entrez Unigene Identifier"     : "UniGene_ID",
 		"GenBank Accession"             : "GB_ACC",
 		"Entrez Gene identifier"        : "EntrezGene",
 		"GenBank Identifier"            : "GenBank_ID"

@@ -106,7 +106,7 @@ def getGPL( target, source, env ):
 fileAnnot = Command( c_fileIDAnnot, c_fileRMetadataTXT, getGPL ) 
 
 #Produce mapping files for gene mapping; if does not exist, then nothing. 
-fileGeneMap = sfle.pipe( pE, c_fileIDAnnot, c_fileProgAnnot2Map, c_fileIDMap ) 
+fileGeneMap = sfle.pipe( pE, c_fileIDAnnot, c_fileProgAnnot2Map, c_fileIDMapRaw ) 
 
 def funcMergeMap( target, source, env ): 
 	strT, astrSs = sfle.ts( target, source )
@@ -117,7 +117,7 @@ def funcMergeMap( target, source, env ):
 	return sfle.ex( [strProg, strRawMap, strMap, strT])	
 
 #Turned off for now 
-#Command( c_fileIDMap, [c_fileIDSeriesTXTGZ,c_fileIDMapRaw, c_fileProgMergeMapping], funcMergeMap )
+Command( c_fileIDMap, [c_fileIDSeriesTXTGZ,c_fileIDMapRaw, c_fileProgMergeMapping], funcMergeMap )
 
 #Clean Microarray Data -- Imputation, Normalization, Gene Mapping    
 execfile( str( c_fileInputSConscript ) )

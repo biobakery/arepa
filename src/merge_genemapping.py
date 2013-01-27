@@ -15,8 +15,8 @@ def _merge_row( dRow1, dRow2 ):
 	astrKeys1, astrKeys2 = dRow1.keys(), dRow2.keys()
 	sstrKeyIntersect = (set(astrKeys1) & set(astrKeys2))
 	assert( any(sstrKeyIntersect) )
-	for strKey in sstrKeyIntersect:
-		assert( dRow1[strKey] == dRow2[strKey] )
+	#for strKey in sstrKeyIntersect:
+	#	assert( dRow1[strKey] == dRow2[strKey] )
 	for strKey in astrKeys2:
 		if not(strKey in astrKeys1):
 			dRow1[strKey] = dRow2[strKey]
