@@ -106,18 +106,21 @@ def getGPL( target, source, env ):
 fileAnnot = Command( c_fileIDAnnot, c_fileRMetadataTXT, getGPL ) 
 
 #Produce mapping files for gene mapping; if does not exist, then nothing. 
-fileGeneMap = sfle.pipe( pE, c_fileIDAnnot, c_fileProgAnnot2Map, c_fileIDMapRaw ) 
+#fileGeneMap = sfle.pipe( pE, c_fileIDAnnot, c_fileProgAnnot2Map, c_fileIDMapRaw ) 
 
-def funcMergeMap( target, source, env ): 
-	strT, astrSs = sfle.ts( target, source )
-	strGZ, strRawMap, strProg = astrSs[:3] 
-	astrTaxID = re.findall(r'Series_platform_taxid\t"([0-9]*)"', 
-		gzip.open( strGZ,"rb").read( ) )
-	strMap = arepa.get_mappingfile( astrTaxID[0] )
-	return sfle.ex( [strProg, strRawMap, strMap, strT])	
+def funcTaxID():
+	astrTaxID = re.findall(r'Series_platform_taxid\t"([0-9]*)"',
+                gzip.open( strGZ,"rb").read( ) )
+	return ( astrTaxID[0] if astrTaxID else None )
+
+#def funcMergeMap( target, source, env ): 
+#	strT, astrSs = sfle.ts( target, source )
+#	strGZ, strRawMap, strProg = astrSs[:3] 
+#	strMap = arepa.get_mappingfile( astrTaxID[0] )
+#	return sfle.ex( [strProg, strRawMap, strMap, strT])	
 
 #Turned off for now 
-Command( c_fileIDMap, [c_fileIDSeriesTXTGZ,c_fileIDMapRaw, c_fileProgMergeMapping], funcMergeMap )
+#Command( c_fileIDMap, [c_fileIDSeriesTXTGZ,c_fileIDMapRaw, c_fileProgMergeMapping], funcMergeMap )
 
 #Clean Microarray Data -- Imputation, Normalization, Gene Mapping    
 execfile( str( c_fileInputSConscript ) )

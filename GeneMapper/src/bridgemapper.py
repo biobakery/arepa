@@ -17,6 +17,8 @@ import sys
 # GENE ID MAPPING: convert geneids_in into geneids_out
 #########################################################
 def convertGeneIds( setstrGenes, strMap, strFrom, strTo ):
+	#Create pFrom differently from pTo, delete after using it...
+	# Perhaps try generating names 	
 
 	pFrom, pTo = [tempfile.NamedTemporaryFile( ) for i in xrange( 2 )]
 

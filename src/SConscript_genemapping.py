@@ -55,8 +55,8 @@ def funcGeneIDMapping( pE, fileDATin, strGeneFrom, strLOGout, strMAPin = None, a
 		strAutoMAP = strAutoMAPtmp if os.path.exists( strAutoMAPtmp ) else None 
 		strMAPin = reduce( lambda x, y: x or y,
 			filter( lambda x: c_strID in x,
-			glob.glob( sfle.d( c_strDirManMap, "*" + c_strSufMap ) ) ), strAutoMAP )
-		if not strTaxa:
+			glob.glob( sfle.d( c_strDirManMap, "*" + c_strSufMap ) ) ), strAutoMAP ) 
+		if not(strMAPin) and not(strTaxa):
 			astrMatch = re.findall( r'taxid_([0-9]+)', c_strID )
 			strTaxa = astrMatch[0].strip( ) if astrMatch else None
 		if not(strMAPin) and strTaxa:

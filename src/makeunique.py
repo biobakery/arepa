@@ -62,7 +62,7 @@ argp.add_argument( "ostm",              metavar = "output.dat",
         type = argparse.FileType( "w" ),        nargs = "?",    default = sys.stdout,
         help = "Input tab-delimited text file with mapped columns" )
 argp.add_argument( "-m",                dest = "strSplit",        metavar = "str_split",
-        type = str,                    	required = False,
+        type = str,                    	required = False,	default = "///",
         help = "Ambiguous field element classifier; a or b; e.g. in the case of a///b the value will be ///" )
 argp.add_argument( "-c",                dest = "iCols",       metavar = "columns",
         type = int,                     default = "2",

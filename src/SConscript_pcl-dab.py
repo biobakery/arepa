@@ -21,6 +21,9 @@ c_fileIDDAB			= sfle.d( pE, c_strID + ".dab" )
 c_fileIDQUANT		= sfle.d( pE, c_strID + ".quant" )
 c_fileIDPKL		 	= sfle.d( pE, c_strID + ".pkl" )
 c_fileStatus		= sfle.d( pE, "status.txt" )
+c_fileIDMap			= sfle.d( pE, c_strID + ".map" )
+c_fileIDMapRaw			= sfle.d( pE, c_strID + "_raw.map" )
+c_strDirManMap			= sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, "manual_mapping" )
 
 c_fileIDMappedPCL	= sfle.d( pE, c_strID + "_00mapped.pcl" )
 c_fileIDMappedPCL2	= sfle.d( pE, c_strID + "_01mapped.pcl" )
@@ -59,11 +62,22 @@ def funcIDQUANT( target, source, env ):
 	iLC = sfle.lc( strS )
 	return (sfle.ex("echo '-1.5\t-0.5\t0.5\t1.5\t2.5\t3.5\t4.5' >" + strT))
 
-def funcPCL2DAB( pE, fileIDRawPCL ):
+def funcMergeMap( strTaxID, fileProgMergeMapping, fileIDMapRaw, fileIDMap ):
+	strMap = arepa.get_mappingfile( strTaxID )
+	return sfle.op( pE, fileProgMergeMapping, [[fileIDMapRaw],[strMap],[True,fileIDMap]] )
 
+def funcPCL2DAB( pE, fileIDRawPCL, fileGPLTXTGZ, fileProgAnnot2Map, fileProgMergeMapping, strTaxID ):
+	
+	#Produce raw mapping file for gene mapping 
+	astrMapRaw = sfle.pipe( pE, fileGPLTXTGZ, fileProgAnnot2Map, c_fileIDMapRaw )
+
+	#Produce merged mapping file
+	astrMap = funcMergeMap( strTaxID, fileProgMergeMapping, astrMapRaw[0], c_fileIDMap )		 
+	
 	#Perform Gene Mapping 
 	astrMapped = funcGeneIDMapping( pE, fileIDRawPCL, arepa.genemap_probeids( ),
-		c_fileStatus, None, c_aiCOL, c_iSkip )
+		c_fileStatus, astrMap[0], c_aiCOL, c_iSkip )
+
 	#Get rid of duplicate identifiers 
 	astrUnique = funcMakeUnique( pE, astrMapped[0], c_iSkip ) 
 
