@@ -36,6 +36,7 @@ c_fileIDAnnot           = sfle.d( pE, c_strID + ".annot.gz" )
 c_fileIDMapRaw		= sfle.d( pE, c_strID + "_raw.map" )
 c_fileIDMap		= sfle.d( pE, c_strID + ".map" )
 
+c_fileTaxa		= sfle.d( pE, "taxa.txt" )
 c_fileStatus		= sfle.d( pE, "status.txt" )
 c_fileTXTGSM		= sfle.d( pE, "GSM.txt" )
 c_fileIDSeriesTXTGZ	= sfle.d( pE, c_strID + "_series_matrix.txt.gz" )
@@ -56,6 +57,7 @@ c_fileProgSeries2GSM		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "serie
 c_fileProgProcessRaw		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "preprocessRaw.R" ) 
 c_fileProgAnnot2Map		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "annot2map.py" ) 
 c_fileProgMergeMapping		= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "merge_genemapping.py" )
+c_fileProgGetInfo		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "getinfo.py" )
 
 Import( "hashArgs" )
 
@@ -105,26 +107,12 @@ def getGPL( target, source, env ):
 
 fileAnnot = Command( c_fileIDAnnot, c_fileRMetadataTXT, getGPL ) 
 
-#Produce mapping files for gene mapping; if does not exist, then nothing. 
-#fileGeneMap = sfle.pipe( pE, c_fileIDAnnot, c_fileProgAnnot2Map, c_fileIDMapRaw ) 
-
-def funcTaxID():
-	astrTaxID = re.findall(r'Series_platform_taxid\t"([0-9]*)"',
-                gzip.open( strGZ,"rb").read( ) )
-	return ( astrTaxID[0] if astrTaxID else None )
-
-#def funcMergeMap( target, source, env ): 
-#	strT, astrSs = sfle.ts( target, source )
-#	strGZ, strRawMap, strProg = astrSs[:3] 
-#	strMap = arepa.get_mappingfile( astrTaxID[0] )
-#	return sfle.ex( [strProg, strRawMap, strMap, strT])	
-
-#Turned off for now 
-#Command( c_fileIDMap, [c_fileIDSeriesTXTGZ,c_fileIDMapRaw, c_fileProgMergeMapping], funcMergeMap )
+#Produce Taxa file 
+sfle.pipe( pE, c_fileIDSeriesTXTGZ, c_fileProgGetInfo, c_fileTaxa )
 
 #Clean Microarray Data -- Imputation, Normalization, Gene Mapping    
 execfile( str( c_fileInputSConscript ) )
-funcPCL2DAB( pE, c_fileIDRawPCL )
+funcPCL2DAB( pE, c_fileIDRawPCL, c_fileIDAnnot, c_fileProgAnnot2Map, c_fileProgMergeMapping, c_fileTaxa )
 
 def scanner( fileExclude = None, fileInclude = None ):
 	setstrExclude = set(readcomment( fileExclude ) if fileExclude else [])
@@ -148,5 +136,4 @@ afileIDsTXT = sfle.pipe( pE, c_fileIDSeriesTXTGZ, c_fileProgSeries2GSM, c_fileTX
 
 #Run RAW pipeline
 #ADDITION: run when configuration file says to  
-
-afileIDsRaw = sfle.sconscript_children( pE, afileIDsTXT , scanner( ), 3, arepa.c_strProgSConstruct, hashArgs )
+#afileIDsRaw = sfle.sconscript_children( pE, afileIDsTXT , scanner( ), 3, arepa.c_strProgSConstruct, hashArgs )

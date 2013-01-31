@@ -62,17 +62,21 @@ def funcIDQUANT( target, source, env ):
 	iLC = sfle.lc( strS )
 	return (sfle.ex("echo '-1.5\t-0.5\t0.5\t1.5\t2.5\t3.5\t4.5' >" + strT))
 
-def funcMergeMap( strTaxID, fileProgMergeMapping, fileIDMapRaw, fileIDMap ):
-	strMap = arepa.get_mappingfile( strTaxID )
-	return sfle.op( pE, fileProgMergeMapping, [[fileIDMapRaw],[strMap],[True,fileIDMap]] )
+def funcMergeMap( target, source, env ):
+	strT, astrSs = sfle.ts( target, source)
+	fileTaxa, fileMerge, fileIDRaw =  astrSs[:3]
+	open(str(fileTaxa)).read() 
+	strMap = arepa.get_mappingfile( sfle.readcomment(str(fileTaxa))[0] )
+	return sfle.ex( [fileMerge, fileIDRaw, strMap, strT] )
 
-def funcPCL2DAB( pE, fileIDRawPCL, fileGPLTXTGZ, fileProgAnnot2Map, fileProgMergeMapping, strTaxID ):
+def funcPCL2DAB( pE, fileIDRawPCL, fileGPLTXTGZ, fileProgAnnot2Map, fileProgMergeMapping, fileTaxa ):
 	
 	#Produce raw mapping file for gene mapping 
 	astrMapRaw = sfle.pipe( pE, fileGPLTXTGZ, fileProgAnnot2Map, c_fileIDMapRaw )
 
 	#Produce merged mapping file
-	astrMap = funcMergeMap( strTaxID, fileProgMergeMapping, astrMapRaw[0], c_fileIDMap )		 
+	astrMap = pE.Command( c_fileIDMap, [fileTaxa, fileProgMergeMapping, astrMapRaw[0]], funcMergeMap )
+	#astrMap = funcMergeMap( strTaxID, fileProgMergeMapping, astrMapRaw[0], c_fileIDMap )		 
 	
 	#Perform Gene Mapping 
 	astrMapped = funcGeneIDMapping( pE, fileIDRawPCL, arepa.genemap_probeids( ),
