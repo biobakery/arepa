@@ -27,7 +27,8 @@ c_fileInputManCurTXT    = sfle.d( pE, arepa.path_repo( ), sfle.c_strDirEtc,
                                  "manual_curation/", c_strID + "_curated_pdata.txt" )
 
 c_filePPfun             = sfle.d( pE, arepa.path_repo( ), sfle.c_strDirEtc, "preprocess")
-c_strPPfun              = sfle.readcomment( c_filePPfun )[0]
+c_fileRunRaw		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirEtc,  "raw")
+
 c_fileIDPKL             = sfle.d( pE, c_strID + ".pkl" )
 c_strURLGPL             = hashArgs["c_strURLGPL"]
 c_strHost               = "ftp.ncbi.nih.gov"
@@ -59,6 +60,9 @@ c_fileProgAnnot2Map		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "annot2
 c_fileProgMergeMapping		= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "merge_genemapping.py" )
 c_fileProgGetInfo		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "getinfo.py" )
 
+m_strPPfun              = sfle.readcomment( c_filePPfun )[0]
+m_boolRunRaw		= bool((sfle.readcomment( c_fileRunRaw ) or ["False"])[0])
+
 Import( "hashArgs" )
 
 #===============================================================================
@@ -83,7 +87,7 @@ sfle.pipe( pE, c_fileRDataTXT, c_fileProgSeries2PCL, c_fileIDRawPCL,
 	[[c_fileRMetadataTXT], [c_fileRPlatformTXT]] )
 
 #Make Eset containing all pertinent data
-sfle.ssink( pE, str(c_fileProgProcessRaw), "R --no-save --args", [[c_fileIDPCL], [True, c_fileEset], c_strPPfun, 
+sfle.ssink( pE, str(c_fileProgProcessRaw), "R --no-save --args", [[c_fileIDPCL], [True, c_fileEset], m_strPPfun, 
 	[c_fileExpTable], [c_fileCondTable]] )
 
 # Download annotation files for specific platform, if they exist 
@@ -135,5 +139,5 @@ def scanner( fileExclude = None, fileInclude = None ):
 afileIDsTXT = sfle.pipe( pE, c_fileIDSeriesTXTGZ, c_fileProgSeries2GSM, c_fileTXTGSM ) 
 
 #Run RAW pipeline
-#ADDITION: run when configuration file says to  
-#afileIDsRaw = sfle.sconscript_children( pE, afileIDsTXT , scanner( ), 3, arepa.c_strProgSConstruct, hashArgs )
+if m_boolRunRaw:
+	afileIDsRaw = sfle.sconscript_children( pE, afileIDsTXT , scanner( ), 3, arepa.c_strProgSConstruct, hashArgs )

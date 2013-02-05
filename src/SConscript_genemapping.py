@@ -69,8 +69,6 @@ def funcGeneIDMapping( pE, fileDATin, strGeneFrom, strLOGout, strMAPin = None, a
 				if re.search( r'\D' + strTaxa + r'\D', strMAPname ):
 					strMAPin = strMAPname
 					break
-	#debugging output 
-	print strMAPin
 	strBase, strExt = os.path.splitext( str(fileDATin) )
 	strCount = funcCounter( g_iterCounter )
 	strT = strBase + c_strMapped + strCount + strExt
@@ -78,11 +76,11 @@ def funcGeneIDMapping( pE, fileDATin, strGeneFrom, strLOGout, strMAPin = None, a
 		"-c", str(aiCOL), "-f", strGeneFrom, "-t", c_astrGeneTo[0],
 		"-s", iSkip, "-l", [True, strLOGout]] +
 		( ["-m", [strMAPin]] if strMAPin else [] ) )
-	#pE.Depends( afileRet, sfle.scons_child( pE, c_strPathGeneMapper ) )
+	pE.Depends( afileRet, sfle.scons_child( pE, c_strPathGeneMapper ) )
 	return afileRet
 
-def funcMakeUnique( pE, fileDATin, iSkip = 0 ):
+def funcMakeUnique( pE, fileDATin, iSkip = 0, iCol = 2 ):
 	strBase, strExt = os.path.splitext(str(fileDATin))
 	iCount = funcCounter( g_iterCounter )
 	strT = re.sub( r'_mapped[0-9]+', c_strMapped + iCount, str(fileDATin))
-	return sfle.op(pE, c_fileProgMakeUnique, [[fileDATin], [True,strT],"-s", iSkip])
+	return sfle.op(pE, c_fileProgMakeUnique, [[fileDATin], [True,strT],"-s", iSkip, "-c", iCol])

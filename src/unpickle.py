@@ -7,13 +7,17 @@ import pickle
 import sys
 import argparse 
 
-def unpickle( istm, ostm, strSplit, iCols, iSkip, istmLog, fRev ):
+def unpickle( istm, ostm, strSplit, iCols, iSkip, istmLog, fRev, strManKey ):
 	if not(fRev):
+		"unpickle"
 		hashData = pickle.load( istm )
 		csvw = csv.writer( ostm, csv.excel_tab )
-		for strKey, pValue in hashData.items( ):
-			csvw.writerow( (strKey, "%s" % pValue) )
+		if strManKey: csvw.writerow( [hashData[strManKey]] )
+		else:
+			for strKey, pValue in hashData.items( ):
+				csvw.writerow( (strKey, "%s" % pValue) )
 	else:
+		"pickle"
 		pMeta = {}
 		csvr1 = csv.reader( istm, csv.excel_tab )
 		for line in csvr1:
@@ -48,10 +52,12 @@ argp.add_argument( "-l",                dest = "istmLog",       metavar = "log.t
         help = "Optional log file containing status metavariables" )
 argp.add_argument( "-r",		dest = "fRev",		action = "store_true",
 	help = "Reverse flag" )
+argp.add_argument( "-k",		dest = "strManKey",	metavar = "str_man_key",
+	help = "Flag to specify output for specific key in the pickle" )
 
 def _main( ):
         args = argp.parse_args()
-        unpickle( args.istm, args.ostm, args.strSplit, args.iCols, args.iSkip, args.istmLog, args.fRev )
+        unpickle( args.istm, args.ostm, args.strSplit, args.iCols, args.iSkip, args.istmLog, args.fRev, args.strManKey )
 
 if __name__ == "__main__":
         _main()

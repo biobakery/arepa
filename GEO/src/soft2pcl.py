@@ -5,7 +5,7 @@ import soft
 import sys
 import math as M
 
-#Criteria for log transforming data :
+# Criteria for log transforming data :
 # >= c_iMaximumCount data points with values >= c_dMaximumValue
 
 c_dMaximumValue = 50
@@ -25,8 +25,7 @@ aiColumns = filter( lambda i: pDS.column( i )[0].startswith( "GSM" ), range( pDS
 print( "GID	NAME	GWEIGHT	" + "\t".join( pDS.column( i )[1] for i in aiColumns ) )
 print( "EWEIGHT		" + ( "	1" * len( aiColumns ) ) )
 
-#"NaN" works for both R and python as a "not-a-number" classifier 
-
+#### Note: "NaN" works for both R and python as a "not-a-number" classifier 
 def noNull():
 	def mapNull( str ):
 		if str == "null":
@@ -62,18 +61,7 @@ def printTable():
 	noNull()
 	transform()
 	for iRow in range( pDS.rows( ) ):
-        	astrRow = pDS.row( iRow )
-        	#This annotation stuff is junk 
-        	#for iAnno in range( len( apAnnos ) ):
-        	#       if aiAnnos[iAnno] == None:
-        	#               continue
-        	#       pAnno = apAnnos[iAnno]
-        	#       iRow = pAnno.row( astrRow[0] )
-                	#strAnno = None if ( iRow == None ) else pAnno.get( iRow, aiAnnos[iAnno] ) 
-                	#if strAnno:
-                	#       astrRow[1] = "|".join( astrRow[0:2] )
-        	       	#       astrRow[0] = strAnno
-               
+        	astrRow = pDS.row( iRow )              
         	for strID in astrRow[0].split( "///" ):
                 	print( "\t".join( [strID, astrRow[1]] + ["1"] + [astrRow[i] for i in aiColumns] ) )
 

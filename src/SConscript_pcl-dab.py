@@ -14,7 +14,7 @@ import glob
 
 c_aiCOL				= [0]
 c_iSkip				= 2
-
+c_iCOL				= len(c_aiCOL)
 c_fileIDNormPCL		= sfle.d( pE, c_strID + "_01norm.pcl" )
 c_fileIDPCL			= sfle.d( pE, c_strID + ".pcl" )
 c_fileIDDAB			= sfle.d( pE, c_strID + ".dab" )
@@ -34,7 +34,7 @@ execfile( arepa.genemapper( ) )
 #- Normalize
 def funcIDNormPCL( target, source, env, iMaxLines = 100000 ):
 	strT, astrSs = sfle.ts( target, source )
-	strS = astrSs[1] if ( sfle.readcomment(astrSs[1]) > c_iSkip ) else astrSs[0] 
+	strS = astrSs[1] if ( len(sfle.readcomment(astrSs[1])) > c_iSkip ) else astrSs[0] 
 	iLC = sfle.lc( strS )
 	return ( sfle.ex( "Normalizer -t pcl -T medmult < " + strS, strT )
 		if ( iLC < iMaxLines ) else sfle.ex( "head -n 3 < " + strS, strT ) )
@@ -83,7 +83,7 @@ def funcPCL2DAB( pE, fileIDRawPCL, fileGPLTXTGZ, fileProgAnnot2Map, fileProgMerg
 		c_fileStatus, astrMap[0], c_aiCOL, c_iSkip )
 
 	#Get rid of duplicate identifiers 
-	astrUnique = funcMakeUnique( pE, astrMapped[0], c_iSkip ) 
+	astrUnique = funcMakeUnique( pE, astrMapped[0], c_iSkip, c_iCOL ) 
 
 	pE.Command( c_fileIDNormPCL, [c_fileIDRawPCL, astrUnique[0]], funcIDNormPCL )
 	pE.Command( c_fileIDPCL, c_fileIDNormPCL, funcIDKNNPCL )

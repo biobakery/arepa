@@ -8,7 +8,8 @@ pE = DefaultEnvironment( )
 #------------------------------------------------------------------------------
 
 c_strURL				= "http://svn.bigcat.unimaas.nl/bridgedb/trunk/"
-c_strRevision			= "626"
+#c_strRevision			= "626"
+c_strRevision			= "587"
 
 c_dirUniprotKO			= Dir(sfle.d( pE, sfle.c_strDirEtc, "uniprotko" ))
 

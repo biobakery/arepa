@@ -34,6 +34,8 @@ c_fileStatus				= sfle.d( pE,"status.txt" )
 
 afileIDDAT = sfle.pipe( pE, c_fileInputBioGridC, c_fileProgC2DAT, c_fileIDDAT, [c_strID] )
 
+#c_strHumanMap			= sfle.d( arepa.path_arepa(), "GeneMapper", sfle.c_strDirEtc, "uniprotko", "9606_hsa_ko_uniprot.map" )
+
 ##############################################
 #- Gene id mapping from Uniprot to Genesymbols
 ##############################################

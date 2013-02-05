@@ -17,29 +17,30 @@ import sys
 # GENE ID MAPPING: convert geneids_in into geneids_out
 #########################################################
 def convertGeneIds( setstrGenes, strMap, strFrom, strTo ):
-	#Create pFrom differently from pTo, delete after using it...
-	# Perhaps try generating names 	
 
-	pFrom, pTo = [tempfile.NamedTemporaryFile( ) for i in xrange( 2 )]
+	pFrom, pTo = [tempfile.NamedTemporaryFile( delete=False ) for i in xrange( 2 )]
 
 	pFrom.write( "\n".join( setstrGenes ) + "\n" )
-	#for line in csv.reader( pFrom ): sys.stderr.write(line+'\n') #Why the hell do I need to do this? Need explanation. 
+	pFrom.close()
 
 	strBatchmapperSH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "trunk/batchmapper.sh")
 	strMapFlag = "-g" if strMap.endswith( ".bridge" ) else "-t"
 
 	subprocess.check_call( ("sh",strBatchmapperSH, "-i", pFrom.name, "-is", strFrom,\
 		"-os", strTo, "-o", pTo.name, strMapFlag, strMap,"-mm") )
-
-	return {a[1]:a[0] for a in csv.reader( pTo, csv.excel_tab )}
+	hashMap = {a[1]:a[0] for a in csv.reader( pTo, csv.excel_tab )}
+	pTo.close()
+	os.unlink(pFrom.name); os.unlink(pTo.name)
+	return hashMap
 		
 def bridgemapper( istm, ostm, strMap, strCols, strFrom, strTo, ostmLog, iSkip ):
 
 	strCols = strCols[1:-1]
 	aiCols = [int(s) for s in re.split( r'\s*,\s*', strCols )] if strCols else []
 	
-	#Open a blank metadata object
+	#Open a blank metadata object and initialize 
 	pMeta = metadata.open( )
+	pMeta.set( "mapped", False )
 
 	aastrData = []
 	setstrIn = set()
@@ -62,23 +63,22 @@ def bridgemapper( istm, ostm, strMap, strCols, strFrom, strTo, ostmLog, iSkip ):
 	else:
 		sys.stderr.write("+++ ERROR in GeneMapper +++ Input file does not exist or is empty. \
 			Return empty file. \n")
-	#Debugging output for hashMap 
-	print str(hashMap)
+	
 	if hashMap:
-		pMeta.set( "mapped", True )
-		for iRow in xrange( iSkip, len( aastrData ) ):
-			astrRow = aastrData[iRow]
-			for iCol in aiCols:
-				if iCol < len( astrRow ):
-					strTo = hashMap.get( astrRow[iCol] )
-					if strTo:
-						astrRow[iCol] = strTo
-					else:
-						astrRow[iCol] = ""
+		if any(hashMap.values()):
+			pMeta.set( "mapped", True )
+			for iRow in xrange( iSkip, len( aastrData ) ):
+				astrRow = aastrData[iRow]
+				for iCol in aiCols:
+					if iCol < len( astrRow ):
+						strTo = hashMap.get( astrRow[iCol] )
+						if strTo:
+							astrRow[iCol] = strTo
+						else:
+							astrRow[iCol] = ""
 	else:
 		sys.stderr.write("+++Error in GeneMapper +++ Empty mapping. \
 			Return original file. \n")      
-		pMeta.set( "mapped", False )
 				
 	csvw = csv.writer( ostm, csv.excel_tab )
 	#make sure that if the mapping is empty for one of the columns, delete the entire row

@@ -32,7 +32,7 @@ c_fileInputSConscriptGM		= sfle.d( pE, arepa.path_arepa(),sfle.c_strDirSrc,"SCon
 c_fileInputSConscriptDAB	= sfle.d( pE, arepa.path_arepa(), sfle.c_strDirSrc, "SConscript_dat-dab.py" )
 
 c_fileStatus	    	= sfle.d( pE, "status.txt" )
-c_strGeneFrom		= "Kg"
+c_strGeneFrom		= "En"
 
 afileIDDAT = sfle.pipe( pE, c_fileInputC, c_fileProgC2DAT, c_fileIDDAT, [c_strID] )
 
@@ -42,7 +42,8 @@ afileIDDAT = sfle.pipe( pE, c_fileInputC, c_fileProgC2DAT, c_fileIDDAT, [c_strID
 
 #Launch gene mapping 
 execfile(str(c_fileInputSConscriptGM))
-astrMapped = funcGeneIDMapping( pE, c_fileIDDAT, c_strGeneFrom, c_fileStatus, None )
+
+astrMapped = funcGeneIDMapping( pE, c_fileIDDAT, c_strGeneFrom, c_fileStatus )
 
 #Make identifiers unique 
 astrUnique = funcMakeUnique( pE, astrMapped[0] )
