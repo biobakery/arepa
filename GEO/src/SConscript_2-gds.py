@@ -14,6 +14,7 @@ if locals( ).has_key( "testing" ):
 pE = DefaultEnvironment( )
 
 c_strID				= arepa.cwd( )
+c_strSufRPackage		= "_rpackage"
 astrID				= c_strID.split( "-" )
 c_strGDS			= astrID[0]
 c_strGPL			= astrID[1]
@@ -31,7 +32,8 @@ c_fileIDPKL			= sfle.d( pE, c_strID + ".pkl" )
 c_fileGPLTXTGZ			= sfle.d( pE, c_strGPL + ".annot.gz" )
 c_fileIDRawPCL			= sfle.d( pE, c_strID + "_00raw.pcl" )
 c_fileEset 			= sfle.d( pE, c_strID + ".RData" )
-
+c_fileHelp			= sfle.d( pE, c_strID + ".Rd" )
+c_fileLogPackage		= sfle.d( pE, "package" )
 c_fileExpTable			= sfle.d( pE, c_strID + "_exp_metadata.txt" )
 
 c_fileProgSOFT2PCL		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "soft2pcl.py" ) 
@@ -72,3 +74,5 @@ sfle.sop( pE, "python", [[c_fileProgPkl2Metadata],[c_fileIDPKL],[True,c_fileExpT
 #Produce expression set file
 sfle.ssink( pE, str(c_fileProgProcessRaw), "R --no-save --args", [[c_fileIDRawPCL],[True,c_fileEset], c_strPPfun, [c_fileExpTable]])
 
+#Make Rd Help Page 
+sfle.ssink( pE, str(c_fileProgEset2Help), "R --no-save --args", [[c_fileEset], [True, c_fileHelp]] )
