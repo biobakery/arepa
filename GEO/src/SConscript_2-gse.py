@@ -135,9 +135,8 @@ def scanner( fileExclude = None, fileInclude = None ):
 				env["sconscript_child"]( target, source[0], env, c_strID + "-RAW" )
 	return funcRet
 
-#Get list of GSM ids for processing raw files in the next step 
-afileIDsTXT = sfle.pipe( pE, c_fileIDSeriesTXTGZ, c_fileProgSeries2GSM, c_fileTXTGSM ) 
-
 #Run RAW pipeline
 if m_boolRunRaw:
+	#Get list of GSM ids for processing raw files in the next step 
+	afileIDsTXT = sfle.pipe( pE, c_fileIDSeriesTXTGZ, c_fileProgSeries2GSM, c_fileTXTGSM ) 
 	afileIDsRaw = sfle.sconscript_children( pE, afileIDsTXT , scanner( ), 3, arepa.c_strProgSConstruct, hashArgs )

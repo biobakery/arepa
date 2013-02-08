@@ -119,7 +119,7 @@ def org2taxid( strOrg, fApprox = False ):
 	else:
 		return hashOrg2TaxID.get( strOrg )
 
-def get_mappingfile( strTaxID, strDir = c_strDirMapping ): 
+def get_mappingfile( strTaxID, strDir = c_strDirMapping ):
 	astrGlob =  glob.glob( sfle.d( strDir, strTaxID + "*" ) ) if strTaxID else ""    
 	return (astrGlob[0] if astrGlob else "") 
 

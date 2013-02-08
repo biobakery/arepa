@@ -15,18 +15,20 @@ import glob
 c_aiCOL				= [0]
 c_iSkip				= 2
 c_iCOL				= len(c_aiCOL)
-c_fileIDNormPCL		= sfle.d( pE, c_strID + "_01norm.pcl" )
+c_fileIDNormPCL			= sfle.d( pE, c_strID + "_01norm.pcl" )
 c_fileIDPCL			= sfle.d( pE, c_strID + ".pcl" )
 c_fileIDDAB			= sfle.d( pE, c_strID + ".dab" )
-c_fileIDQUANT		= sfle.d( pE, c_strID + ".quant" )
+c_fileIDQUANT			= sfle.d( pE, c_strID + ".quant" )
 c_fileIDPKL		 	= sfle.d( pE, c_strID + ".pkl" )
-c_fileStatus		= sfle.d( pE, "status.txt" )
+c_fileStatus			= sfle.d( pE, "status.txt" )
 c_fileIDMap			= sfle.d( pE, c_strID + ".map" )
 c_fileIDMapRaw			= sfle.d( pE, c_strID + "_raw.map" )
 c_strDirManMap			= sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, "manual_mapping" )
 
-c_fileIDMappedPCL	= sfle.d( pE, c_strID + "_00mapped.pcl" )
-c_fileIDMappedPCL2	= sfle.d( pE, c_strID + "_01mapped.pcl" )
+c_fileIDMappedPCL		= sfle.d( pE, c_strID + "_00mapped.pcl" )
+c_fileIDMappedPCL2		= sfle.d( pE, c_strID + "_01mapped.pcl" )
+
+c_fileFlagSleipnir		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirEtc, "sleipnir" )
 
 #Load GeneMapper SConscript 
 execfile( arepa.genemapper( ) )
@@ -65,18 +67,21 @@ def funcIDQUANT( target, source, env ):
 def funcMergeMap( target, source, env ):
 	strT, astrSs = sfle.ts( target, source)
 	fileTaxa, fileMerge, fileIDRaw =  astrSs[:3]
-	open(str(fileTaxa)).read() 
-	strMap = arepa.get_mappingfile( sfle.readcomment(str(fileTaxa))[0] )
-	return sfle.ex( [fileMerge, fileIDRaw, strMap, strT] )
+	astrTaxa = sfle.readcomment(fileTaxa)
+	strMap = arepa.get_mappingfile( astrTaxa[0] ) if astrTaxa else ""
+	return ( sfle.ex( [fileMerge, fileIDRaw, strMap, strT] ) if strMap else sfle.ex(["cp", fileIDRaw, strT]) )
 
 def funcPCL2DAB( pE, fileIDRawPCL, fileGPLTXTGZ, fileProgAnnot2Map, fileProgMergeMapping, fileTaxa ):
 	
+	astrSleipnir = sfle.readcomment(c_fileFlagSleipnir)
+	bSleipnir = astrSleipnir[0]=="True" if astrSleipnir else False   
+
+	print "sleipnir", ("On" if bSleipnir else "Off")
 	#Produce raw mapping file for gene mapping 
 	astrMapRaw = sfle.pipe( pE, fileGPLTXTGZ, fileProgAnnot2Map, c_fileIDMapRaw )
 
 	#Produce merged mapping file
 	astrMap = pE.Command( c_fileIDMap, [fileTaxa, fileProgMergeMapping, astrMapRaw[0]], funcMergeMap )
-	#astrMap = funcMergeMap( strTaxID, fileProgMergeMapping, astrMapRaw[0], c_fileIDMap )		 
 	
 	#Perform Gene Mapping 
 	astrMapped = funcGeneIDMapping( pE, fileIDRawPCL, arepa.genemap_probeids( ),
@@ -85,7 +90,10 @@ def funcPCL2DAB( pE, fileIDRawPCL, fileGPLTXTGZ, fileProgAnnot2Map, fileProgMerg
 	#Get rid of duplicate identifiers 
 	astrUnique = funcMakeUnique( pE, astrMapped[0], c_iSkip, c_iCOL ) 
 
-	pE.Command( c_fileIDNormPCL, [c_fileIDRawPCL, astrUnique[0]], funcIDNormPCL )
-	pE.Command( c_fileIDPCL, c_fileIDNormPCL, funcIDKNNPCL )
-	pE.Command( c_fileIDDAB, c_fileIDPCL, funcIDDAB )
-	pE.Command( c_fileIDQUANT, c_fileIDPCL, funcIDQUANT )
+	if bSleipnir:  
+		pE.Command( c_fileIDNormPCL, [c_fileIDRawPCL, astrUnique[0]], funcIDNormPCL )
+		pE.Command( c_fileIDPCL, c_fileIDNormPCL, funcIDKNNPCL )
+		pE.Command( c_fileIDDAB, c_fileIDPCL, funcIDDAB )
+		pE.Command( c_fileIDQUANT, c_fileIDPCL, funcIDQUANT )
+	else:
+		sfle.sop( pE, "cp", [[astrUnique[0]], [True, c_fileIDPCL]] )	
