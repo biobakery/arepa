@@ -3,7 +3,8 @@
 import re
 import sys
 
-c_iColumns     = 6#15
+#c_iColumns     = 6#15
+c_iColumns     = 6
 
 def split( strToken ):
      mtch = re.search( '^([^:]+):(.+)$', strToken )

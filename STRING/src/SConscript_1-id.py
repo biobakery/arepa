@@ -48,6 +48,7 @@ astrMapped = funcGeneIDMapping( pE, c_fileIDDAT, c_strGeneFrom, c_fileStatus )
 #Make identifiers unique 
 astrUnique = funcMakeUnique( pE, astrMapped[0] )
 
+#Make metadata
 afileIDTXT = sfle.pipe( pE, c_fileInputC, c_fileProgC2Metadata, c_fileIDPKL,[c_strID,[c_fileStatus]] )
 
 execfile(str(c_fileInputSConscriptDAB))
@@ -55,4 +56,3 @@ execfile(str(c_fileInputSConscriptDAB))
 #DAT to DAB
 astrDAB = funcDAB( pE, c_fileIDDAB, [c_fileIDDAT, astrUnique[0]] )
 funcQUANT( pE, c_fileIDQUANT )
-

@@ -90,9 +90,11 @@ else:
 			for i in range( len( astrLine )):
 				pMetadata[astrHeaders[i]].append( astrLine[i] )				
 		else:
+			astrLine = map( lambda s: "sample_" + s if s else "sample_name", astrLine[:] )
 			pMetadata[c_hashkeyCurated] = astrLine 
 			astrHeaders = astrLine
 			for item in astrHeaders:
+				assert( not(pMetadata[item]) )
 				pMetadata.set( item, [] ) 
 
 ###### Add Mapping Status and Save ######

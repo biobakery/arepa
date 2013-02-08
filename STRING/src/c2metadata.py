@@ -6,8 +6,8 @@ import sys
 import csv 
 
 def metadatum( funcMetadata, astrTokens, iIndex ):
-
 	for strTokens in astrTokens:
+		sys.stderr.write( str(strTokens) + "\n" )
 		setstrTokens = set()
 		for strToken in strTokens.split( "|" ):
 			astrToken = string1.split( strToken )
@@ -22,7 +22,7 @@ def callback( aArgs, strAs, strBs, strTaxAs, strTaxBs, strPMIDs, strScores, strS
 	metadatum( pMetadata.platform, [strMethods], 2 )
 
 if len( sys.argv ) < 2:
-	raise Exception( "Usage: c2metadata.py <id> < <intactc>" )
+	raise Exception( "Usage: c2metadata.py <id> < <stringc>" )
 
 strTarget = sys.argv[1]
 strStatus = sys.argv[2] if len(sys.argv[1:]) > 1 else None 

@@ -60,8 +60,8 @@ c_fileProgAnnot2Map		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "annot2
 c_fileProgMergeMapping		= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "merge_genemapping.py" )
 c_fileProgGetInfo		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "getinfo.py" )
 
-m_strPPfun              = sfle.readcomment( c_filePPfun )[0]
-m_boolRunRaw		= bool((sfle.readcomment( c_fileRunRaw ) or ["False"])[0])
+m_strPPfun              = (sfle.readcomment( c_filePPfun ) or ["affy::rma"])[0]
+m_boolRunRaw		= sfle.readcomment( c_fileRunRaw ) == ["True"] or False 
 
 Import( "hashArgs" )
 

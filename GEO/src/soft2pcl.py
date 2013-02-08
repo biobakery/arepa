@@ -27,11 +27,8 @@ print( "EWEIGHT		" + ( "	1" * len( aiColumns ) ) )
 
 #### Note: "NaN" works for both R and python as a "not-a-number" classifier 
 def noNull():
-	def mapNull( str ):
-		if str == "null":
-			return "NaN"
-		else:
-			return str 
+	def mapNull( s ):
+		return ("NaN" if s=="null" else s)
 	for iRow in range( pDS.rows() ):
 		astrRow = pDS.row( iRow )
 		astrRow[2:] = map(mapNull, astrRow[2:]) 
