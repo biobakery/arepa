@@ -17,6 +17,7 @@ if locals( ).has_key( "testing" ):
 pE = DefaultEnvironment( )
 
 c_strID                 = arepa.cwd( )
+c_strSufRPackage	= "_rpackage" 
 c_fileGPL               = sfle.d( pE, arepa.path_repo( ), sfle.c_strDirTmp, "gpl.txt" ) 
 c_fileAnnot             = sfle.d( pE, arepa.path_repo( ), sfle.c_strDirTmp, "annot.txt" ) 
 c_fileInputSConscript   = sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, 
@@ -48,6 +49,8 @@ c_fileIDRawPCL		= sfle.d( pE, c_strID + "_00raw.pcl" )
 c_fileIDMappedPCL	= sfle.d( pE, c_strID + "_00mapped.pcl")
 c_fileIDPCL             = sfle.d( pE, c_strID + ".pcl" )
 c_fileEset              = sfle.d( pE, c_strID + ".RData" )
+c_fileHelp		= sfle.d( pE, c_strID + ".Rd" )
+c_fileLogPackage	= sfle.d( pE, "package" )
 c_fileExpTable          = sfle.d( pE, c_strID + "_exp_metadata.txt" )
 c_fileCondTable         = sfle.d( pE, c_strID + "_cond_metadata.txt" )
 
@@ -59,6 +62,7 @@ c_fileProgProcessRaw		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "prepr
 c_fileProgAnnot2Map		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "annot2map.py" ) 
 c_fileProgMergeMapping		= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "merge_genemapping.py" )
 c_fileProgGetInfo		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "getinfo.py" )
+c_fileProgEset2Help             = sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "eset2help.R" )
 
 m_strPPfun              = (sfle.readcomment( c_filePPfun ) or ["affy::rma"])[0]
 m_boolRunRaw		= sfle.readcomment( c_fileRunRaw ) == ["True"] or False 
@@ -89,6 +93,22 @@ sfle.pipe( pE, c_fileRDataTXT, c_fileProgSeries2PCL, c_fileIDRawPCL,
 #Make Eset containing all pertinent data
 sfle.ssink( pE, str(c_fileProgProcessRaw), "R --no-save --args", [[c_fileIDPCL], [True, c_fileEset], m_strPPfun, 
 	[c_fileExpTable], [c_fileCondTable]] )
+
+#Make Rd Help Page 
+sfle.ssink( pE, str(c_fileProgEset2Help), "R --no-save --args", [[c_fileEset], [True, c_fileHelp]] )
+
+#Build R package 
+#def buildR( target, source, env ):
+#	strT, astrSs = sfle.ts( target, source )
+#	strEset, strHelp =  astrSs[:2]
+#	strDir = c_strID + c_strSufRPackage 
+#	arepa.r_dir( strDir )
+#	sfle.ex( ["cp", strEset, sfle.d( strDir, sfle.c_strDirData,strEset)] )
+#	sfle.ex( ["cp", strHelp, sfle.d( strDir, "man", strHelp ) ] )
+#	sfle.ex( ["R, CMD", "build", strDir] )
+#	return sfle.ssink( pE, "R package built OK", strT )
+
+#Command( c_fileLogPackage, [c_fileEset, c_fileHelp], buildR )
 
 # Download annotation files for specific platform, if they exist 
 def getGPL( target, source, env ):

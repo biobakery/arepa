@@ -59,6 +59,21 @@ def level( ):
 c_strProgSConstruct		= sfle.d( path_arepa( ), sfle.c_strDirSrc, "SConstruct.py" )
 
 #===============================================================================
+# R package building 
+#===============================================================================
+c_strRPackage = "rpackage"
+
+def r_dir( strName = c_strRPackage ):
+	strDirMan = sfle.d( strName, "man" )
+	strDirData = sfle.d( strName, sfle.c_strDirData )
+	if not(os.path.exists(strDirMan)):
+		os.makedirs( sfle.d( strName, "man" ) )
+	if not(os.path.exists(strDirData)):
+		os.makedirs( sfle.d( strName, sfle.c_strDirData ) )
+	with open( sfle.d( strName, "NAMESPACE" ), "w" ) as outputf:
+		outputf.write( r'exportPattern("^[[:alpha:]]+")' )
+	
+#===============================================================================
 # Gene ID conversion
 #===============================================================================
 
