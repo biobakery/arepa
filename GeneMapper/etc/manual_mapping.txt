@@ -1,0 +1,6 @@
+Homo sapiens	9606_hsa_ko_uniprot.map 
+Escherichia coli	511145_eco_ko_uniprot.map
+Mus musculus	10090_mmu_ko_uniprot.map 
+Saccharomyces cerevisiae	559292_sce_ko_uniprot.map
+Pseudomonas	?
+Bacillus subtilis	?

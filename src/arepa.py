@@ -5,6 +5,7 @@ import sfle
 import sys
 import threading
 import glob 
+import csv 
 
 #===============================================================================
 # ARepA structural metadata
@@ -79,6 +80,7 @@ def r_dir( strName = c_strRPackage ):
 
 #Constants 
 c_strDirMapping		= sfle.d( path_arepa(), "GeneMapper", sfle.c_strDirEtc, "uniprotko" )
+c_strFileManualMapping	= sfle.d( path_arepa(), "GeneMapper", sfle.c_strDirEtc, "manual_mapping.txt" )
 
 def genemapper( ):
 
@@ -123,20 +125,48 @@ def taxid2org( strTaxID ):
 	hashTaxID2Org, hashOrg2TaxID = _taxdump( )
 	return hashTaxID2Org.get( strTaxID )
 
-def org2taxid( strOrg, fApprox = False ):
+def org2taxid( strOrg, fApprox = False, iLevel = 2 ):
 	"""fApprox flag turns on approximate taxid acquisition; 
 	includes subspecies. Modified: returns list, not string  
 	"""
 	hashTaxID2Org, hashOrg2TaxID = _taxdump( )
 	if fApprox:
-		astrApproxTaxIDs = filter(lambda s: strOrg in s,hashOrg2TaxID.keys())
+		astrOrgSplit = strOrg.split(" ")
+		strOrgApprox = " ".join(astrOrgSplit[:iLevel]) if len(astrOrgSplit)>=2 else strOrg
+		astrApproxTaxIDs = filter(lambda s: strOrgApprox in s,hashOrg2TaxID.keys())
 		return [hashOrg2TaxID[k] for k in astrApproxTaxIDs] 
 	else:
 		return hashOrg2TaxID.get( strOrg )
 
-def get_mappingfile( strTaxID, strDir = c_strDirMapping ):
-	astrGlob =  glob.glob( sfle.d( strDir, strTaxID + "*" ) ) if strTaxID else ""    
-	return (astrGlob[0] if astrGlob else "") 
+#def get_mappingfile( strTaxID, fApprox = True, strDir = c_strDirMapping ):
+#	if not(strTaxID):
+#		return None 
+#	else:
+#		astrIDs = [strTaxID] if not(fApprox) else org2taxid( taxid2org( strTaxID ), True )
+#		for strID in astrIDs:
+#			astrGlob =  glob.glob( sfle.d( strDir, strID + "_*" ) )
+#			if astrGlob:
+#				break  
+#		return (astrGlob[0] if astrGlob else None) 
+
+def get_mappingfile( strTaxID, fApprox = True, strDir = c_strDirMapping ):
+        if not(strTaxID):
+                return None 
+        else:
+                if not(sfle.isempty(c_strFileManualMapping)):
+                        pHash = {k:v for k,v in sfle.readcomment(open(c_strFileManualMapping))}
+                        astrMapOutTmp = filter(bool,[pHash.get(item) for item in [taxid2org( strTaxID ).split(" ")[:2]]])
+                        astrMapOut = map(lambda x: sfle.d( c_strDirMapping, x), astrMapOutTmp) if astrMapOutTmp else []
+                if not(astrMapOut):
+                        astrIDs = [strTaxID] if not(fApprox) else org2taxid( taxid2org( strTaxID ), True )
+                        for strID in astrIDs:
+                                astrGlob =  glob.glob( sfle.d( strDir, strID + "_*" ) )
+                                if astrGlob:
+                                        astrMapOut = astrGlob
+                                        break
+                return (astrMapOut[0] if astrMapOut else None)
+
+
 
 #------------------------------------------------------------------------------ 
 
