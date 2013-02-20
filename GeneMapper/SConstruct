@@ -5,26 +5,22 @@ import sfle
 
 pE = DefaultEnvironment( )
 
-#------------------------------------------------------------------------------
+c_strURL		= "http://svn.bigcat.unimaas.nl/bridgedb/trunk/"
+c_strRevision		= "587"
+c_strTrunk		= "trunk"
 
-c_strURL				= "http://svn.bigcat.unimaas.nl/bridgedb/trunk/"
-c_strRevision				= "587"
-
-c_dirUniprotKO			= Dir(sfle.d( pE, sfle.c_strDirEtc, "uniprotko" ))
-
-c_strTrunk				= "trunk"
-c_strDirEtc				= sfle.d( pE, sfle.c_strDirEtc )
-c_fileInputBuilder		= sfle.d( pE, c_strTrunk, "build.xml" )
-
-c_fileBatchmapper		= sfle.d( pE, c_strTrunk, "batchmapper.sh" )
+c_dirUniprotKO		= Dir(sfle.d( pE, sfle.c_strDirEtc, "uniprotko" ))
+c_strDirEtc		= sfle.d( pE, sfle.c_strDirEtc )
+c_fileInputBuilder	= sfle.d( pE, c_strTrunk, "build.xml" )
+c_fileBatchmapper	= sfle.d( pE, c_strTrunk, "batchmapper.sh" )
 c_fileUniprotKOTARGZ	= sfle.d( pE, c_dirUniprotKO, "uniprotko.tar.gz" ) 
-c_fileCheckLOG			= sfle.d( pE, sfle.c_strDirTmp, "checkout.log" )
-c_fileCompLOG			= sfle.d( pE, sfle.c_strDirTmp, "compile.log" )
-c_fileUnzipLOG			= sfle.d( pE, sfle.c_strDirTmp, "unzip.log" )
+c_fileCheckLOG		= sfle.d( pE, sfle.c_strDirTmp, "checkout.log" )
+c_fileCompLOG		= sfle.d( pE, sfle.c_strDirTmp, "compile.log" )
+c_fileUnzipLOG		= sfle.d( pE, sfle.c_strDirTmp, "unzip.log" )
 
 ##Predefined mappingfiles from Bridgedb for human,  mouse and yeast:
-c_astrMappingFiles		= ["Hs_Derby_20110601.bridge", "Mm_Derby_20100601.bridge", "Sc_Derby_20110603.bridge"]
-c_strMappingURL			= "http://bridgedb.org/data/gene_database/"
+c_astrMappingFiles	= ["Hs_Derby_20120602.bridge", "Mm_Derby_20120602.bridge", "Sc_Derby_20120602.bridge"]
+c_strMappingURL		= "http://bridgedb.org/data/gene_database/"
 
 #===============================================================================
 # Check out last version of the tool and compile

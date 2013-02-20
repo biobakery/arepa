@@ -84,7 +84,7 @@ def merge( strFile1, strFile2 ):
 		for strKey in pKeyData2.keys():
 			if not(strKey in sstrMaxGeneIDs):
 				for leftoever_header in (sstrHeaderUnion - sstrHeader2):
-					pKeyData2[strKey][leftover_header] =""
+					pKeyData2[strKey][leftover_header] = ""
 				dummyOut.append(pKeyData2[strKey]) 
 
 		return dummyOut 

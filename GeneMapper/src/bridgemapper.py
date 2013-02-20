@@ -17,19 +17,22 @@ import sys
 # GENE ID MAPPING: convert geneids_in into geneids_out
 #########################################################
 def convertGeneIds( setstrGenes, strMap, strFrom, strTo ):
-
 	pFrom, pTo = [tempfile.NamedTemporaryFile( delete=False ) for i in xrange( 2 )]
 
 	pFrom.write( "\n".join( setstrGenes ) + "\n" )
-	pFrom.close()
+	pFrom.flush()
+	#pFrom.close()
 
 	strBatchmapperSH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "trunk/batchmapper.sh")
 	strMapFlag = "-g" if strMap.endswith( ".bridge" ) else "-t"
 
 	subprocess.check_call( ("sh",strBatchmapperSH, "-i", pFrom.name, "-is", strFrom,\
 		"-os", strTo, "-o", pTo.name, strMapFlag, strMap,"-mm") )
+
+
 	hashMap = {a[1]:a[0] for a in csv.reader( pTo, csv.excel_tab )}
-	pTo.close()
+	#print [hashMap[a] for a in hashMap.keys()]
+	pTo.flush()
 	os.unlink(pFrom.name); os.unlink(pTo.name)
 	return hashMap
 		

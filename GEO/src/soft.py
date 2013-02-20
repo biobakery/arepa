@@ -51,7 +51,19 @@ class CSOFT:
 				return ( self.m_aastrRows[pRow] if ( pRow < len( self.m_aastrRows ) ) else None )
 			
 			return self.m_hashRows.get( pRow )
-		
+	
+		def set_row( self, pRow, pObject ):
+
+			if isinstance( pRow, int ):
+				astrRow = None 
+				try:
+					astrRow = self.m_aastrRows[pRow]
+				except IndexError:
+					pass
+				if astrRow:
+					self.m_aastrRows[pRow] = pObject
+			return (pObject if astrRow else None) 
+				
 		def add_row( self, astrRow ):
 			
 			if self.m_astrColumns:

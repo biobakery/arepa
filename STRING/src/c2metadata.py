@@ -14,12 +14,9 @@ def metadatum( funcMetadata, astrTokens, iIndex ):
 			setstrTokens.add( astrToken[iIndex] or strToken )
 		funcMetadata( setstrTokens )
 
-#def callback( pMetadata, strAs, strBs, strAltAs, strAltBs, strSynAs, strSynBs, strMethods, strAuthors, strPMIDs,	strTaxAs, strTaxBs, strTypes, strDBs, strIDs, strConfs ):
-def callback( aArgs, strAs, strBs, strTaxAs, strTaxBs, strPMIDs, strScores, strSynAs, strSynBs, strMethods, strAuthors, strAltBs, strAltAs, strDBs, strIDs, strConfs ):
+def callback( pMetadata, strAs, strBs, strAltAs, strAltBs, strSynAs, strSynBs, strMethods, strAuthors, strPMIDs,	strTaxAs, strTaxBs, strTypes, strDBs, strIDs, strConfs ):
 	metadatum( pMetadata.taxid, [strTaxAs, strTaxBs], 1 )
 	metadatum( pMetadata.pmid, [strPMIDs], 1 )
-	#metadatum( pMetadata.type, [strTypes.lower( )], 2 )
-	metadatum( pMetadata.platform, [strMethods], 2 )
 
 if len( sys.argv ) < 2:
 	raise Exception( "Usage: c2metadata.py <id> < <stringc>" )

@@ -8,12 +8,11 @@ import re
 import soft
 import sys
 
-def metadatum( funcMetadata, strValue ):
-
-		hashOut.setdefault( strID, set() ).add( strValue )
-
 strStatus 	= sys.argv[1]
 astrGPLGZs	= sys.argv[2:]
+
+def metadatum( funcMetadata, strValue ):
+	hashOut.setdefault( strID, set() ).add( strValue )
 
 pSOFT = soft.CSOFT( )
 for strGPLGZ in astrGPLGZs:
