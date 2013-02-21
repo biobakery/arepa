@@ -4,7 +4,7 @@
 import gzip
 import soft
 import sys
-import math as M
+import math 
 
 c_iMaximumValue 	= 50
 c_iMaximumCount 	= 50
@@ -13,7 +13,7 @@ c_iSkip			= 2
 
 ## Function Definitions 
 
-def parse( pDS )
+def parse( pDS, iSkip = c_iSkip, strReplace = c_strReplace ):
 	iCountBig = 0 
 	for iRow in range( pDS.rows() ):
 		dummyRow = [] 
@@ -21,24 +21,32 @@ def parse( pDS )
 			if i < iSkip:
 				dummyRow.append(strVal)
 				continue 
-			try:
-				tmpVal = float(strVal)
-			except ValueError:
-				tmpVal = strReplace 
-			if isinstance( tmpVal, float ):
-				if tmpVal > c_iMaximumValue: iCountBig+= 1 
-			dummyRow.append(str(tmpVal))
+			else:
+				try:
+					tmpVal = float(strVal)
+				except ValueError:
+					tmpVal = strReplace 
+				if isinstance( tmpVal, float ):
+					if tmpVal > c_iMaximumValue: iCountBig+= 1 
+				dummyRow.append(str(tmpVal))
 		pDS.set_row( iRow, dummyRow )
 	return ( iCountBig >= c_iMaximumCount )
 
-def transform( pDS ):
+def transform( pDS, iSkip = c_iSkip ):
 	'''Criteria for log-transforming data :
 	 >= c_iMaximumCount data points with values >= c_dMaximumValue
 	'''
 	f = lambda x: math.log(x,2)
 	for iRow in range( pDS.rows( ) ):
+		dummyRow = [] 
 		astrRowTmp = pDS.row( iRow )
-		astrRow = astrRowTmp[:iSkip] + map( f, astrRowTmp[2:] ) 
+		for strVal in astrRowTmp[:iSkip]:
+			try:
+				tmpVal = f(float(strVal))
+			except ValueError, TypeError:
+				tmpVal = strVal 
+			dummyRow.append(tmpVal)
+		astrRow = astrRowTmp[:iSkip] + dummyRow 
 		pDS.set_row( iRow, astrRow )
 	return pDS 	
 
@@ -60,11 +68,17 @@ aiColumns 	= filter( lambda i: pDS.column( i )[0].startswith( "GSM" ), range( pD
 print( "GID	NAME	GWEIGHT	" + "\t".join( pDS.column( i )[1] for i in aiColumns ) )
 print( "EWEIGHT		" + ( "	1" * len( aiColumns ) ) )
 
-fTransform = parse( pDS )
-if fTransform: 
-	transform( pDS )
+# Debug this with GDS2606 in hutlab4
+#fTransform = parse( pDS )
+#if fTransform: 
+#	transform( pDS )
+
+sys.stderr.write( str(aiColumns) + "\n" )
+
 for iRow in range( pDS.rows( ) ):
 	astrRow = pDS.row( iRow )
+	#sys.stderr.write( str(len(astrRow)) + "\n" )
+	#sys.stderr.write( "\t".join(astrRow) + "\n" )
 	for strID in astrRow[0].split( "///" ):
 		print( "\t".join( [strID, astrRow[1]] + ["1"] + [astrRow[i] for i in aiColumns] ) )
 
