@@ -8,7 +8,6 @@ import sys
 def callback( aArgs, strAs, strBs, strAltAs , strAltBs , strSynAs , strSynBs , strMethods , strAuthors , strPMIDs , strTaxAs , strTaxBsi , strTypes , strDBs , strIDs , strConfs  ):
     setPairs, strTaxID, hashCache = aArgs
     astrAB = []
-    #sys.stderr.write(str(aArgs))
     for astrCur in ([strAs, strAltAs, strSynAs], [strBs, strAltBs, strSynBs]):
         astrTokens = []
         for strTokens in astrCur:

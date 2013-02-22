@@ -26,6 +26,10 @@ hashhashPMTaxa = {}
 for astrLine in csv.reader( sys.stdin, csv.excel_tab ):
 	if astrLine and astrLine[0].startswith( "#" ):
 		continue
+	else:
+		#Do this in a better way: swap two columns with another  
+		dummy = astrLine[:]
+		astrLine = dummy[2:4] + dummy[:2] + dummy[4:]	
 	strPMID = sfle.regs( 'pubmed:(\d+)', astrLine[8], 1 )
 	strTax1, strTax2 = (sfle.regs( 'taxid:(\d+)', strCur, 1 ) for strCur in
 		astrLine[9:11])

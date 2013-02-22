@@ -153,11 +153,12 @@ def get_mappingfile( strTaxID, fApprox = True, strDir = c_strDirMapping ):
         if not(strTaxID):
                 return None 
         else:
-                if not(sfle.isempty(c_strFileManualMapping)):
-                        pHash = {k:v for k,v in sfle.readcomment(open(c_strFileManualMapping))}
-                        astrMapOutTmp = filter(bool,[pHash.get(item) for item in [taxid2org( strTaxID ).split(" ")[:2]]])
-                        astrMapOut = map(lambda x: sfle.d( c_strDirMapping, x), astrMapOutTmp) if astrMapOutTmp else []
-                if not(astrMapOut):
+                #if not(sfle.isempty(c_strFileManualMapping)):
+                #       pHash = {k:v for k,v in sfle.readcomment(open(c_strFileManualMapping))}
+                #      astrMapOutTmp = filter(bool,[pHash.get(item) for item in [taxid2org( strTaxID ).split(" ")[:2]]])
+                #     astrMapOut = map(lambda x: sfle.d( c_strDirMapping, x), astrMapOutTmp) if astrMapOutTmp else []
+                astrMapOut = []
+		if not(astrMapOut):
                         astrIDs = [strTaxID] if not(fApprox) else org2taxid( taxid2org( strTaxID ), True )
                         for strID in astrIDs:
                                 astrGlob =  glob.glob( sfle.d( strDir, strID + "_*" ) )

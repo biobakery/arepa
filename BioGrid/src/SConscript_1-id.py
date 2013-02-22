@@ -34,20 +34,17 @@ c_fileStatus				= sfle.d( pE,"status.txt" )
 
 afileIDDAT = sfle.pipe( pE, c_fileInputBioGridC, c_fileProgC2DAT, c_fileIDDAT, [c_strID] )
 
-#c_strHumanMap			= sfle.d( arepa.path_arepa(), "GeneMapper", sfle.c_strDirEtc, "uniprotko", "9606_hsa_ko_uniprot.map" )
-
 ##############################################
 #- Gene id mapping from Uniprot to Genesymbols
 ##############################################
 #Launch gene mapping 
 execfile(str(c_fileInputSConscriptGM))
-astrMapped = funcGeneIDMapping( pE, c_fileIDDAT, arepa.genemap_genename( ), c_fileStatus, "/Users/ysupmoon/hg/arepa/GeneMapper/etc/uniprotko/9606_hsa_ko_uniprot.map" )
+astrMapped = funcGeneIDMapping( pE, c_fileIDDAT, arepa.genemap_genename( ), c_fileStatus ) 
 
 #Make identifiers unique 
 astrUnique = funcMakeUnique( pE, astrMapped[0] )
 
-afileIDTXT = sfle.pipe( pE, c_fileInputBioGridC, c_fileProgC2Metadata, c_fileIDPKL,
-	[c_strID, [c_fileStatus]] )
+afileIDTXT = sfle.pipe( pE, c_fileInputBioGridC, c_fileProgC2Metadata, c_fileIDPKL, [c_strID, [c_fileStatus]] )
 
 execfile(str(c_fileInputSConscriptDAB))
 #DAT to DAB

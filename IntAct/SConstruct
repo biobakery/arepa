@@ -13,7 +13,7 @@ c_strURLIntact			= "ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psimitab/in
 
 c_fileInputTaxIDs		= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
 
-c_fileIntactZIP			= sfle.d( pE, sfle.c_strDirTmp, "intact-clustered.zip" )
+c_fileIntactZIP			= sfle.d( pE, sfle.c_strDirTmp, "intact-miclustered.zip" )
 c_fileIntactTXT			= sfle.d( pE, sfle.c_strDirTmp, "intact.txt" )
 c_fileIntactC			= sfle.d( pE, sfle.c_strDirTmp, "intactc" )
 
