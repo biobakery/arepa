@@ -18,7 +18,7 @@ c_strID					= arepa.cwd( )
 c_fileInputIntactC			= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirTmp, "intactc" )
 c_fileIDPKL				= sfle.d( pE, c_strID + ".pkl" )
 c_fileIDDAB				= sfle.d( pE, c_strID + ".dab" )
-c_fileIDDAT             		= sfle.d( pE, c_strID + ".dat" )
+c_fileIDDAT             		= sfle.d( pE, c_strID + "_00raw.dat" )
 c_fileIDQUANT           		= sfle.d( pE, c_strID + ".quant" )
 
 c_fileProgUnpickle                      = sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "unpickle.py" )

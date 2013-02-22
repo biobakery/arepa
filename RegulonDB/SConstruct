@@ -15,7 +15,7 @@ c_fileProgUnpickle			= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "unpic
 
 c_fileInMeta				= sfle.d( pE, sfle.c_strDirEtc, "regulondb.txt" )
 
-c_fileOutDAT				= sfle.d( pE, sfle.c_strDirData, "regulondb.dat" )
+c_fileOutDAT				= sfle.d( pE, sfle.c_strDirData, "regulondb_00raw.dat" )
 c_fileOutDAB				= sfle.d( pE, sfle.c_strDirData, sfle.rebase(str(c_fileOutDAT), ".dat", ".dab" ))
 c_fileOutQUANT				= sfle.d( pE, sfle.c_strDirData, sfle.rebase(str(c_fileOutDAT), ".dat", ".quant" ))
 c_fileOutPKL				= sfle.d( pE, sfle.c_strDirData, "regulondb.pkl" )

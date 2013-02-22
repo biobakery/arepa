@@ -11,7 +11,7 @@ c_strInputTaxIDs		= sfle.d( arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
 c_fileBactTXT       	 	= sfle.d( pE, sfle.c_strDirTmp, os.path.basename(c_strURL))
 c_fileProgBacteriome		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "bacteriome.py" ) 
 c_fileProgUnpickle		= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "unpickle.py" )
-c_fileOutDAT             	= sfle.d( pE, sfle.c_strDirData, "bacteriome.dat" ) 
+c_fileOutDAT             	= sfle.d( pE, sfle.c_strDirData, "bacteriome_00raw.dat" ) 
 
 #GeneMapping 
 c_fileInputSConscriptGM		= sfle.d( pE, arepa.path_arepa(),sfle.c_strDirSrc,"SConscript_genemapping.py") 

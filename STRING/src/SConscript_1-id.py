@@ -22,7 +22,7 @@ c_fileInputC    		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirTmp, "stringc" 
 c_fileIDPKL             	= sfle.d( pE, c_strID + ".pkl" )
 c_fileIDDAB           		= sfle.d( pE, c_strID + ".dab" )
 c_fileIDQUANT           	= sfle.d( c_strID + ".quant" )
-c_fileIDDAT             	= sfle.d( pE, c_strID + ".dat" )
+c_fileIDDAT             	= sfle.d( pE, c_strID + "_00raw.dat" )
 
 c_fileProgUnpickle		= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "unpickle.py" )
 c_fileProgC2Metadata		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "c2metadata.py" )

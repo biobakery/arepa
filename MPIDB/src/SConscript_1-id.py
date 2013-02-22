@@ -15,21 +15,20 @@ if locals( ).has_key( "testing" ):
 
 pE = DefaultEnvironment( )
 
-c_strID						= arepa.cwd( )
+c_strID					= arepa.cwd( )
 c_fileInputC				= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirTmp, "mpidbc" ) 
-c_fileIDPKL					= sfle.d( pE, c_strID + ".pkl" )
-c_fileIDDAB					= sfle.d( pE, c_strID + ".dab" )
+c_fileIDPKL				= sfle.d( pE, c_strID + ".pkl" )
+c_fileIDDAB				= sfle.d( pE, c_strID + ".dab" )
 c_fileIDQUANT			 	= sfle.d( c_strID + ".quant" )
-c_fileIDDAT			 		= sfle.d( pE, c_strID + ".dat" )
+c_fileIDDAT			 	= sfle.d( pE, c_strID + "_00raw.dat" )
 
 c_fileProgUnpickle			= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "unpickle.py" )
-c_fileProgC2Metadata		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "c2metadata.py" ) 
+c_fileProgC2Metadata			= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "c2metadata.py" ) 
 c_fileProgC2DAT				= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "c2dat.py" ) 
 
 c_fileInputSConscriptGM		= sfle.d( pE, arepa.path_arepa(),sfle.c_strDirSrc,"SConscript_genemapping.py")
 c_fileInputSConscriptDAB	= sfle.d( pE, arepa.path_arepa(), sfle.c_strDirSrc, "SConscript_dat-dab.py" )
-
-c_fileStatus				= sfle.d(pE, "status.txt")
+c_fileStatus			= sfle.d(pE, "status.txt")
 
 afileIDDAT = sfle.pipe( pE, c_fileInputC, c_fileProgC2DAT, c_fileIDDAT, [c_strID] )
 
