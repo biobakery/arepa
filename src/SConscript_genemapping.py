@@ -70,6 +70,12 @@ def funcGeneIDMapping( pE, fileDATin, strGeneFrom, strLOGout, strMAPin = None, a
 				if strSpeciesName in arepa.taxid2org( strTaxa ):
 					strMAPin = c_pHashBridgeDB[strSpeciesName]
 					break 
+		if not(strMAPin) and strTaxa:
+			strMAPin = arepa.get_mappingfile( strTaxa )
+			#for strMAPname in glob.glob(sfle.d( c_strPathUniprotKO, "*.map" )):
+			#	if re.search( r'\D' + strTaxa + r'\D', strMAPname ):
+			#		strMAPin = strMAPname
+			#		break
 	strBase, strExt = os.path.splitext( str(fileDATin) )
 	strCount = funcCounter( g_iterCounter )
 	strT = strBase + c_strMapped + strCount + strExt

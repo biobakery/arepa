@@ -35,7 +35,7 @@ afileIDDAT = sfle.pipe( pE, c_fileInputBioGridC, c_fileProgC2DAT, c_fileIDDAT, [
 
 # Launch gene mapping 
 execfile(str(c_fileInputSConscriptGM))
-astrMapped = funcGeneIDMapping( pE, c_fileIDDAT, arepa.genemap_genename( ), c_fileStatus )
+astrMapped = funcGeneIDMapping( pE, c_fileIDDAT, arepa.genemap_genename( ), c_fileStatus ) 
 
 # Make identifiers unique 
 astrUnique = funcMakeUnique( pE, astrMapped[0] )

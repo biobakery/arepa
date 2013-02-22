@@ -33,10 +33,6 @@ c_strGeneFrom 				= "S"
 
 afileIDDAT = sfle.pipe( pE, c_fileInputIntactC, c_fileProgC2DAT, c_fileIDDAT, [c_strID] )
 
-#=============================================
-# Gene id mapping from Uniprot to Genesymbols
-#=============================================
-
 #Launch gene mapping 
 execfile(str(c_fileInputSConscriptGM))
 astrMapped = funcGeneIDMapping( pE, c_fileIDDAT, c_strGeneFrom, c_fileStatus )

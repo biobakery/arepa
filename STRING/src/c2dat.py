@@ -23,8 +23,8 @@ def callback( aArgs, strAs, strBs, strAltAs, strAltBs, strSynAs, strSynBs, strMe
                     break
           astrAB.append( strGene or astrTokens[0] )
      strScores = str(float(strScores)/1000)
-     astrAB.append(strScores) #NEW
-     setPairs.add( tuple( astrAB ) )  #setPairs.add( tuple(sorted( astrAB )) )
+     astrAB.append(strScores) #Add scores 
+     setPairs.add( tuple( astrAB ) )  
 
 if len( sys.argv ) != 2:
     raise Exception( "Usage: c2txt.py <id> < <intactc>" )
@@ -36,5 +36,4 @@ strTaxID = mtch.group( 1 )
 setPairs = set()
 string1.read( sys.stdin, strTarget, callback, [setPairs, strTaxID, {}] )
 for astrGenes in setPairs:
-    #sys.stderr.write(str(astrGenes)+"\n")
-    print( "\t".join( list(astrGenes)  ) ) #print( "\t".join( list(astrGenes) + ["1"] ) )
+    print( "\t".join( list(astrGenes)  ) ) 
