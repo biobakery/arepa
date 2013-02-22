@@ -42,7 +42,7 @@ strID 		= sys.argv[1]
 strStatus 	= sys.argv[2]
 strMetadata 	= sys.argv[3] if ( len( sys.argv ) > 3 ) else None
 
-###### Series Matrix Metadata ######
+# Series Matrix Metadata
 
 pMetadata = metadata.open( )
 
@@ -72,7 +72,7 @@ for astrLine in csv.reader( sys.stdin, csv.excel_tab ):
 		if not pMetadata[c_hashkeyCondition]:
 			pMetadata[c_hashkeyCondition] = len( astrCur ) 
 
-###### Auxillary Metadata ###### 
+# Auxillary Metadata
 
 if strMetadata:
 	astrHeaders = None
@@ -97,7 +97,7 @@ else:
 				assert( not(pMetadata[item]) )
 				pMetadata.set( item, [] ) 
 
-###### Add Mapping Status and Save ######
+# Add Mapping Status and Save
 k,v = sfle.readcomment( open( strStatus ) )[0].split("\t")
 pMetadata.update({k:v})
 pMetadata.save()

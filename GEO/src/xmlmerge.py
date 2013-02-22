@@ -17,9 +17,7 @@ if len( sys.argv[1:] ) !=2:
 	raise Exception("Usage: xmlmerge.py <metadata> <id>" )	
 
 inputf, geo_id  = sys.argv[1:]
-
 hashRet = {k:v for k,v in map( lambda s: s.split("\t"), sfle.readcomment( open( inputf ) ))}
-
 id_count, query_key, web_env =  [hashRet.get(i) for i in [ c_strCount, c_strQuery, c_strWebEnv]]
 
 #===========================================================================

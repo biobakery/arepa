@@ -15,7 +15,7 @@ c_fileBioGridTXT	 	= sfle.d( pE, sfle.c_strDirTmp, "biogrid_downloaded.txt" )
 c_fileBioGridC			= sfle.d( pE, sfle.c_strDirTmp, "biogridc.txt" )
 c_fileProgBioGrid		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "biogrid.py" ) 
 c_fileProgBioGrid2C		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "biogrid2c.py" ) 
-c_strTXT				= sfle.c_strSufTXT
+c_strTXT			= sfle.c_strSufTXT
 
 #===============================================================================
 # Download the Biogrid.zip source file

@@ -21,7 +21,7 @@ for astrLine in csv.reader( open( strPlatform ) ):
 				iName = i
 				break
 	if ( iProbe != None ) or ( iName != None ):
-# index = probe, name
+		# index = probe, name
 		hashPlatform[astrLine[0]] = [astrLine[iProbe or 0], astrLine[iName or iProbe or 0]]
 
 hashMetadata = {}
