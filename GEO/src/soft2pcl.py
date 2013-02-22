@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-'''Convert soft file to pcl'''
+'''Convert soft file to pcl
+Usage: soft2pcl.py < [stdin] <input.txt.gz> > <output.pcl>  
+'''
 
 import gzip
 import soft
@@ -36,11 +38,11 @@ def transform( pDS, iSkip = c_iSkip ):
 	'''Criteria for log-transforming data :
 	 >= c_iMaximumCount data points with values >= c_dMaximumValue
 	'''
-	f = lambda x: math.log(x,2)
+	f = lambda x: str(math.log(x,2))
 	for iRow in range( pDS.rows( ) ):
 		dummyRow = [] 
 		astrRowTmp = pDS.row( iRow )
-		for strVal in astrRowTmp[:iSkip]:
+		for strVal in astrRowTmp[iSkip:]:
 			try:
 				tmpVal = f(float(strVal))
 			except ValueError, TypeError:
@@ -48,8 +50,8 @@ def transform( pDS, iSkip = c_iSkip ):
 			dummyRow.append(tmpVal)
 		astrRow = astrRowTmp[:iSkip] + dummyRow 
 		pDS.set_row( iRow, astrRow )
-	return pDS 	
-
+	return True
+ 
 ## Execution 
 
 astrGPLGZs 	= sys.argv[1:]
@@ -68,17 +70,12 @@ aiColumns 	= filter( lambda i: pDS.column( i )[0].startswith( "GSM" ), range( pD
 print( "GID	NAME	GWEIGHT	" + "\t".join( pDS.column( i )[1] for i in aiColumns ) )
 print( "EWEIGHT		" + ( "	1" * len( aiColumns ) ) )
 
-# Debug this with GDS2606 in hutlab4
-#fTransform = parse( pDS )
-#if fTransform: 
-#	transform( pDS )
-
-sys.stderr.write( str(aiColumns) + "\n" )
+fTransform = parse( pDS )
+if fTransform: 
+	transform( pDS )
 
 for iRow in range( pDS.rows( ) ):
 	astrRow = pDS.row( iRow )
-	#sys.stderr.write( str(len(astrRow)) + "\n" )
-	#sys.stderr.write( "\t".join(astrRow) + "\n" )
 	for strID in astrRow[0].split( "///" ):
 		print( "\t".join( [strID, astrRow[1]] + ["1"] + [astrRow[i] for i in aiColumns] ) )
 
