@@ -7,7 +7,6 @@ import csv
 
 def metadatum( funcMetadata, astrTokens, iIndex ):
 	for strTokens in astrTokens:
-		sys.stderr.write( str(strTokens) + "\n" )
 		setstrTokens = set()
 		for strToken in strTokens.split( "|" ):
 			astrToken = string1.split( strToken )

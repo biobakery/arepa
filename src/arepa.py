@@ -138,27 +138,19 @@ def org2taxid( strOrg, fApprox = False, iLevel = 2 ):
 	else:
 		return hashOrg2TaxID.get( strOrg )
 
-#def get_mappingfile( strTaxID, fApprox = True, strDir = c_strDirMapping ):
-#	if not(strTaxID):
-#		return None 
-#	else:
-#		astrIDs = [strTaxID] if not(fApprox) else org2taxid( taxid2org( strTaxID ), True )
-#		for strID in astrIDs:
-#			astrGlob =  glob.glob( sfle.d( strDir, strID + "_*" ) )
-#			if astrGlob:
-#				break  
-#		return (astrGlob[0] if astrGlob else None) 
-
 def get_mappingfile( strTaxID, fApprox = True, strDir = c_strDirMapping ):
         if not(strTaxID):
                 return None 
         else:
-                #if not(sfle.isempty(c_strFileManualMapping)):
-                #       pHash = {k:v for k,v in sfle.readcomment(open(c_strFileManualMapping))}
-                #      astrMapOutTmp = filter(bool,[pHash.get(item) for item in [taxid2org( strTaxID ).split(" ")[:2]]])
-                #     astrMapOut = map(lambda x: sfle.d( c_strDirMapping, x), astrMapOutTmp) if astrMapOutTmp else []
-                astrMapOut = []
+                if not(sfle.isempty(c_strFileManualMapping)):
+			pHash = {k:v for k,v in map( lambda a: a.split('\t'),
+					sfle.readcomment(open(c_strFileManualMapping)))}
+			astrMapOutTmp = filter(bool,[pHash.get(item) for item in 
+				[" ".join(taxid2org( strTaxID ).split(" ")[:2])]])
+			astrMapOut = map(lambda x: sfle.d( c_strDirMapping, x), astrMapOutTmp) \
+				if astrMapOutTmp else []
 		if not(astrMapOut):
+			# give an un-prioritized list 
                         astrIDs = [strTaxID] if not(fApprox) else org2taxid( taxid2org( strTaxID ), True )
                         for strID in astrIDs:
                                 astrGlob =  glob.glob( sfle.d( strDir, strID + "_*" ) )
@@ -166,7 +158,6 @@ def get_mappingfile( strTaxID, fApprox = True, strDir = c_strDirMapping ):
                                         astrMapOut = astrGlob
                                         break
                 return (astrMapOut[0] if astrMapOut else None)
-
 
 
 #------------------------------------------------------------------------------ 

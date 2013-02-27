@@ -36,10 +36,6 @@ c_strGeneFrom		= "En"
 
 afileIDDAT = sfle.pipe( pE, c_fileInputC, c_fileProgC2DAT, c_fileIDDAT, [c_strID] )
 
-##############################################
-#- Gene id mapping from Uniprot to Genesymbols
-##############################################
-
 #Launch gene mapping 
 execfile(str(c_fileInputSConscriptGM))
 

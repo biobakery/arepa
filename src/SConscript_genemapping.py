@@ -24,6 +24,7 @@ c_strDirManMap			= sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, "manual_mapping
 c_astrGeneTo			= sfle.readcomment( sfle.d( arepa.path_arepa(),sfle.c_strDirEtc,"geneid" ) 
 					or [arepa.genemap_genename( )] ) 
 c_strPathGeneMapper		= sfle.d( arepa.path_arepa(), "GeneMapper" )
+c_strPathTopMapping		= sfle.d( c_strPathGeneMapper, sfle.c_strDirEtc, "manual_mapping" )
 c_strPathUniprotKO		= sfle.d( c_strPathGeneMapper, sfle.c_strDirEtc, "uniprotko" )
 c_fileProgMakeUnique		= sfle.d( arepa.path_arepa(), sfle.c_strDirSrc,"makeunique.py")
 c_funcGeneMapper		= sfle.d( c_strPathGeneMapper, sfle.c_strDirSrc, "bridgemapper.py" )
@@ -50,11 +51,14 @@ def funcGeneIDMapping( pE, fileDATin, strGeneFrom, strLOGout, strMAPin = None, a
 		strDirAuto = c_strDirData if ( c_strID == c_strPathRepo ) else "" 
 		strAutoMAPtmp = sfle.d( strDirAuto, c_strID + c_strSufMap )
 		strAutoMAP = strAutoMAPtmp if os.path.exists( strAutoMAPtmp ) else None 
-		# Use manual mapping files, else try automatically generated mapping file
-		strMAPin = reduce( lambda x, y: x or y,
-			filter( lambda x: c_strID in x,
-			glob.glob( sfle.d( c_strDirManMap, "*" + c_strSufMap ) ) ), strAutoMAP ) 
-		# Find taxid 
+		# Use manual mapping files, files that are deeper down have priority
+		#else try automatically generated mapping file
+		strTopMAP = reduce( lambda x,y: x or y, glob.glob( sfle.d( c_strPathTopMapping, 
+			"*" + c_strSufMap ) ), None )
+		strMAPManTmp = sfle.d( c_strDirManMap, c_strID + c_strSufMap )
+		strMAPin = (strMAPManTmp if os.path.exists( strMAPManTmp) else None) or strTopMAP or strAutoMAP  
+		sys.stderr.write( strMAPin + '\n' )
+		# Else find taxid 
 		if not(strMAPin) and not(strTaxa):
 			astrMatch = re.findall( r'taxid_([0-9]+)', c_strID )
 			strTaxa = astrMatch[0].strip( ) if astrMatch else None
@@ -64,18 +68,16 @@ def funcGeneIDMapping( pE, fileDATin, strGeneFrom, strLOGout, strMAPin = None, a
 				if re.search( r'\D' + strTaxa + r'\D', strMAPname ):
 					strMAPin = strMAPname
 					break
-		# BridgeDB files
+		# Else ask arepa to figure out an appropriate mapping file 
+		if not(strMAPin) and strTaxa:
+			strMAPin = arepa.get_mappingfile( strTaxa )
+		# Else use BridgeDB files
 		if not(strMAPin) and strTaxa:
 			for strSpeciesName in c_pHashBridgeDB.keys():
 				if strSpeciesName in arepa.taxid2org( strTaxa ):
 					strMAPin = c_pHashBridgeDB[strSpeciesName]
 					break 
-		if not(strMAPin) and strTaxa:
-			strMAPin = arepa.get_mappingfile( strTaxa )
-			#for strMAPname in glob.glob(sfle.d( c_strPathUniprotKO, "*.map" )):
-			#	if re.search( r'\D' + strTaxa + r'\D', strMAPname ):
-			#		strMAPin = strMAPname
-			#		break
+		
 	strBase, strExt = os.path.splitext( str(fileDATin) )
 	strCount = funcCounter( g_iterCounter )
 	strT = strBase + c_strMapped + strCount + strExt
