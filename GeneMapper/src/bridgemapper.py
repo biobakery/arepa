@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 '''
-Main gene mapping python script
+Genemapping python wrapper for BridgeDB gene mapper
+
+Type "python bridgemapper.py -h" for help
 '''
 
 import argparse
@@ -13,8 +15,18 @@ import tempfile
 import metadata 
 import sys 
 
+# These are the only genes that we are keeping track of for now 
+
+c_hashGeneNames	= {"HGNC": "H", 
+					"UniGene": "U",
+					"Uniprot/TrEMBL": "S",
+					"Ensembl": "En",
+					"Kegg Genes": "Kg",
+					"Kegg Compound": "Ck"
+					}
+
 #########################################################
-# GENE ID MAPPING: convert geneids_in into geneids_out
+# GENE ID MAPPING: Convert Gene Identifiers
 #########################################################
 def convertGeneIds( setstrGenes, strMap, strFrom, strTo ):
 	pFrom, pTo = [tempfile.NamedTemporaryFile( delete=False ) for i in xrange( 2 )]
@@ -87,6 +99,73 @@ def bridgemapper( istm, ostm, strMap, strCols, strFrom, strTo, ostmLog, iSkip ):
 	if ostmLog:
 		pMeta.save_text( ostmLog )
 
+#TODO: Add Sniffer For Gene Identifiers
+#IDEA: do some kind of bootstrapping procedure to make sure you are indeed getting the right identifier
+
+
+def gene_sniffer( istm, strCols ):
+	'''
+	takes in input file, outputs gene identifier convention, e.g. HGNC
+	'''
+	def _sniff( name_list ):
+		pass 
+
+	strCols = strCols[1:-1]
+	aiCols = [int(s) for s in re.split( r'\s*,\s*', strCols )] if strCols else []
+	
+	#Open a blank metadata object and initialize 
+	aastrData = []
+	setstrIn = set()
+	csvr = csv.reader( istm, csv.excel_tab )
+
+'''
+NOTES 
+
+UniGene - 
+This one is easy; it starts with either "UniRef90" or "UniRef100"
+
+Uniprot/TrEMBL -
+Always 6 alphanumeric characeters, a lot of them start with P or Q
+About 70% of them start with P or Q
+
+
+Q8TBF5 
+Q8TBF4  
+P30613  
+Q5H9L4  
+P20933  
+P20936  
+Q8IZF2  
+Q2T9G7  
+P31213  
+Q9NXR8  
+E9PN47  
+Q4VXU2  
+Q96N66  
+Q00532  
+Q96J66  
+O00712  
+Q9UBM8  
+Q96J65  
+O00241  
+O00716  
+Q96KS0  
+Q9UBM7  
+Q6BEB4  
+Q92911  
+Q13835  
+Q7Z3T1  
+P40424  
+P40425  
+B3KVK0  
+B3KVK3  
+Q7Z3T8  
+Q13838  
+        
+
+'''
+
+
 argp = argparse.ArgumentParser( prog = "bridgemapper.py",
 	description = """Maps gene IDs from one or more tab-delimited text columns from and to specified formats.""" )
 argp.add_argument( "istm",		metavar = "input.dat",
@@ -113,6 +192,8 @@ argp.add_argument( "-s",		dest = "iSkip",		metavar = "skip_rows",
 argp.add_argument( "-l",		dest = "ostmLog",	metavar = "log.txt",
 	type = argparse.FileType( "w" ),
 	help = "Optional log file containing output mapping status" )
+argp.add_argument('-x', 		dest = "fSniffer" ,	action="store_true", default=False, 
+	help = "Optional flag turning on/off gene identifier sniffer (automatically decide geneid_from)" )
 
 def _main( ):
 	args = argp.parse_args( )

@@ -16,56 +16,57 @@ if locals( ).has_key( "testing" ):
 
 pE = DefaultEnvironment( )
 
-c_strID                 = arepa.cwd( )
-c_strSufRPackage	= "_rpackage" 
-c_fileGPL               = sfle.d( pE, arepa.path_repo( ), sfle.c_strDirTmp, "gpl.txt" ) 
-c_fileAnnot             = sfle.d( pE, arepa.path_repo( ), sfle.c_strDirTmp, "annot.txt" ) 
-c_fileInputSConscript   = sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, 
-                                 "SConscript_pcl-dab.py" ) 
-c_fileProgUnpickle      = sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "unpickle.py" ) 
-c_fileInputGSER         = sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "gse.R" ) 
-c_fileInputManCurTXT    = sfle.d( pE, arepa.path_repo( ), sfle.c_strDirEtc,   
-                                 "manual_curation/", c_strID + "_curated_pdata.txt" )
+c_strID               	= arepa.cwd( )
+c_strSufRPackage      	= "_rpackage" 
+c_fileGPL             	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirTmp, "gpl.txt" ) 
+c_fileAnnot           	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirTmp, "annot.txt" ) 
+c_fileInputSConscript 	= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "SConscript_pcl-dab.py" ) 
+c_fileProgUnpickle    	= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "unpickle.py" ) 
+c_fileInputGSER       	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "gse.R" ) 
+c_fileInputManCurTXT  	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirEtc, "manual_curation/", 
+							c_strID + "_curated_pdata.txt" )
 
-c_filePPfun             = sfle.d( pE, arepa.path_repo( ), sfle.c_strDirEtc, "preprocess")
-c_fileRunRaw		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirEtc,  "raw")
+c_filePPfun         	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirEtc, "preprocess")
+c_fileRunRaw        	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirEtc,  "raw")
 
-c_fileIDPKL             = sfle.d( pE, c_strID + ".pkl" )
-c_strURLGPL             = hashArgs["c_strURLGPL"]
-c_strHost               = "ftp.ncbi.nih.gov"
-c_strPath               = "pub/geo/DATA/annotation/platforms/"
-c_fileIDAnnot           = sfle.d( pE, c_strID + ".annot.gz" )
-c_fileIDMapRaw		= sfle.d( pE, c_strID + "_raw.map" )
-c_fileIDMap		= sfle.d( pE, c_strID + ".map" )
+c_fileIDPKL    			= sfle.d( pE, c_strID + ".pkl" )
+c_strURLGPL    			= hashArgs["c_strURLGPL"]
+c_strHost      			= "ftp.ncbi.nih.gov"
+c_strPath      			= "pub/geo/DATA/annotation/platforms/"
+c_fileIDAnnot  			= sfle.d( pE, c_strID + ".annot.gz" )
+c_fileIDMapRaw 			= sfle.d( pE, c_strID + "_raw.map" )
+c_fileIDMap    			= sfle.d( pE, c_strID + ".map" )
 
-c_fileTaxa		= sfle.d( pE, "taxa.txt" )
-c_fileStatus		= sfle.d( pE, "status.txt" )
-c_fileTXTGSM		= sfle.d( pE, "GSM.txt" )
-c_fileIDSeriesTXTGZ	= sfle.d( pE, c_strID + "_series_matrix.txt.gz" )
-c_fileRDataTXT		= sfle.d( pE, c_strID + "_rdata.txt" )
-c_fileRMetadataTXT	= sfle.d( pE, c_strID + "_rmetadata.txt" )
-c_fileRPlatformTXT	= sfle.d( pE, c_strID + "_rplatform.txt" )
-c_fileIDRawPCL		= sfle.d( pE, c_strID + "_00raw.pcl" )
-c_fileIDMappedPCL	= sfle.d( pE, c_strID + "_00mapped.pcl")
-c_fileIDPCL             = sfle.d( pE, c_strID + ".pcl" )
-c_fileEset              = sfle.d( pE, c_strID + ".RData" )
-c_fileHelp		= sfle.d( pE, c_strID + ".Rd" )
-c_fileLogPackage	= sfle.d( pE, "package" )
-c_fileExpTable          = sfle.d( pE, c_strID + "_exp_metadata.txt" )
-c_fileCondTable         = sfle.d( pE, c_strID + "_cond_metadata.txt" )
+c_fileTaxa          	= sfle.d( pE, "taxa.txt" )
+c_fileStatus        	= sfle.d( pE, "status.txt" )
+c_fileTXTGSM        	= sfle.d( pE, "GSM.txt" )
+c_fileIDSeriesTXTGZ 	= sfle.d( pE, c_strID + "_series_matrix.txt.gz" )
+c_fileRDataTXT     		= sfle.d( pE, c_strID + "_rdata.txt" )
+c_fileRMetadataTXT  	= sfle.d( pE, c_strID + "_rmetadata.txt" )
+c_fileRPlatformTXT  	= sfle.d( pE, c_strID + "_rplatform.txt" )
+c_fileIDRawPCL     	 	= sfle.d( pE, c_strID + "_00raw.pcl" )
+c_fileIDMappedPCL   	= sfle.d( pE, c_strID + "_00mapped.pcl")
+c_fileIDPCL         	= sfle.d( pE, c_strID + ".pcl" )
+c_fileEset          	= sfle.d( pE, c_strID + ".RData" )
+c_fileHelp          	= sfle.d( pE, c_strID + ".Rd" )
+c_fileLogPackage    	= sfle.d( pE, "package" )
+c_fileConfigPacakge 	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirEtc, "rpackage" )
+c_fileExpTable      	= sfle.d( pE, c_strID + "_exp_metadata.txt" )
+c_fileCondTable     	= sfle.d( pE, c_strID + "_cond_metadata.txt" )
 
-c_fileProgSeries2PCL        	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "series2pcl.py" ) 
-c_fileProgSeries2Metadata   	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "series2metadata.py" ) 
-c_fileProgPkl2Metadata      	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "pkl2metadata.py" ) 
-c_fileProgSeries2GSM		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "series2gsm.py" ) 
-c_fileProgProcessRaw		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "preprocessRaw.R" ) 
-c_fileProgAnnot2Map		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "annot2map.py" ) 
-c_fileProgMergeMapping		= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "merge_genemapping.py" )
-c_fileProgGetInfo		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "getinfo.py" )
-c_fileProgEset2Help             = sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "eset2help.R" )
+c_fileProgSeries2PCL      	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "series2pcl.py" ) 
+c_fileProgSeries2Metadata 	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "series2metadata.py" ) 
+c_fileProgPkl2Metadata    	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "pkl2metadata.py" ) 
+c_fileProgSeries2GSM      	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "series2gsm.py" ) 
+c_fileProgProcessRaw      	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "preprocessRaw.R" ) 
+c_fileProgAnnot2Map      	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "annot2map.py" ) 
+c_fileProgMergeMapping    	= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "merge_genemapping.py" )
+c_fileProgGetInfo         	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "getinfo.py" )
+c_fileProgEset2Help       	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "eset2help.R" )
 
-m_strPPfun              = (sfle.readcomment( c_filePPfun ) or ["affy::rma"])[0]
-m_boolRunRaw		= sfle.readcomment( c_fileRunRaw ) == ["True"] or False 
+m_strPPfun   	= (sfle.readcomment( c_filePPfun ) or ["affy::rma"])[0]
+m_boolRunRaw 	= sfle.readcomment( c_fileRunRaw ) == ["True"] or False 
+m_boolRPackage	= sfle.readcomment( c_fileProgProcessRaw ) == ["True"] or False
 
 Import( "hashArgs" )
 
@@ -90,25 +91,25 @@ sfle.sop( pE, "python", [[c_fileProgPkl2Metadata], [c_fileIDPKL], [True, c_fileE
 sfle.pipe( pE, c_fileRDataTXT, c_fileProgSeries2PCL, c_fileIDRawPCL,
 	[[c_fileRMetadataTXT], [c_fileRPlatformTXT]] )
 
-#Make Eset containing all pertinent data
-sfle.ssink( pE, str(c_fileProgProcessRaw), "R --no-save --args", [[c_fileIDPCL], [True, c_fileEset], m_strPPfun, 
+if m_boolRPackage:
+	#Make Eset containing all pertinent data
+	sfle.ssink( pE, str(c_fileProgProcessRaw), "R --no-save --args", [[c_fileIDPCL], [True, c_fileEset], m_strPPfun, 
 	[c_fileExpTable], [c_fileCondTable]] )
+	#Make Rd Help Page 
+	sfle.ssink( pE, str(c_fileProgEset2Help), "R --no-save --args", [[c_fileEset], [True, c_fileHelp]] )
 
-#Make Rd Help Page 
-sfle.ssink( pE, str(c_fileProgEset2Help), "R --no-save --args", [[c_fileEset], [True, c_fileHelp]] )
+	#Build R package 	
+	#def buildR( target, source, env ):
+	#	strT, astrSs = sfle.ts( target, source )
+	#	strEset, strHelp =  astrSs[:2]
+	#	strDir = c_strID + c_strSufRPackage 
+	#	arepa.r_dir( strDir )
+	#	sfle.ex( ["cp", strEset, sfle.d( strDir, sfle.c_strDirData,strEset)] )
+	#	sfle.ex( ["cp", strHelp, sfle.d( strDir, "man", strHelp ) ] )
+	#	sfle.ex( ["R, CMD", "build", strDir] )
+	#	return sfle.ssink( pE, "R package built OK", strT )
 
-#Build R package 
-#def buildR( target, source, env ):
-#	strT, astrSs = sfle.ts( target, source )
-#	strEset, strHelp =  astrSs[:2]
-#	strDir = c_strID + c_strSufRPackage 
-#	arepa.r_dir( strDir )
-#	sfle.ex( ["cp", strEset, sfle.d( strDir, sfle.c_strDirData,strEset)] )
-#	sfle.ex( ["cp", strHelp, sfle.d( strDir, "man", strHelp ) ] )
-#	sfle.ex( ["R, CMD", "build", strDir] )
-#	return sfle.ssink( pE, "R package built OK", strT )
-
-#Command( c_fileLogPackage, [c_fileEset, c_fileHelp], buildR )
+	#Command( c_fileLogPackage, [c_fileEset, c_fileHelp], buildR )
 
 # Download annotation files for specific platform, if they exist 
 def getGPL( target, source, env ):
@@ -134,7 +135,8 @@ fileAnnot = Command( c_fileIDAnnot, c_fileRMetadataTXT, getGPL )
 #Produce Taxa file 
 sfle.pipe( pE, c_fileIDSeriesTXTGZ, c_fileProgGetInfo, c_fileTaxa )
 
-#Clean Microarray Data -- Imputation, Normalization, Gene Mapping    
+# Clean Microarray Data -- Imputation, Normalization, Gene Mapping
+# This only executes if the sleipnir configuration file in the etc directory is set to "True"
 execfile( str( c_fileInputSConscript ) )
 funcPCL2DAB( pE, c_fileIDRawPCL, c_fileIDAnnot, c_fileProgAnnot2Map, c_fileProgMergeMapping, c_fileTaxa )
 

@@ -1,0 +1,4 @@
+# Configuration file for R package building
+# Default value is False
+# True/False
+False 

@@ -12,23 +12,23 @@ import os
 import metadata
 import glob 
 
-c_aiCOL				= [0]
-c_iSkip				= 2
-c_iCOL				= len(c_aiCOL)
-c_fileIDNormPCL			= sfle.d( pE, c_strID + "_01norm.pcl" )
-c_fileIDPCL			= sfle.d( pE, c_strID + ".pcl" )
-c_fileIDDAB			= sfle.d( pE, c_strID + ".dab" )
-c_fileIDQUANT			= sfle.d( pE, c_strID + ".quant" )
-c_fileIDPKL		 	= sfle.d( pE, c_strID + ".pkl" )
-c_fileStatus			= sfle.d( pE, "status.txt" )
-c_fileIDMap			= sfle.d( pE, c_strID + ".map" )
-c_fileIDMapRaw			= sfle.d( pE, c_strID + "_raw.map" )
-c_strDirManMap			= sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, "manual_mapping" )
+c_aiCOL            = [0]
+c_iSkip            = 2
+c_iCOL             = len(c_aiCOL)
+c_fileIDNormPCL    = sfle.d( pE, c_strID + "_01norm.pcl" )
+c_fileIDPCL        = sfle.d( pE, c_strID + ".pcl" )
+c_fileIDDAB        = sfle.d( pE, c_strID + ".dab" )
+c_fileIDQUANT      = sfle.d( pE, c_strID + ".quant" )
+c_fileIDPKL        = sfle.d( pE, c_strID + ".pkl" )
+c_fileStatus       = sfle.d( pE, "status.txt" )
+c_fileIDMap        = sfle.d( pE, c_strID + ".map" )
+c_fileIDMapRaw     = sfle.d( pE, c_strID + "_raw.map" )
+c_strDirManMap     = sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, "manual_mapping" )
 
-c_fileIDMappedPCL		= sfle.d( pE, c_strID + "_00mapped.pcl" )
-c_fileIDMappedPCL2		= sfle.d( pE, c_strID + "_01mapped.pcl" )
+c_fileIDMappedPCL  = sfle.d( pE, c_strID + "_00mapped.pcl" )
+c_fileIDMappedPCL2 = sfle.d( pE, c_strID + "_01mapped.pcl" )
 
-c_fileFlagSleipnir		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirEtc, "sleipnir" )
+c_fileFlagSleipnir = sfle.d( pE, arepa.path_repo( ), sfle.c_strDirEtc, "sleipnir" )
 
 #Load GeneMapper SConscript 
 execfile( arepa.genemapper( ) )

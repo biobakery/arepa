@@ -2,7 +2,7 @@
 import csv
 import sys
 import os
-			
+
 #Input Arguments:
 inputfile 	= sys.argv[1]
 outputfile 	= sys.argv[2]
