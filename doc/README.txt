@@ -2,152 +2,48 @@
 ARepA: Automated Repository Acquisition 
 ======================================================
 
----------------------------------------------------------
-User Manual, Version 0.9.2 
----------------------------------------------------------
+..  This document follows reStructuredText syntax and conventions.
+	You can compile this file to a pdf document by 
+	running the "SConstruct" file in the directory where
+	this file is located. Simply run "scons" in your terminal. 
+
+-------------------------------------------------------
+User Manual, Version 0.9.3 
+-------------------------------------------------------
 
 Authors 
- Yo S. Moon, Dr. Levi Waldron, 
- Dr. Daniela Boernigen, Dr. Curtis Huttenhower
+ Yo Sup Moon, Dr. Daniela Boernigen, Dr. Levi Waldron, [additional authors], and Dr. Curtis Huttenhower
 
 Maintainer
- Yo S. Moon <jmoon@hsph.harvard.edu> 
+ Yo Sup Moon <moon.yosup@gmail.com> 
 
-Lincese
- None 
+License 
+ GNU General Public License 
 
 URL
- http://huttenhower.org/arepa 
+ http://huttenhower.sph.harvard.edu/arepa 
+
+Google Group
+ arepa-users
 
 Citation 
- Yo S. Moon, Levi Waldron, Daniela Boernigen, and Curtis Huttenhower. "ARepA: Automated Repository Acqusition", Nucleic Acids Research 
+ Yo Sup Moon, Daniela Boernigen, Levi Waldron, and Curtis Huttenhower. "ARepA: Automated Repository Acquisition" 
+ (working title)
+
+
 
 Chapter 0 Getting Started 
 ============================================
 
-Section 0.1 Supported Operating Systems 
---------------------------------------------
-ARepA was fully tested on and is supported by the following platform(s) 
-
-* Linux 
-* Mac OS X
-
-The following platform is NOT supported:
-
-* Windows 
-
-The following platform(s) have NOT been tested:
-
-* Windows Cygwin 
-
-It is highly recommended that ARepA is run on a Linux cluster rather than on a local machine.
-Certain processes (such as missing value imputation and functional network construction for 
-GEO) can be extremely CPU-intensive and is not suitable for laptop set-ups. That having said, 
-certain other processes, such as running custom pipelines to analyze the data once it has been downloaded, 
-are both suitable and convenient to run on a local linux machine. This will be described in more detail
-in the subsequent sections.  
-
-Section 0.2 Software Prerequisites 
+0.0 Overview 
 --------------------------------------------
 
-Before downloading ARepA, you should have the following software on your machine:
-
-* Python (ver >= 2.7.1) 
-* SCons (ver >= 2.1.0)  
-* Sleipnir Library for Computational Functional Genomics [1]
-* R (ver >= 2.13.1) with Bioconductor package, permission to download new libraries
-* Java SE 6 (ver >= 1.6.0): Java is needed for gene identifier conversion service
-* Mercurial Source Control Management (Recommended) 
-
-
-Section 0.3 Downloading ARepa 
-------------------------------------------------
-
-You can retrieve a copy of ARepA via mercurial (Recommended): ::
-
-$ hg clone https://bitbucket.org/chuttenh/arepa
-
-or by downloading a tarball from the huttenhower website ::
-
-$ wget http://huttenhower.org/arepa/arepa_stable.tar.gz
-
-Once you have downloaded arepa, you must set up the correct environmental variables, 
-which is described in the next section. 
-
-Section 0.4 Setting up the Path 
---------------------------------------------
-
-Once you have cloned arepa into a local directory, you must set up the correct UNIX paths
-so that the necessary files in ARepA are recognized by your system. 
- 
-While in the root level in arepa, set the path by typing ::
-
-$ export PATH=`pwd`/src:$PATH
-$ export PYTHONPATH=`pwd`/src:$PYTHONPATH 
-
-This command adds the main source directory to both the UNIX path for the bash shell and the environmental path for Python. 
-These two lines should be added to your bashrc file to avoid repeating this exportation procedure every time you want to run arepa (with `pwd` replaced with 
-the absolute path of arepa). For instance, the author's local version of arepa is in */Users/ysupmoon/hg/arepa*. To add to the bashrc one types ::
-
-$ cd ~
-$ touch .bashrc 
-$ echo 'export PATH=/Users/ysupmoon/hg/arepa/src:$PATH' \
-$ | cat >> .bashrc 
-$ echo 'export PYTHONPATH=/Users/ysupmoon/hg/arepa/src:$PYTHONPATH' \
-$ | cat >> .bashrc 
-
-This should append those two lines to the end of the .bashrc file. 
-We are almost there! We now move on to initializing the necessary components before we tell arepa to run. 
-
-Section 0.5 Compiling Necessary Components  
----------------------------------------------
-
-It is *crucial* that you compile the GeneMapper module *prior* to running the build in its entirety. Otherwise you will not get standardized gene identifier names in your downloads!  
-Compilation of GeneMapepr can be done by running the SConstruct file in the GeneMapper directory. Let's first see what directories are present in the current implementation of arepa ::
-
-$ ls | less -S
-
-What you see is the following: ::
-
-$ Bacteriome
-$ BioGrid
-$ GEO
-$ GeneMapper
-$ IntAct
-$ MPIDB
-$ Package
-$ RegulonDB
-$ SConstruct
-$ STRING
-$ doc
-$ etc
-$ src
-$ tmp 
-
-Everything you see is a *directory* except for a specialized *file* named "SConstruct". 
-Right now, we are interested in only initializing the directory "GeneMapper".
-Starting at the root directory (you should already be there), type ::
-
-$ cd GeneMapper
-$ scons 
-
-This initiates a check-out of the batchmapper API and compiles a functional version of GeneMapper via a Java build (this is why we need Java!).
-After this is complete, ARepA will automatically provide gene identifier conversion services (given that a mapping file for the specified organism exists; 
-we will talk more about what this means later).  
-
-Congratulations! Now you are ready to run ARepA. Before you run it, though, it is important to understand how ARepA handles user input. 
-
-Chapter 1 Running ARepA 
-============================================
 ARepA was designed to be a simple command-line interface 
 combining programmatic automation with an integrated data management tool 
 that consolidates eclectic data from heterogeneous sources into a 
 consistent, easily manipulable format. It was written with the Python programming 
 language under the SCons software construction tool for dependency-tracking and 
-automation. [Figure 1 of Paper] 
-
-1.0 Overview 
---------------------------------------------
+automation.
 
 The current implementation of ARepA fetches data cross *seven* different data repositories: (1) Bacteriome, (2) BioGRID, (3) GEO, (4) IntAct, (5) MPIDB, (6) RegulonDB, and (7) STRING.
 The data from each of these repositories are managed in separate directories. Each sub-directory in ARepA conforms to its "hierarchical modularity": (described in detail later)
@@ -171,8 +67,149 @@ Here is a table describing the nature of each repository.
 | STRING          | functional assoc.   | 1,133         | 1,640,707        | {PMID:21045058}         |
 +-----------------+---------------------+---------------+------------------+-------------------------+
 | GEO             | gene expression     | 1,967         |                  | {PMID:21097893}         |
-+-----------------+---------------------+---------------+------------------+-------------------------+ 
++-----------------+---------------------+---------------+------------------+-------------------------+
 
+Section 0.1 Supported Operating Systems 
+--------------------------------------------
+ARepA was fully tested on and is supported by the following platform(s) 
+
+* Linux 
+* Mac OS X
+
+The following platform(s) is(are) NOT supported:
+
+* Windows 
+
+The following platform(s) has(have) NOT been tested:
+
+* Windows Cygwin 
+
+NB: It is highly recommended that ARepA is run on a Linux cluster rather than on a local machine when 
+intending to use it for performing large batch jobs. Certain processes (such as missing value imputation and functional network construction for GEO) can be extremely CPU-intensive and is not suitable for laptop set-ups. 
+That being said, certain other processes, such as running custom pipelines to analyze the data once it has been downloaded, are both suitable and convenient to run on a local Unix-like environment. 
+
+Section 0.2 Software Prerequisites 
+--------------------------------------------
+
+Before downloading ARepA, you should have the following software on your machine:
+
+* Python (ver >= 2.7.1) 
+* SCons (ver >= 2.1.0)  
+* R (ver >= 2.13.1) with Bioconductor package, permission to download new libraries
+* Java SE 6 (ver >= 1.6.0): Java is needed for gene identifier conversion service
+* Mercurial Source Control Management (ver >= 2.5.1)
+* Subversion Source Control Management (ver >= 1.7.8): for automated acquisition of BridgeDB
+* Sleipnir Library for Computational Functional Genomics (Optional, but necessary for some normalization steps)
+
+
+Section 0.3 Downloading ARepa 
+------------------------------------------------
+
+You can retrieve a copy of ARepA via mercurial (Recommended) ::
+
+$ hg clone https://bitbucket.org/chuttenh/arepa
+
+or by downloading a tarball from the huttenhower website ::
+
+$ wget http://huttenhower.org/arepa/arepa_stable.tar.gz
+
+Once you have downloaded arepa, you must set up the correct environmental variables, 
+which is described in the next section. 
+
+Section 0.4 Setting up the Path 
+--------------------------------------------
+
+Once you have cloned arepa into a local directory, you must set up the correct UNIX paths
+so that the necessary files in ARepA are recognized by your system. 
+ 
+Make sure you are at the root level of arepa. Check by typing in your terminal ::
+
+$ pwd 
+
+Your local arepa directory should look something like this 
+
+	BioGrid		doc			etc         GEO     	MPIDB	RegulonDB   src     tmp
+	Bacteriome  GeneMapper  IntAct  	SConstruct  STRING
+
+
+While in the root level in arepa, set the path by typing ::
+
+$ export PATH=`pwd`/src:$PATH
+$ export PYTHONPATH=`pwd`/src:$PYTHONPATH 
+
+This command adds the main source directory to both the UNIX path for the bash shell and the environmental path for Python. These two lines should be added to your bashrc file to avoid repeating this exportation procedure every time you want to run arepa (with `pwd` replaced with the absolute path of arepa). For instance, the author's local version of arepa is in */Users/ysupmoon/hg/arepa*. To add to the bashrc one types ::
+
+$ cd ~
+$ echo 'export PATH=/Users/ysupmoon/hg/arepa/src:$PATH' |cat >> .bashrc 
+$ echo 'export PYTHONPATH=/Users/ysupmoon/hg/arepa/src:$PYTHONPATH' |cat >> .bashrc 
+
+This should append those two lines to the end of the .bashrc file.
+We are almost there! We now move on to initializing the necessary components before we tell arepa to run. 
+But first, we review some basic facts about arepa. 
+
+Section 0.5 ARepA Basics 
+--------------------------------------------- 
+
+ARepA is built with *hierarchical modularity* in mind. This means that a computational process can be initiated 
+from just about any node in the program tree. At every executable directory, you will see an "SConstruct" file.
+This file can be launched with the command "scons". From the last section, we saw that your local directory structure 
+of arepa might look like this 
+
+	BioGrid		doc			etc         GEO     	MPIDB	RegulonDB   src     tmp
+	Bacteriome  GeneMapper  IntAct  	SConstruct  STRING
+
+Things to note: 
+
+1. Folders with files pertaining to *this* particular level of arepa are in lowercase; for instance, 
+**doc**, **etc**, **tmp**, and **src** are folders that describe this current node, the root node. 
+
+2. Submodules start with uppercase characters; **BioGrid**, **Bacteriome**, **GeneMapper**, **IntAct**, **GEO**, **MPIDB**, **STRING**, and **RegulonDB** are all submodules that perform specific tasks. 
+
+3. The "SConstruct" file is a file that launches all processes downstream from the main directory. 
+Each module has an SConstruct file. The root directory has one, and so do each submodules. We can run arepa by typing 
+"scons" in the root directory. Once it builds the necessary files for the current directory, arepa instructs its children to run. At this point, you can run each submodule separately. That is, you can pick specific repositories that you want data from. But we are not ready to run arepa yet! Follow the instructions on the next section. 
+
+Section 0.6 Extracting Necessary Components  
+---------------------------------------------
+
+It is **recommended** that you extract and run the GeneMapper module **prior** to running the build in its entirety. 
+ARepA will automatically do this for you when the necessity of using GeneMapper arises, but it is recommended that 
+you do this first. This may save you some headaches. Extraction of GeneMapper can be done by running the SConstruct file in the GeneMapper directory. Let's first see what directories are present in the current implementation of arepa ::
+
+$ ls | less -S
+
+What you see is the following ::
+
+$ Bacteriome
+$ BioGrid
+$ GEO
+$ GeneMapper
+$ IntAct
+$ MPIDB
+$ Package
+$ RegulonDB
+$ SConstruct
+$ STRING
+$ doc
+$ etc
+$ src
+$ tmp 
+
+Everything you see is a **directory** except for a specialized **file** named "SConstruct". 
+Right now, we are interested in only initializing the directory "GeneMapper".
+Starting at the root directory (you should already be there), type ::
+
+$ cd GeneMapper
+$ scons 
+
+This initiates a check-out of the BridgeDB API and compiles a functional version of GeneMapper via a Java build (this is why we need Java!).
+After this is complete, ARepA will automatically provide gene identifier conversion services (given that a mapping file for the specified organism exists; 
+we will talk more about what this means later).  
+
+Congratulations! Now you are ready to run ARepA. Before you run it, though, it is important to understand how ARepA handles user input. 
+
+Chapter 1 Running ARepA 
+============================================
 
 1.1 Input  
 --------------------------------------------
@@ -181,30 +218,38 @@ ARepA requires the user to provide (1) the taxonomic identifier of the organism 
 This information is relayed onto ARepA in the **etc/taxa** and **etc/geneid** text files, respectively. 
 For instance, if you want to fetch human network and expression data across a multitude of data repositories, you would specify "Homo sapiens" in the input (etc/taxa). 
 
-A new copy of ARepA is by default instructed to download a set of model organism data. 
+1. Taxa 
 
-Typing ::
+	A new copy of ARepA is by default instructed to download a set of model organism data. 
 
-$ cd etc
-$ less taxa 
+	Typing ::
 
-will yield the default set of organisms
+	$ cd etc
+	$ less taxa 
 
-* Homo sapiens 
-* Escherichia coli
-* Vibrio cholerae
-* Bacillus subtilis.
+	will yield the default set of organisms
 
-Following the pythonic standard, you can comment out any line with a hash "#". For example, the following file ::
+	* Homo sapiens 
+	* Escherichia coli
+	* Mus musculus 
+	* Saccharomyces cerevisiae
+	* Pseudomonas aeruginosa
 
-* #Homo sapiens
-* Escherichia coli
-* #Vibrio cholerae
-* #Bacillus subtillis 
+	Following the pythonic standard, you can comment out any line with a hash "#". For example, the following file ::
 
-will only fetch E. coli data, and nothing else.
+	* Homo sapiens 
+	* #Escherichia coli
+	* #Mus musculus 
+	* #Saccharomyces cerevisiae
+	* #Pseudomonas aeruginosa
+	will only fetch E. coli data, and nothing else.
 
-Now, Tte entirety of the ARepA pipeline can be run with the execution of a simple command in terminlal. In the root directory of arepa, type ::
+2. Gene ID 
+
+	By default, 
+
+
+Now, The entirety of the ARepA pipeline can be run with the execution of a simple command in terminal. In the root directory of arepa, type ::
 
 $ scons -k
 
@@ -229,21 +274,19 @@ identifier specified by the input file.
 	* BioGrid
 	* STRING 
 
-1.3 Handy Features 
+1.3 Advanced Input  
 --------------------------------------------
 
-Chpater 2 Modules 
+Chapter 2 Modules 
 ============================================
 
 There are two types of modules: **internal modules**, and 
 **external modules**. Internal modules do actual downloading and processing 
-of data/metadata from public repositoires; external modules serve 
-global helper functions, such as gene identifier conversion, and R package 
-generation. Currently there are 3 external modules:
+of data/metadata from public repositories; external modules serve 
+global helper functions, such as gene identifier conversion. 
+Here is a list of external module(s): 
 
-1. RST - generate documentation from source
-2. Package - export R package 
-3. GeneMapper - converts gene identifiers into common format 
+1. GeneMapper - converts gene identifiers into common format 
 
 Now, we describe the internal modules, which can be subsequently 
 divided into two broad categories: gene expression/co-expression, 
@@ -262,17 +305,10 @@ Interaction Networks
 5. BioGrid
 6. STRING 
 
-Chapter 3 Structure 
+Chapter 3 Design Choice 
 ============================================
 
-.. image:: figure1.png
-  :height: 300
-  :width: 400
-  :scale: 50
-  :alt: Entity Diagram of ARepA  
-
-
-1. SConstruct (SConscript) - the main driver script of the module. This initiates all processes downstream of the file.
+1. SConstruct - the main driver script of the module. This initiates all processes downstream of the file.
 2. data - this is where the downloaded (and parsed) is kept. 
 3. src - contains all the source scripts. 
 4. tmp - contains all intermediate files necessary to carry out the build for each module. 
@@ -282,7 +318,7 @@ Chapter 3 Structure
 Chapter 4 Advanced Topics 
 ============================================ 
 
-Section 4.1 Testing ARepA 
+Section 4.1 Unit-Testing ARepA 
 --------------------------------------------
 
 ARepA has a built-in unit testing script, located in the main **src** directory. 
@@ -319,7 +355,7 @@ easy (well, as easy as the learning curve of SCons).
 Chapter 5 Frequently Asked Questions 
 ============================================
 
-NB: All questions should be directed to jmoon@hsph.harvard.edu.
+NB: All questions should be directed to the arepa-users group group. 
 
 1. I get the following error when I run ARepA
 
@@ -359,4 +395,20 @@ References
 =============================================
 * Sleipnir
 * Bioconductor Package 
-* Batchmapper 
+* BridgeDB 
+
+
+License  
+==============================================
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.

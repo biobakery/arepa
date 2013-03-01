@@ -57,7 +57,6 @@ def funcGeneIDMapping( pE, fileDATin, strGeneFrom, strLOGout, strMAPin = None, a
 			"*" + c_strSufMap ) ), None )
 		strMAPManTmp = sfle.d( c_strDirManMap, c_strID + c_strSufMap )
 		strMAPin = (strMAPManTmp if os.path.exists( strMAPManTmp) else None) or strTopMAP or strAutoMAP  
-		sys.stderr.write( strMAPin + '\n' )
 		# Else find taxid 
 		if not(strMAPin) and not(strTaxa):
 			astrMatch = re.findall( r'taxid_([0-9]+)', c_strID )

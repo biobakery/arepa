@@ -28,9 +28,16 @@ c_fileTaxdumpTARGZ		= sfle.d( pE, sfle.c_strDirTmp, "taxdump.tar.gz" )
 c_fileProgTaxdump2TXT		= sfle.d( pE, sfle.c_strDirSrc, "taxdump2txt.py" )
 c_fileProgTaxdump2Taxa		= sfle.d( pE, sfle.c_strDirSrc, "taxdump2taxa.py" )
 
+c_strExportPath			= "export PATH=`pwd`/src:$PATH"
+c_strExportPythonPath	= "export PYTHONPATH=`pwd`/src:$PYTHONPATH"
+
 #===============================================================================
 # Shared data setup: NCBI taxonomy
 #===============================================================================
+
+# Automatically Set up Path 
+for strCommand in [c_strExportPath, c_strExportPythonPath]:
+	sfle.ex( strCommand )
 
 sfle.download( pE, c_strURLTaxonomy, c_fileTaxdumpTARGZ )
 

@@ -113,7 +113,6 @@ def gene_sniffer( istm, strCols ):
 	strCols = strCols[1:-1]
 	aiCols = [int(s) for s in re.split( r'\s*,\s*', strCols )] if strCols else []
 	
-	#Open a blank metadata object and initialize 
 	aastrData = []
 	setstrIn = set()
 	csvr = csv.reader( istm, csv.excel_tab )
