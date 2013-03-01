@@ -8,7 +8,7 @@ import arepa
 import sys 
 import re 
 
-pHashRE = {"gse": r'Series_platform_taxid\t"([0-9]*)"', "gds": r'dataset_sample_organism = ([A-Za-z ]+)'}
+pHashRE = {"gse": r'Series_platform_taxid\t"([0-9]*)"', "gds": r'dataset_sample_organism = ([A-Za-z0-9_\- ]*)'}
 
 strf = sys.stdin.read() 
 

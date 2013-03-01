@@ -6,6 +6,7 @@ Type "python bridgemapper.py -h" for help
 '''
 
 import argparse
+import operator 
 import csv
 import os
 import re
@@ -17,17 +18,20 @@ import sys
 
 # These are the only genes that we are keeping track of for now 
 
-c_hashGeneNames	= {"HGNC": "H", 
+c_hashGeneNames		= {"HGNC": "H", 
 					"UniGene": "U",
 					"Uniprot/TrEMBL": "S",
 					"Ensembl": "En",
 					"Kegg Genes": "Kg",
 					"Kegg Compound": "Ck"
 					}
+					
+c_strDefaultGeneIDFrom	= "Kegg Genes"
 
 #########################################################
 # GENE ID MAPPING: Convert Gene Identifiers
 #########################################################
+
 def convertGeneIds( setstrGenes, strMap, strFrom, strTo ):
 	pFrom, pTo = [tempfile.NamedTemporaryFile( delete=False ) for i in xrange( 2 )]
 
@@ -102,68 +106,50 @@ def bridgemapper( istm, ostm, strMap, strCols, strFrom, strTo, ostmLog, iSkip ):
 #TODO: Add Sniffer For Gene Identifiers
 #IDEA: do some kind of bootstrapping procedure to make sure you are indeed getting the right identifier
 
-
-def gene_sniffer( istm, strCols ):
+def gene_sniffer( istm, strCols, pGeneNameHash = c_hashGeneNames, default_standard = c_strDefaultGeneIDFrom ):
 	'''
 	takes in input file, outputs gene identifier convention, e.g. HGNC
 	'''
 	def _sniff( name_list ):
-		pass 
-
+		'''
+		Input: takes in list of gene identifiers
+		Output: name of gene identifier convention; e.g. "HGNC"
+		'''
+		# Define Standards Here 
+		astrUniRef	= ["UniRef" + str(n) for n in [50,90,100]]
+		strEnsembl = "EN"
+		fUniProt	= 0.5 
+		astrKeggCompound = ["K0", "K1"]
+		
+		len_name_list = len(name_list)
+		strHead = name_list[0]
+		#UniRef --> "UniGene"
+		if any(map( lambda x: strHead.startswith(x), astrUniRef )):
+			return "UniGene"
+		elif strHead.startswith( strEnsembl ):
+			return "Ensembl"
+		elif any(map( lambda x: strHead.startswith(x), strKeggCompound)):
+			return "Kegg Compound"
+		else: 
+			#Uniprot 
+			filter_list = filter( lambda x: len(x) == 6 and (x.startswith("Q") or x.startswith("P")), name_list)
+			if float(len(filter_list))/float(len_name_list) >= fUniProt:
+				return "Uniprot/TrEMBL"
+			else:
+				return default_standard 
+			
 	strCols = strCols[1:-1]
 	aiCols = [int(s) for s in re.split( r'\s*,\s*', strCols )] if strCols else []
-	
-	aastrData = []
 	setstrIn = set()
 	csvr = csv.reader( istm, csv.excel_tab )
-
-'''
-NOTES 
-
-UniGene - 
-This one is easy; it starts with either "UniRef90" or "UniRef100"
-
-Uniprot/TrEMBL -
-Always 6 alphanumeric characeters, a lot of them start with P or Q
-About 70% of them start with P or Q
-
-
-Q8TBF5 
-Q8TBF4  
-P30613  
-Q5H9L4  
-P20933  
-P20936  
-Q8IZF2  
-Q2T9G7  
-P31213  
-Q9NXR8  
-E9PN47  
-Q4VXU2  
-Q96N66  
-Q00532  
-Q96J66  
-O00712  
-Q9UBM8  
-Q96J65  
-O00241  
-O00716  
-Q96KS0  
-Q9UBM7  
-Q6BEB4  
-Q92911  
-Q13835  
-Q7Z3T1  
-P40424  
-P40425  
-B3KVK0  
-B3KVK3  
-Q7Z3T8  
-Q13838  
-        
-
-'''
-
+	strGeneID = None 
+	for i in aiCols:
+		if strGeneID: 
+			break 
+		astrData = [x[i] for x in csvr]
+		strGeneID = _sniff( astrData )
+	
+	return pGeneNameHash[(strGeneID or default_standard)]
 
 argp = argparse.ArgumentParser( prog = "bridgemapper.py",
 	description = """Maps gene IDs from one or more tab-delimited text columns from and to specified formats.""" )
@@ -217,6 +203,10 @@ def _main( ):
 			pMeta.set("mapped",False)
 			pMeta.save_text( args.ostmLog )
 	else:
+		#if gene sniffer flag is on, try to guess the best possible gene identifier 
+		if args.fSniffer:
+			args.strFrom = gene_sniffer( args.istm, args.strCols )
+		sys.stderr.write( args.strFrom + '\n')
 		bridgemapper( args.istm, args.ostm, args.strMap, args.strCols, args.strFrom, args.strTo, args.ostmLog, args.iSkip )
 
 if __name__ == "__main__":

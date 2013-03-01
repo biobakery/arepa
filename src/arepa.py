@@ -130,7 +130,7 @@ def org2taxid( strOrg, fApprox = False, iLevel = 2 ):
 	includes subspecies. Modified: returns list, not string  
 	"""
 	hashTaxID2Org, hashOrg2TaxID = _taxdump( )
-	if fApprox:
+	if (strOrg and fApprox):
 		astrOrgSplit = strOrg.split(" ")
 		strOrgApprox = " ".join(astrOrgSplit[:iLevel]) if len(astrOrgSplit)>=2 else strOrg
 		astrApproxTaxIDs = filter(lambda s: strOrgApprox in s,hashOrg2TaxID.keys())

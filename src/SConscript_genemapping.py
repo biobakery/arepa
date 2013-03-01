@@ -81,9 +81,8 @@ def funcGeneIDMapping( pE, fileDATin, strGeneFrom, strLOGout, strMAPin = None, a
 	strCount = funcCounter( g_iterCounter )
 	strT = strBase + c_strMapped + strCount + strExt
 	afileRet = sfle.op( pE, c_funcGeneMapper, [[fileDATin], [True, strT],
-		"-c", str(aiCOL), "-f", strGeneFrom, "-t", c_astrGeneTo[0],
-		"-s", iSkip, "-l", [True, strLOGout]] +
-		( ["-m", [strMAPin]] if strMAPin else [] ) )
+		"-c", str(aiCOL)] + (["-f", strGeneFrom] if strGeneFrom else ["-x"] ) + ["-t", c_astrGeneTo[0], 
+		"-s", iSkip, "-l", [True, strLOGout]] + ( ["-m", [strMAPin]] if strMAPin else [] ) )
 	pE.Depends( afileRet, sfle.scons_child( pE, c_strPathGeneMapper ) )
 	return afileRet
 
