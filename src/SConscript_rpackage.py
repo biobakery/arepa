@@ -16,10 +16,10 @@ Requirements for R package building:
 import sfle 
 import arepa 
 
-c_strNAMESPACE		= r"exportPattern('^[[:alpha:]]+')"
+c_strNAMESPACE		= r"'exportPattern(\\'^[[:alpha:]]+\\')'"
 c_fileProgUnpickle	= sfle.d( pE, arepa.path_arepa(), sfle.c_strDirSrc, "unpickle.py" )
 
-def funcCheckRStructure( pE, fileNAMESPACE, fileManMaster, strNAMESPACE = c_strNAMESPACE ):
+def funcCheckRStructure( pE, filePKL, fileNAMESPACE, fileManMaster, strNAMESPACE = c_strNAMESPACE ):
 	'''
 	Completes necessary components for R package building 
 	Assumes that data/ and man/ directories have the corresponding data and manual files per dataset
@@ -30,10 +30,9 @@ def funcCheckRStructure( pE, fileNAMESPACE, fileManMaster, strNAMESPACE = c_strN
 	
 	'''
 	# Make NAMESPACE File 
-	sfle.ssink( pE, "echo " + strNAMESPACE, fileNAMESPACE )
+	return ( sfle.scmd( pE, "echo " + strNAMESPACE, fileNAMESPACE ) +
 	# Make Master Man File 
-	return sfle.cmd( pE, c_fileProgUnpickle, ["-x", [True, fileManMaster]] )
-	
+		sfle.cmd( pE, c_fileProgUnpickle, fileManMaster, ["-x", filePKL] ) )
 
 def funcMakeRPackage( pE, strDirectory, filePackageLog ):
 	'''
@@ -44,10 +43,5 @@ def funcMakeRPackage( pE, strDirectory, filePackageLog ):
 	filePackageLog = log file for scons to track 
 	'''
 	
-	sfle.ex( "R CMD build " + strDirectory )
-	return sfle.ssink( pE, "echo R package compiled OK", filePackageLog )
-	
-
-
-
-
+	return ( sfle.sop( pE, "R CMD build", [strDirectory] ) +
+		sfle.scmd( pE, "echo R package compiled OK", filePackageLog ) )

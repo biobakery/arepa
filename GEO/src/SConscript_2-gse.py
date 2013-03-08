@@ -108,7 +108,7 @@ if m_boolRPackage:
 	sfle.ssink( pE, str(c_fileProgEset2Help), "R --no-save --args", [[c_fileEset], [True, c_fileHelp]] )
 	
 	execfile( str(c_fileRSConscript) )
-	funcCheckRStructure( pE, c_fileRNAMESPACE, c_fileRMaster )
+	funcCheckRStructure( pE, c_fileIDPKL, c_fileRNAMESPACE, c_fileRMaster )
 	funcMakeRPackage( pE, str(c_dirR), c_fileLogPackage )
 	
 

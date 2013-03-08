@@ -11,7 +11,6 @@ import sfle
 import pickle 
 import itertools 
 import re 
-import glob 
 
 g_iterCounter			= itertools.count(0) 
 
@@ -68,15 +67,15 @@ def funcGeneIDMapping( pE, fileDATin, strGeneFrom = None, fileLOGout = None, str
 		strAutoMAP = strAutoMAPtmp if os.path.exists( strAutoMAPtmp ) else None 
 		# Use manual mapping files, files that are deeper down have priority
 		#else try automatically generated mapping file
-		strTopMAP = reduce( lambda x,y: x or y, glob.glob( sfle.d( c_strPathTopMapping, 
-			"*" + c_strSufMap ) ), None )
+		afileMaps = Glob( sfle.d( c_strPathTopMapping, "*" + c_strSufMap ) )
+		strTopMAP = str(afileMaps[0]) if afileMaps else None
 		strMAPManTmp = sfle.d( c_strDirManMap, c_strID + c_strSufMap )
-		strMAPin = (strMAPManTmp if os.path.exists( strMAPManTmp) else None) or strTopMAP or strAutoMAP  
+		strMAPin = (strMAPManTmp if os.path.exists( strMAPManTmp ) else None) or strTopMAP or strAutoMAP  
 		# Use provided mapping files  
 		if not(strMAPin) and strTaxID:
-			for strMAPname in glob.glob(sfle.d( c_strPathUniprotKO, "*.map" )):
-				if re.search( r'\D' + strTaxID + r'\D', strMAPname ):
-					strMAPin = strMAPname
+			for fileMAPname in Glob(sfle.d( c_strPathUniprotKO, "*" + c_strSufMap )):
+				if re.search( r'\D' + strTaxID + r'\D', str(fileMAPname) ):
+					strMAPin = str(fileMAPname)
 					break
 		# Else ask arepa to figure out an appropriate mapping file 
 		if not(strMAPin) and strTaxID:

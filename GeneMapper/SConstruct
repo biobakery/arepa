@@ -2,6 +2,7 @@ import arepa
 import os
 import sys
 import sfle
+import time
 
 pE = DefaultEnvironment( )
 
@@ -17,34 +18,54 @@ c_fileUniprotKOTARGZ	= sfle.d( pE, c_dirUniprotKO, "uniprotko.tar.gz" )
 c_fileCheckLOG		= sfle.d( pE, sfle.c_strDirTmp, "checkout.log" )
 c_fileCompLOG		= sfle.d( pE, sfle.c_strDirTmp, "compile.log" )
 c_fileUnzipLOG		= sfle.d( pE, sfle.c_strDirTmp, "unzip.log" )
+c_fileRaceLOG		= sfle.d( pE, sfle.c_strDirTmp, "race.log" )
 
 ##Predefined mappingfiles from Bridgedb for human,  mouse and yeast:
 c_astrMappingFiles	= ["Hs_Derby_20120602.bridge", "Mm_Derby_20120602.bridge", "Sc_Derby_20120602.bridge"]
 c_strMappingURL		= "http://bridgedb.org/data/gene_database/"
 
 #===============================================================================
+# Lock file to prevent race condition
+#===============================================================================
+
+fLocked = False
+while not fLocked:
+	if not os.path.exists( str(c_fileRaceLOG) ):
+		try:
+			os.makedirs( os.path.dirname( str(c_fileRaceLOG) ) )
+		except OSError:
+			pass
+		open( str(c_fileRaceLOG), "w" ).close( )
+		fLocked = True
+
+#===============================================================================
 # Check out last version of the tool and compile
 #===============================================================================
 
-for strMappingFile in c_astrMappingFiles:
-	sfle.download( pE, c_strMappingURL + strMappingFile,
-		sfle.d( sfle.c_strDirEtc, strMappingFile ) )
+		for strMappingFile in c_astrMappingFiles:
+			sfle.download( pE, c_strMappingURL + strMappingFile,
+				sfle.d( sfle.c_strDirEtc, strMappingFile ) )
+		
+		def funcCheckoutTrunk( target, source, env ):
+			strT, astrSs = sfle.ts( target, source )
+			return ( sfle.ex(["svn checkout -r", c_strRevision, c_strURL]) or
+				sfle.ex(["sed", "-i.orig", "'s/^java -jar/java -Xmx1024m -jar/g'", c_fileBatchmapper]) or
+				sfle.ex("echo checked out OK", strT) )
+		Command( c_fileCheckLOG, None, funcCheckoutTrunk )
+		
+		def funcCompileTrunk( target, source, env ):
+			strT, astrSs = sfle.ts( target, source )
+			return ( sfle.ex(["ant -buildfile", c_fileInputBuilder]) or
+				sfle.ex("echo compiled OK", strT) )
+		Command( c_fileCompLOG, c_fileCheckLOG, funcCompileTrunk )
+		
+		def funcMakeMapFiles( target, source, env ):
+			strT, astrSs = sfle.ts( target, source )
+			return ( sfle.ex(["tar", "-xzf",c_fileUniprotKOTARGZ, "-C", c_strDirEtc]) or \
+				sfle.ex("echo Unzipped OK", strT) )
+		Command( c_fileUnzipLOG, c_fileCompLOG, funcMakeMapFiles )
 
-def funcCheckoutTrunk( target, source, env ):
-	strT, astrSs = sfle.ts( target, source )
-	return ( sfle.ex(["svn checkout -r", c_strRevision, c_strURL]) or
-		sfle.ex(["sed", "-i.orig", "'s/^java -jar/java -Xmx1024m -jar/g'", c_fileBatchmapper]) or
-		sfle.ex("echo checked out OK", strT) )
-Command( c_fileCheckLOG, None, funcCheckoutTrunk )
-
-def funcCompileTrunk( target, source, env ):
-	strT, astrSs = sfle.ts( target, source )
-	return ( sfle.ex(["ant -buildfile", c_fileInputBuilder]) or
-		sfle.ex("echo compiled OK", strT) )
-Command( c_fileCompLOG, c_fileCheckLOG, funcCompileTrunk )
-
-def funcMakeMapFiles( target, source, env ):
-	strT, astrSs = sfle.ts( target, source )
-	return ( sfle.ex(["tar", "-xzf",c_fileUniprotKOTARGZ, "-C", c_strDirEtc]) or \
-		sfle.ex("echo Unzipped OK", strT) )
-Command( c_fileUnzipLOG, c_fileCompLOG, funcMakeMapFiles )
+#BUGBUG: fix this
+		Depends( sfle.sop( pE, "rm -f", [c_fileRaceLOG] ), c_fileUnzipLOG )
+	else:
+		time.sleep( 5 )

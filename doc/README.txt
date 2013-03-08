@@ -3,8 +3,8 @@ ARepA: Automated Repository Acquisition
 ======================================================
 
 ..  This document follows reStructuredText syntax and conventions.
-	You can compile this file to a pdf document by 
-	running the "SConstruct" file in the directory where
+	You can compile this file to a PDF or HTML document by 
+	executing the "SConstruct" file in the directory where
 	this file is located. Simply run "scons" in your terminal. 
 
 -------------------------------------------------------
@@ -18,13 +18,13 @@ Maintainer
  Yo Sup Moon <moon.yosup@gmail.com> 
 
 License 
- GNU General Public License 
+ MIT License 
 
 URL
  http://huttenhower.sph.harvard.edu/arepa 
 
 Google Group
- arepa-users
+ arepa-users: https://groups.google.com/forum/?fromgroups#!forum/arepa-users
 
 Citation 
  Yo Sup Moon, Daniela Boernigen, Levi Waldron, and Curtis Huttenhower. "ARepA: Automated Repository Acquisition" 
