@@ -32,8 +32,7 @@ c_fileInputSConscriptGM		= sfle.d( pE, arepa.path_arepa(),sfle.c_strDirSrc,"SCon
 c_fileInputSConscriptDAB	= sfle.d( pE, arepa.path_arepa(), sfle.c_strDirSrc, "SConscript_dat-dab.py" )
 
 c_fileStatus	    	= sfle.d( pE, "status.txt" )
-c_strGeneFrom		= "En"
-#TODO: fix this strFrom gene feature so taht STRING smartly handles different gene identifiers 
+c_strGeneFrom		= None #we do not know a priori what the gene identifiers are going to be
 
 afileIDDAT = sfle.pipe( pE, c_fileInputC, c_fileProgC2DAT, c_fileIDDAT, [c_strID] )
 

@@ -7,28 +7,31 @@ import pickle
 import sys
 import argparse 
 
-def unpickle( istm, ostm, strSplit, iCols, iSkip, istmLog, fRev, strManKey ):
-	if not(fRev):
-		"unpickle"
-		hashData = pickle.load( istm )
-		csvw = csv.writer( ostm, csv.excel_tab )
-		if strManKey: csvw.writerow( [hashData[strManKey]] )
-		else:
-			for strKey, pValue in hashData.items( ):
-				csvw.writerow( (strKey, "%s" % pValue) )
+
+def unpickle( istm, ostm, strSplit, iCols, iSkip, istmLog, strManKey ):
+	hashData = pickle.load( istm )
+	csvw = csv.writer( ostm, csv.excel_tab )
+	if strManKey: csvw.writerow( [hashData[strManKey]] )
 	else:
-		"pickle"
-		pMeta = {}
-		csvr1 = csv.reader( istm, csv.excel_tab )
-		for line in csvr1:
+		for strKey, pValue in hashData.items( ):
+			csvw.writerow( (strKey, "%s" % pValue) )
+		
+
+def pickle( istm, ostm, strSplit, iCols, iSkip, istmLog, strManKey ):
+	pMeta = {}
+	csvr1 = csv.reader( istm, csv.excel_tab )
+	for line in csvr1:
+		if line: key,value = line 
+		pMeta[key] = value 
+	if istmLog:
+		csvr2 = csv.reader( istmLog, csv.excel_tab )
+		for line in csvr2:
 			if line: key,value = line 
 			pMeta[key] = value 
-		if istmLog:
-			csvr2 = csv.reader( istmLog, csv.excel_tab )
-			for line in csvr2:
-				if line: key,value = line 
-				pMeta[key] = value 
-		pickle.dump( pMeta, ostm )
+	return pickle.dump( pMeta, ostm )
+
+def 
+
 
 argp = argparse.ArgumentParser( prog = "unpickle.py",
         description =   """pickle and unpickle files.""" )
@@ -54,10 +57,15 @@ argp.add_argument( "-r",		dest = "fRev",		action = "store_true",
 	help = "Reverse flag" )
 argp.add_argument( "-k",		dest = "strManKey",	metavar = "str_man_key",
 	help = "Flag to specify output for specific key in the pickle" )
+argp.add_argument( "-x",		dest = "fRMeta", 	action = "store_true",
+ 	help = "Give output in R package metadata format")
 
 def _main( ):
         args = argp.parse_args()
-        unpickle( args.istm, args.ostm, args.strSplit, args.iCols, args.iSkip, args.istmLog, args.fRev, args.strManKey )
+		if not(args.fRev):
+        	unpickle( args.istm, args.ostm, args.strSplit, args.iCols, args.iSkip, args.istmLog, args.strManKey )
+		else:
+			pickle( args.istm, args.ostm, args.strSplit, args.iCols, args.iSkip, args.istmLog, args.strManKey )
 
 if __name__ == "__main__":
         _main()

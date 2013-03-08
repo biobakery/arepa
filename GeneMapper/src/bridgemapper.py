@@ -22,11 +22,11 @@ c_hashGeneNames		= {"HGNC": "H",
 					"UniGene": "U",
 					"Uniprot/TrEMBL": "S",
 					"Ensembl": "En",
-					"Kegg Genes": "Kg",
+					"KEGG Genes": "Kg",
 					"Kegg Compound": "Ck"
 					}
 					
-c_strDefaultGeneIDFrom	= "Kegg Genes"
+c_strDefaultGeneIDFrom	= "KEGG Genes"
 
 #########################################################
 # GENE ID MAPPING: Convert Gene Identifiers
@@ -128,7 +128,7 @@ def gene_sniffer( istm, strCols, pGeneNameHash = c_hashGeneNames, default_standa
 			return "UniGene"
 		elif strHead.startswith( strEnsembl ):
 			return "Ensembl"
-		elif any(map( lambda x: strHead.startswith(x), strKeggCompound)):
+		elif any(map( lambda x: strHead.startswith(x), astrKeggCompound)):
 			return "Kegg Compound"
 		else: 
 			#Uniprot 
@@ -206,7 +206,6 @@ def _main( ):
 		#if gene sniffer flag is on, try to guess the best possible gene identifier 
 		if args.fSniffer:
 			args.strFrom = gene_sniffer( args.istm, args.strCols )
-		sys.stderr.write( args.strFrom + '\n')
 		bridgemapper( args.istm, args.ostm, args.strMap, args.strCols, args.strFrom, args.strTo, args.ostmLog, args.iSkip )
 
 if __name__ == "__main__":

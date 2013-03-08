@@ -21,6 +21,7 @@ c_strSufRPackage      	= "_rpackage"
 c_fileGPL             	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirTmp, "gpl.txt" ) 
 c_fileAnnot           	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirTmp, "annot.txt" ) 
 c_fileInputSConscript 	= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "SConscript_pcl-dab.py" ) 
+c_fileRSConscript		= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "SConscript_rpackage.py" )
 c_fileProgUnpickle    	= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "unpickle.py" ) 
 c_fileInputGSER       	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "gse.R" ) 
 c_fileInputManCurTXT  	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirEtc, "manual_curation/", 
@@ -33,6 +34,13 @@ c_fileIDPKL    			= sfle.d( pE, c_strID + ".pkl" )
 c_strURLGPL    			= hashArgs["c_strURLGPL"]
 c_strHost      			= "ftp.ncbi.nih.gov"
 c_strPath      			= "pub/geo/DATA/annotation/platforms/"
+
+c_strDirR				= "R"
+c_strDirRman			= "man"
+c_strDirRdata			= "data"
+c_fileRNAMESPACE		= sfle.d( pE, c_strDirR, "NAMESPACE" )
+c_fileRMaster			= sfle.d( pE, c_strDirR, c_strDirRman, "arepa_GEO_" + c_strID + "_rpackage")
+
 c_fileIDAnnot  			= sfle.d( pE, c_strID + ".annot.gz" )
 c_fileIDMapRaw 			= sfle.d( pE, c_strID + "_raw.map" )
 c_fileIDMap    			= sfle.d( pE, c_strID + ".map" )
@@ -47,8 +55,8 @@ c_fileRPlatformTXT  	= sfle.d( pE, c_strID + "_rplatform.txt" )
 c_fileIDRawPCL     	 	= sfle.d( pE, c_strID + "_00raw.pcl" )
 c_fileIDMappedPCL   	= sfle.d( pE, c_strID + "_00mapped.pcl")
 c_fileIDPCL         	= sfle.d( pE, c_strID + ".pcl" )
-c_fileEset          	= sfle.d( pE, c_strID + ".RData" )
-c_fileHelp          	= sfle.d( pE, c_strID + ".Rd" )
+c_fileEset          	= sfle.d( pE, c_strDirR, c_strDirRdata, c_strID + ".RData" )
+c_fileHelp          	= sfle.d( pE, c_strDirR, c_strDirRman, c_strID + ".Rd" )
 c_fileLogPackage    	= sfle.d( pE, "package" )
 c_fileConfigPacakge 	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirEtc, "rpackage" )
 c_fileExpTable      	= sfle.d( pE, c_strID + "_exp_metadata.txt" )
@@ -98,18 +106,7 @@ if m_boolRPackage:
 	#Make Rd Help Page 
 	sfle.ssink( pE, str(c_fileProgEset2Help), "R --no-save --args", [[c_fileEset], [True, c_fileHelp]] )
 
-	#Build R package 	
-	#def buildR( target, source, env ):
-	#	strT, astrSs = sfle.ts( target, source )
-	#	strEset, strHelp =  astrSs[:2]
-	#	strDir = c_strID + c_strSufRPackage 
-	#	arepa.r_dir( strDir )
-	#	sfle.ex( ["cp", strEset, sfle.d( strDir, sfle.c_strDirData,strEset)] )
-	#	sfle.ex( ["cp", strHelp, sfle.d( strDir, "man", strHelp ) ] )
-	#	sfle.ex( ["R, CMD", "build", strDir] )
-	#	return sfle.ssink( pE, "R package built OK", strT )
-
-	#Command( c_fileLogPackage, [c_fileEset, c_fileHelp], buildR )
+	
 
 # Download annotation files for specific platform, if they exist 
 def getGPL( target, source, env ):
