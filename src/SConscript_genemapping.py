@@ -40,7 +40,7 @@ c_pHashBridgeDB 		= dict((strName, sfle.d( arepa.path_arepa( ), "GeneMapper", sf
 
 pHashBridgeDBTaxIDs 	= { k:arepa.org2taxid( k, True ) for k in c_pHashBridgeDB.keys()}
 m_hashGeneIDs			= { k:v for k,v in map( lambda x: x.split("\t"), 
-							sfle.readcomment(open(c_strManualGeneIDs)) ) }
+							sfle.readcomment(open(c_strManualGeneIDs)) ) } if os.path.exists( c_strManualGeneIDs ) else None 
 
 def funcCounter( iter ):
 	return ( "%02d" % next( iter ) )
@@ -59,7 +59,7 @@ def funcGeneIDMapping( pE, fileDATin, strGeneFrom = None, fileLOGout = None, str
 		#if strGeneFrom is not specified, try to retrieve it from
 		#the "manual_geneids.txt" file in the respective etc directory, else None 
 		#this problem tends to arise in mixed microbial network data 
-		if strTaxID: 
+		if strTaxID and m_hashGeneIDs: 
 			strOrg = " ".join( arepa.taxid2org( strTaxID ).split(" ")[:iLevel] )
 			strGeneFrom = m_hashGeneIDs.get( strOrg )
 	if not(strMAPin):
