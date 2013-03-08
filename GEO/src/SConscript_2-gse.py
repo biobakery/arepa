@@ -36,10 +36,11 @@ c_strHost      			= "ftp.ncbi.nih.gov"
 c_strPath      			= "pub/geo/DATA/annotation/platforms/"
 
 c_strDirR				= "R"
+c_dirR					= sfle.d( c_strDirR )
 c_strDirRman			= "man"
 c_strDirRdata			= "data"
-c_fileRNAMESPACE		= sfle.d( pE, c_strDirR, "NAMESPACE" )
-c_fileRMaster			= sfle.d( pE, c_strDirR, c_strDirRman, "arepa_GEO_" + c_strID + "_rpackage")
+c_fileRNAMESPACE		= sfle.d( c_strDirR, "NAMESPACE" )
+c_fileRMaster			= sfle.d( c_strDirR, c_strDirRman, "arepa_GEO_" + c_strID + "_rpackage")
 
 c_fileIDAnnot  			= sfle.d( pE, c_strID + ".annot.gz" )
 c_fileIDMapRaw 			= sfle.d( pE, c_strID + "_raw.map" )
@@ -74,7 +75,7 @@ c_fileProgEset2Help       	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "
 
 m_strPPfun   	= (sfle.readcomment( c_filePPfun ) or ["affy::rma"])[0]
 m_boolRunRaw 	= sfle.readcomment( c_fileRunRaw ) == ["True"] or False 
-m_boolRPackage	= sfle.readcomment( c_fileProgProcessRaw ) == ["True"] or False
+m_boolRPackage	= sfle.readcomment( c_fileConfigPacakge ) == ["True"] or False
 
 Import( "hashArgs" )
 
@@ -105,7 +106,10 @@ if m_boolRPackage:
 	[c_fileExpTable], [c_fileCondTable]] )
 	#Make Rd Help Page 
 	sfle.ssink( pE, str(c_fileProgEset2Help), "R --no-save --args", [[c_fileEset], [True, c_fileHelp]] )
-
+	
+	execfile( str(c_fileRSConscript) )
+	funcCheckRStructure( pE, c_fileRNAMESPACE, c_fileRMaster )
+	funcMakeRPackage( pE, str(c_dirR), c_fileLogPackage )
 	
 
 # Download annotation files for specific platform, if they exist 

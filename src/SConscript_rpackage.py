@@ -14,9 +14,10 @@ Requirements for R package building:
 '''
 
 import sfle 
+import arepa 
 
-c_strNAMESPACE		= "exportPattern("^[[:alpha:]]+")"
-
+c_strNAMESPACE		= r"exportPattern('^[[:alpha:]]+')"
+c_fileProgUnpickle	= sfle.d( pE, arepa.path_arepa(), sfle.c_strDirSrc, "unpickle.py" )
 
 def funcCheckRStructure( pE, fileNAMESPACE, fileManMaster, strNAMESPACE = c_strNAMESPACE ):
 	'''
@@ -28,11 +29,12 @@ def funcCheckRStructure( pE, fileNAMESPACE, fileManMaster, strNAMESPACE = c_strN
 	fileManMaster = pointer to the master manual file in man/ 
 	
 	'''
-	# Make NAMESPACE file 
+	# Make NAMESPACE File 
 	sfle.ssink( pE, "echo " + strNAMESPACE, fileNAMESPACE )
+	# Make Master Man File 
+	return sfle.cmd( pE, c_fileProgUnpickle, ["-x", [True, fileManMaster]] )
 	
-	
-	
+
 def funcMakeRPackage( pE, strDirectory, filePackageLog ):
 	'''
 	Compile the R package 
