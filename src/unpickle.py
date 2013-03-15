@@ -6,7 +6,6 @@ import csv
 import pickle
 import sys
 import argparse 
-
 '''
 
 \name{curatedOvarianData-package}
@@ -33,22 +32,7 @@ def _unpickle( istm, ostm, strSplit, iCols, iSkip, istmLog, strManKey, fRMeta ):
 	hashData = pickle.load( istm )
 	csvw = csv.writer( ostm, csv.excel_tab )
 	if strManKey: 
-		csvw.writerow( [hashData[strManKey]] )
-	elif fRMeta:
-		
-		def _metaStr( strDescription, strContent ):
-			return "\\"+ strDescription + "{" + strContent + "}"
-						
-		astrAccessionKey =  filter( lambda x: x.find("Series_geo_accession")!=-1, hashData.keys() ) or [""] 
-		strDataAccession = ( hashData.get( astrAccessionKey[0] ) or "" ) + "_package"
-		strDataTitle = hashData.get( "title" ) or ""
-		strDataGloss = hashData.get( "gloss" ) or ""
-	
-		aastrOut = [("name", strDataAccession),("title", strDataTitle),("description", strDataGloss)]
-		
-		for strDescription, strContent in aastrOut:
-			print _metaStr( strDescription, strContent )
-			
+		csvw.writerow( [hashData[strManKey]] )			
 	else:
 		for strKey, pValue in hashData.items( ):
 			csvw.writerow( (strKey, "%s" % pValue) )

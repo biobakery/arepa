@@ -40,7 +40,8 @@ c_dirR					= sfle.d( c_strDirR )
 c_strDirRman			= "man"
 c_strDirRdata			= "data"
 c_fileRNAMESPACE		= sfle.d( c_strDirR, "NAMESPACE" )
-c_fileRMaster			= sfle.d( c_strDirR, c_strDirRman, "arepa_GEO_" + c_strID + "_rpackage")
+c_fileRDESCRIPTION		= sfle.d( c_strDirR, "DESCRIPTION" )
+c_fileRMaster			= sfle.d( c_strDirR, c_strDirRman, c_strID + "-package.Rd")
 
 c_fileIDAnnot  			= sfle.d( pE, c_strID + ".annot.gz" )
 c_fileIDMapRaw 			= sfle.d( pE, c_strID + "_raw.map" )
@@ -108,7 +109,7 @@ if m_boolRPackage:
 	sfle.ssink( pE, str(c_fileProgEset2Help), "R --no-save --args", [[c_fileEset], [True, c_fileHelp]] )
 	
 	execfile( str(c_fileRSConscript) )
-	funcCheckRStructure( pE, c_fileIDPKL, c_fileRNAMESPACE, c_fileRMaster )
+	funcCheckRStructure( pE, c_strID, c_fileIDPKL, c_fileRNAMESPACE, c_fileRDESCRIPTION, c_fileRMaster )
 	funcMakeRPackage( pE, str(c_dirR), c_fileLogPackage )
 	
 

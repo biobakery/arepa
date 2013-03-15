@@ -7,20 +7,21 @@ import time
 pE = DefaultEnvironment( )
 
 c_strURL		= "http://svn.bigcat.unimaas.nl/bridgedb/trunk/"
-c_strRevision		= "587"
+c_strRevision	= "587"
 c_strTrunk		= "trunk"
 
-c_dirUniprotKO		= Dir(sfle.d( pE, sfle.c_strDirEtc, "uniprotko" ))
+c_dirUniprotKO	= Dir(sfle.d( pE, sfle.c_strDirEtc, "uniprotko" ))
 c_strDirEtc		= sfle.d( pE, sfle.c_strDirEtc )
 c_fileInputBuilder	= sfle.d( pE, c_strTrunk, "build.xml" )
 c_fileBatchmapper	= sfle.d( pE, c_strTrunk, "batchmapper.sh" )
-c_fileUniprotKOTARGZ	= sfle.d( pE, c_dirUniprotKO, "uniprotko.tar.gz" ) 
+c_fileUniprotKOTARGZ= sfle.d( pE, c_dirUniprotKO, "uniprotko.tar.gz" ) 
 c_fileCheckLOG		= sfle.d( pE, sfle.c_strDirTmp, "checkout.log" )
 c_fileCompLOG		= sfle.d( pE, sfle.c_strDirTmp, "compile.log" )
 c_fileUnzipLOG		= sfle.d( pE, sfle.c_strDirTmp, "unzip.log" )
 c_fileRaceLOG		= sfle.d( pE, sfle.c_strDirTmp, "race.log" )
 
 ##Predefined mappingfiles from Bridgedb for human,  mouse and yeast:
+
 c_astrMappingFiles	= ["Hs_Derby_20120602.bridge", "Mm_Derby_20120602.bridge", "Sc_Derby_20120602.bridge"]
 c_strMappingURL		= "http://bridgedb.org/data/gene_database/"
 
@@ -63,9 +64,8 @@ while not fLocked:
 			strT, astrSs = sfle.ts( target, source )
 			return ( sfle.ex(["tar", "-xzf",c_fileUniprotKOTARGZ, "-C", c_strDirEtc]) or \
 				sfle.ex("echo Unzipped OK", strT) )
-		Command( c_fileUnzipLOG, c_fileCompLOG, funcMakeMapFiles )
+		astrFileUnzip = Command( c_fileUnzipLOG, c_fileCompLOG, funcMakeMapFiles )
 
-#BUGBUG: fix this
-		Depends( sfle.sop( pE, "rm -f", [c_fileRaceLOG] ), c_fileUnzipLOG )
+		Depends( sfle.ex( ["rm","-f", str(c_fileRaceLOG)] ), c_fileUnzipLOG )
 	else:
 		time.sleep( 5 )

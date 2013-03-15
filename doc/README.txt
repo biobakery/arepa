@@ -3,16 +3,14 @@ ARepA: Automated Repository Acquisition
 ======================================================
 
 ..  This document follows reStructuredText syntax and conventions.
-	You can compile this file to a PDF or HTML document by 
-	executing the "SConstruct" file in the directory where
-	this file is located. Simply run "scons" in your terminal. 
+	You can compile this file to a PDF or HTML document. 
 
 -------------------------------------------------------
 User Manual, Version 0.9.3 
 -------------------------------------------------------
 
 Authors 
- Yo Sup Moon, Dr. Daniela Boernigen, Dr. Levi Waldron, [additional authors], and Dr. Curtis Huttenhower
+ Yo Sup Moon, Dr. Daniela Boernigen, Dr. Levi Waldron, Eric Franzosa, and Dr. Curtis Huttenhower
 
 Maintainer
  Yo Sup Moon <moon.yosup@gmail.com> 
@@ -400,15 +398,13 @@ References
 
 License  
 ==============================================
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+This software is licensed under the MIT license. 
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+Copyright (c) 2013 Yo Sup Moon, Dr. Daniela Boernigen, Dr. Levi Waldron, Dr. Eric Franzosa, and Dr. Curtis Huttenhower 
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

@@ -1,4 +1,25 @@
 #!/usr/bin/env python
+"""
+ARepA: Automated Repository Acquisition 
+
+ARepA is licensed under the MIT license.
+
+Copyright (C) 2013 Yo Sup Moon, Daniela Boernigen, Levi Waldron, Eric Franzosa, Curtis Huttenhower
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation 
+files (the "Software"), to deal in the Software without restriction, including without limitation the rights to 
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons 
+to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or 
+substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+"""
 
 import os
 import sfle
@@ -6,6 +27,18 @@ import sys
 import threading
 import glob 
 import csv 
+import argparse
+
+#===============================================================================
+# ARepA Documentation
+#===============================================================================
+
+c_strVersion		= "0.9.4"
+c_strDate			= "2013-03-15"
+c_strURL			= "http://huttenhower.sph.harvard.edu/arepa"
+c_strLicense		= "MIT license"
+c_astrAuthors		= ["Yo Sup Moon", "Daniela Boernigen", "Levi Waldron", "Eric Franzosa", "Curtis Huttenhower"]
+c_strMaintainer		= r"Yo Sup Moon <moon@college.harvard.edu>"
 
 #===============================================================================
 # ARepA structural metadata
@@ -58,21 +91,6 @@ def level( ):
 	return iRet
 
 c_strProgSConstruct		= sfle.d( path_arepa( ), sfle.c_strDirSrc, "SConstruct.py" )
-
-#===============================================================================
-# R package building 
-#===============================================================================
-c_strRPackage = "rpackage"
-
-def r_dir( strName = c_strRPackage ):
-	strDirMan = sfle.d( strName, "man" )
-	strDirData = sfle.d( strName, sfle.c_strDirData )
-	if not(os.path.exists(strDirMan)):
-		os.makedirs( sfle.d( strName, "man" ) )
-	if not(os.path.exists(strDirData)):
-		os.makedirs( sfle.d( strName, sfle.c_strDirData ) )
-	with open( sfle.d( strName, "NAMESPACE" ), "w" ) as outputf:
-		outputf.write( r'exportPattern("^[[:alpha:]]+")' )
 	
 #===============================================================================
 # Gene ID conversion
@@ -159,8 +177,17 @@ def get_mappingfile( strTaxID, fApprox = True, strDir = c_strDirMapping ):
                                         break
                 return (astrMapOut[0] if astrMapOut else None)
 
+#------------------------------------------------------------------------------
+#ARepA runtime behavior 
 
+argp = argparse.ArgumentParser( prog = "arepa.py",
+        description = 	"""Main python script for arepa.""" )
+
+
+def _main( ):
+	pass 
+	
 #------------------------------------------------------------------------------ 
-
 if __name__ == "__main__":
-	pass
+	_main() 
+	
