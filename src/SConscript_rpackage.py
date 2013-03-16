@@ -39,8 +39,7 @@ c_strNAMESPACE		= r"'exportPattern(\\'^[[:alpha:]]+\\')'"
 
 c_fileProgUnpickle	= sfle.d( pE, arepa.path_arepa(), sfle.c_strDirSrc, "unpickle.py" )
 
-def funcCheckRStructure( pE, strDatasetName, filePKL, fileNAMESPACE, fileDESCRIPTION, 
-	fileManMaster, strNAMESPACE = c_strNAMESPACE ):
+def funcCheckRStructure( pE, strDatasetName, filePKL, fileNAMESPACE, fileDESCRIPTION, fileManMaster, strNAMESPACE = c_strNAMESPACE ):
 	'''
 	Completes necessary components for R package building 
 	Assumes that data/ and man/ directories have the corresponding data and manual files per dataset
@@ -49,22 +48,22 @@ def funcCheckRStructure( pE, strDatasetName, filePKL, fileNAMESPACE, fileDESCRIP
 	fileNAMESPACE = pointer to NAMESPACE file to be tracked 
 	fileManMaster = pointer to the master manual file in man/ 
 	'''
-	
-	pHash = pickle.load( open(str(filePKL)) )
-	c_hashDescription	= { "Package": strDatasetName.replace("-","."), "Type": "Package", "Title": pHash.get("title"), 
-	  						"Version": arepa.c_strVersion, "Author": ", ".join(arepa.c_astrAuthors), 
-	 						"Date": arepa.c_strDate, "Maintainer": arepa.c_strMaintainer, 
-							"Depends": "R (>= 2.10.0), affy", "Suggests": "survival", "URL": arepa.c_strURL,
-							"License": arepa.c_strLicense, "Description": pHash.get("summary") or "foo" }
-	
+
 	def _makeDescription( target, source, env ):
 		strT, astrSs = sfle.ts( target, source )
+		pHash = pickle.load(open(astrSs[0]))
+		pHashDescription	= { "Package": strDatasetName.replace("-","."), "Type": "Package", "Title": pHash.get("title"), 
+		  						"Version": arepa.c_strVersion, "Author": ", ".join(arepa.c_astrAuthors), 
+		 						"Date": arepa.c_strDate, "Maintainer": arepa.c_strMaintainer, 
+								"Depends": "R (>= 2.10.0), affy", "Suggests": "survival", "URL": arepa.c_strURL,
+								"License": arepa.c_strLicense, "Description": pHash.get("gloss") or " " }
 		with open(strT, "w") as outputf:
-			for k,v in c_hashDescription.items():
+			for k,v in pHashDescription.items():
 				outputf.write( k + ": " + v + "\n" )
 				
 	def _makeMasterMan( target, source, env ):
 		strT, astrSs = sfle.ts( target, source )
+		pHash = pickle.load(open(astrSs[0]))
 		def _metaStr( strDescription, strContent ):
 			return "\\"+ strDescription + "{" + strContent + "}"
 						
@@ -82,7 +81,7 @@ def funcCheckRStructure( pE, strDatasetName, filePKL, fileNAMESPACE, fileDESCRIP
 	# Make NAMESPACE File 
 	return ( sfle.scmd( pE, "echo " + strNAMESPACE, fileNAMESPACE ) +
 	# Make DESCRIPTION File 
-		Command( fileDESCRIPTION, None, _makeDescription ) + 
+		Command( fileDESCRIPTION, filePKL, _makeDescription ) + 
 	# Make Master Man File 
 		Command( fileManMaster, filePKL, _makeMasterMan ) )
 

@@ -95,8 +95,6 @@ for strSet, strBase in c_hashFiles.items( ):
 	if strBase != "gpl":
 		afileTXTs += afileCur
 
-print afileTXTs 
-
 # Parse XML into gds_all/gse_all/gpl_all.txt (text files containing all ids) 
 def getAll( target, source, env ):
 	stripFw = lambda s: stripFw( s[1:] ) if s.startswith("0") else s
@@ -120,7 +118,6 @@ def getAnnot( target, source, env ):
 
 afileAnnot = Command( c_fileTmpAnnot, None, getAnnot )
 NoClean( afileAnnot )
-
 
 #===============================================================================
 # Pass the IDs from gds/gse/gpl.txt to child directories
