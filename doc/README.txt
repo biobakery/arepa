@@ -29,7 +29,6 @@ Citation
  (working title)
 
 
-
 Chapter 0 Getting Started 
 ============================================
 
@@ -91,28 +90,24 @@ Section 0.2 Software Prerequisites
 
 Before downloading ARepA, you should have the following software on your machine:
 
-* Python (ver >= 2.7.1) 
-* SCons (ver >= 2.1.0)  
-* R (ver >= 2.13.1) with Bioconductor package, permission to download new libraries
-* Java SE 6 (ver >= 1.6.0): Java is needed for gene identifier conversion service
-* Mercurial Source Control Management (ver >= 2.5.1)
-* Subversion Source Control Management (ver >= 1.7.8): for automated acquisition of BridgeDB
-* Sleipnir Library for Computational Functional Genomics (Optional, but necessary for some normalization steps)
+* Required 
+	Python (ver >= 2.7.1) 
+	SCons (ver >= 2.1.0)  
+	R (ver >= 2.13.1) with Bioconductor package, permission to download new libraries
+	Java SE 6 (ver >= 1.6.0): Java is needed for gene identifier conversion service
+	Subversion Source Control Management (ver >= 1.7.8): for automated acquisition of BridgeDB
+
+* Recommended 
+	Sleipnir Library for Computational Functional Genomics (Optional, but necessary for some normalization 	steps)
 
 
 Section 0.3 Downloading ARepa 
 ------------------------------------------------
 
-You can retrieve a copy of ARepA via mercurial (Recommended) ::
+You can download ARepA from the following url: http://huttenhower.sph.harvard.edu/arepa. 
 
-$ hg clone https://bitbucket.org/chuttenh/arepa
-
-or by downloading a tarball from the huttenhower website ::
-
-$ wget http://huttenhower.org/arepa/arepa_stable.tar.gz
-
-Once you have downloaded arepa, you must set up the correct environmental variables, 
-which is described in the next section. 
+Once you have downloaded arepa, you must set up the correct UNIX paths, which 
+is described in the next section. 
 
 Section 0.4 Setting up the Path 
 --------------------------------------------
@@ -125,6 +120,8 @@ Make sure you are at the root level of arepa. Check by typing in your terminal :
 $ pwd 
 
 Your local arepa directory should look something like this 
+
+::
 
 	BioGrid		doc			etc         GEO     	MPIDB	RegulonDB   src     tmp
 	Bacteriome  GeneMapper  IntAct  	SConstruct  STRING
@@ -174,24 +171,13 @@ It is **recommended** that you extract and run the GeneMapper module **prior** t
 ARepA will automatically do this for you when the necessity of using GeneMapper arises, but it is recommended that 
 you do this first. This may save you some headaches. Extraction of GeneMapper can be done by running the SConstruct file in the GeneMapper directory. Let's first see what directories are present in the current implementation of arepa ::
 
-$ ls | less -S
+$ ls 
 
-What you see is the following ::
+What you see is the following
 
-$ Bacteriome
-$ BioGrid
-$ GEO
-$ GeneMapper
-$ IntAct
-$ MPIDB
-$ Package
-$ RegulonDB
-$ SConstruct
-$ STRING
-$ doc
-$ etc
-$ src
-$ tmp 
+::
+
+	Bacteriome  BioGrid  doc  etc  GeneMapper  GEO  IntAct  MPIDB  RegulonDB  SConstruct  src  STRING  tmp
 
 Everything you see is a **directory** except for a specialized **file** named "SConstruct". 
 Right now, we are interested in only initializing the directory "GeneMapper".
@@ -206,10 +192,15 @@ we will talk more about what this means later).
 
 Congratulations! Now you are ready to run ARepA. Before you run it, though, it is important to understand how ARepA handles user input. 
 
-Chapter 1 Running ARepA 
+
+Chapter 1 Running ARepA (Simple)
 ============================================
 
-1.1 Input  
+
+Chapter 2 Running ARepA (Customized)
+============================================
+
+2.1 Input  
 --------------------------------------------
 
 ARepA requires the user to provide (1) the taxonomic identifier of the organism of interest and (2) the final gene identifier standard (gene name, uniprot, kegg orthologs, etc). 
@@ -256,7 +247,7 @@ explaination can be found in the SCons user manual.
 The output files, when built, will be saved in the **data** directory of the respective modules.
 For instance, with the above taxa file, E. coli expression data will saved in GEO/data, and regulatory association network data in RegulonDB/data, and so forth.   
 
-1.2 Output 
+2.2 Output 
 --------------------------------------------
 
 ARepA by default fetches data from 7 different public repositories, which are again listed below. For each repository, ARepA acquires the dataset names matching the taxonomic 
@@ -272,10 +263,10 @@ identifier specified by the input file.
 	* BioGrid
 	* STRING 
 
-1.3 Advanced Input  
+2.3 Advanced Input  
 --------------------------------------------
 
-Chapter 2 Modules 
+Chapter 3 Modules 
 ============================================
 
 There are two types of modules: **internal modules**, and 
@@ -303,7 +294,7 @@ Interaction Networks
 5. BioGrid
 6. STRING 
 
-Chapter 3 Design Choice 
+Chapter 4 Design Choice 
 ============================================
 
 1. SConstruct - the main driver script of the module. This initiates all processes downstream of the file.
@@ -313,10 +304,10 @@ Chapter 3 Design Choice
 5. etc - contains all configuration information for the module, including programmatic and manual overrides. 
 6. doc - contains documentation for the module. 
 
-Chapter 4 Advanced Topics 
+Chapter 5 Advanced Topics 
 ============================================ 
 
-Section 4.1 Unit-Testing ARepA 
+Section 5.1 Unit-Testing ARepA 
 --------------------------------------------
 
 ARepA has a built-in unit testing script, located in the main **src** directory. 
@@ -328,12 +319,12 @@ The default behavior of the testing script assumes that the entire build of ARep
 
 $ python test.py scons 
 
-Section 4.2 Advanced Configuration 
+Section 5.2 Advanced Configuration 
 --------------------------------------------
 Mapping status can be checked in every module by either checking the pickle metadata. 
 
 
-Section 4.3 Running Modules Separately 
+Section 5.3 Running Modules Separately 
 ---------------------------------------------
 
 After the taxonomic information has been downloaded
@@ -343,14 +334,14 @@ one can launch any internal module separately by going into a desired directory 
 $ cd GEO
 $ scons 
 
-Section 4.3 Adding Custom Modules
+Section 5.4 Adding Custom Modules
 ---------------------------------------------
 
 This is where things get fun. ARepA was designed so that adding new repositories is 
 easy (well, as easy as the learning curve of SCons).  
 
 
-Chapter 5 Frequently Asked Questions 
+Chapter 6 Frequently Asked Questions 
 ============================================
 
 NB: All questions should be directed to the arepa-users group group. 

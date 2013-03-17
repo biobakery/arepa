@@ -9,6 +9,9 @@ import gzip
 import metadata 
 import re 
 
+c_strFileSkip			= sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, "skip" )
+m_iSkip					= int((sfle.readcomment( open(c_strFileSkip) ) or ["3"])[0])
+
 def test( iLevel, strID, hashArgs ):
 	return ( iLevel == 2 ) and ( strID.find( "GSE" ) == 0 ) 
 if locals( ).has_key( "testing" ):

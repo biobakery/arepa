@@ -33,7 +33,7 @@ import argparse
 # ARepA Documentation
 #===============================================================================
 
-c_strVersion		= "0.9.4"
+c_strVersion		= "0.9.5"
 c_strDate			= "2013-03-15"
 c_strURL			= "http://huttenhower.sph.harvard.edu/arepa"
 c_strLicense		= "MIT license"

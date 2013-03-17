@@ -16,8 +16,7 @@ pE = DefaultEnvironment( )
 
 c_strID				= arepa.cwd( )
 c_fileIDTXT			= sfle.d( pE, c_strID + ".txt" )
-c_fileIDSOFTGZ			= sfle.d( pE, c_strID + ".soft.gz" )
-
+c_fileIDSOFTGZ		= sfle.d( pE, c_strID + ".soft.gz" )
 
 Import( "hashArgs" )
 
@@ -37,6 +36,7 @@ def funcGPLsTXT( target, source, env ):
 	with open( strT, "w" ) as fileOut:
 		fileOut.write( "%s\n" % "\n".join( ("-".join( (c_strID, s) ) for s in setstrGPLs) ) )
 	return None
+
 afileGPLsTXT = Command( c_fileIDTXT, c_fileIDSOFTGZ, funcGPLsTXT )
 
 sfle.sconscript_children( pE, afileGPLsTXT, sfle.scanner( ), 2, arepa.c_strProgSConstruct, hashArgs )

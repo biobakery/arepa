@@ -13,21 +13,18 @@ Requirements for R package building:
 * DESCRIPTION file 
 	/** example **/ 
 
-	Package: curatedOvarianData
+	Package: $package_name
 	Type: Package
-	Title: Clinically Annotated Data for the Ovarian Cancer Transcriptome
-	Version: 1.0.1
-	Date: 2013-02-22
-	Author: Benjamin F. Ganzfried, Markus Riester, Steve Skates, Victoria Wang, Thomas Risch, Benjamin Haibe-Kains, Svitlana Tyekucheva,
-	Maintainer: Levi Waldron <levi@jimmy.harvard.edu>
-	Description: The curatedOvarianData package provides data for gene expression analysis in patients with ovarian cancer.
+	Title: $dataset_title
+	Version: $arepa_version
+	Date: $arepa_date
+	Author: $arepa_authors
+	Maintainer: $arepa_maintainer
+	Description: Automatically generated R package by arepa 
 	Depends: R (>= 2.10.0), affy
-	Imports: BiocGenerics
-	Suggests: survival, RUnit, metafor, genefilter, logging, sva, xtable
-	License: Artistic-2.0
-	URL: http://bcb.dfci.harvard.edu/ovariancancer
-	biocViews: ExperimentData, Cancer, Ovarian, RNAExpressionData
-
+	Suggests: survival
+	License: MIT license 
+	URL: http://huttenhower.sph.harvard.edu/arepa
 '''
 
 import sfle 
@@ -56,7 +53,7 @@ def funcCheckRStructure( pE, strDatasetName, filePKL, fileNAMESPACE, fileDESCRIP
 		  						"Version": arepa.c_strVersion, "Author": ", ".join(arepa.c_astrAuthors), 
 		 						"Date": arepa.c_strDate, "Maintainer": arepa.c_strMaintainer, 
 								"Depends": "R (>= 2.10.0), affy", "Suggests": "survival", "URL": arepa.c_strURL,
-								"License": arepa.c_strLicense, "Description": pHash.get("gloss") or " " }
+								"License": arepa.c_strLicense, "Description": "ARepA generated package" }
 		with open(strT, "w") as outputf:
 			for k,v in pHashDescription.items():
 				outputf.write( k + ": " + v + "\n" )
