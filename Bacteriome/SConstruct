@@ -11,7 +11,8 @@ c_strInputTaxIDs		= sfle.d( arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
 c_fileBactTXT       	 	= sfle.d( pE, sfle.c_strDirTmp, os.path.basename(c_strURL))
 c_fileProgBacteriome		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "bacteriome.py" ) 
 c_fileProgUnpickle		= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "unpickle.py" )
-c_fileOutDAT             	= sfle.d( pE, sfle.c_strDirData, "bacteriome_00raw.dat" ) 
+c_fileIDDAT				= sfle.d( pE, sfle.c_strDirData, "bacteriome.dat" )
+c_fileIDRawDAT             	= sfle.d( pE, sfle.c_strDirData, "bacteriome_00raw.dat" ) 
 
 #GeneMapping 
 c_fileInputSConscriptGM		= sfle.d( pE, arepa.path_arepa(),sfle.c_strDirSrc,"SConscript_genemapping.py") 
@@ -20,9 +21,10 @@ c_strGeneFrom			= "Kg"
 c_strMappingfileEcoli   	= sfle.d(arepa.path_arepa(), "GeneMapper", sfle.c_strDirEtc, "uniprotko","511145_eco_ko_uniprot.map")
 
 c_fileInMeta		= sfle.d( pE, arepa.path_repo(), sfle.c_strDirEtc, "bacteriome.txt" )
-c_fileOutDAB            = sfle.d( pE, sfle.c_strDirData, sfle.rebase(c_fileOutDAT, ".dat", ".dab" ))
-c_fileOutQUANT          = sfle.d( pE, sfle.c_strDirData, sfle.rebase(c_fileOutDAT, ".dat", ".quant" ))
-c_fileOutPKL		= sfle.d( pE, sfle.c_strDirData, "bacteriome.pkl" )		 
+
+c_fileIDDAB			= sfle.d( pE, sfle.c_strDirData, sfle.rebase(c_fileIDRawDAT, ".dat", ".dab" ))
+c_fileIDQUANT		= sfle.d( pE, sfle.c_strDirData, sfle.rebase(c_fileIDRawDAT, ".dat", ".quant" ))
+c_fileIDPKL			= sfle.d( pE, sfle.c_strDirData, "bacteriome.pkl" )		 
 c_fileStatus		= sfle.d( pE, sfle.c_strDirData, "status.txt" )
 
 #===============================================================================
@@ -31,11 +33,11 @@ c_fileStatus		= sfle.d( pE, sfle.c_strDirData, "status.txt" )
 sfle.download( pE, c_strURL, c_fileBactTXT )
 
 #Extractor 
-sfle.op( pE, c_fileProgBacteriome, [[c_fileBactTXT], [True,c_fileOutDAT]] )
+sfle.op( pE, c_fileProgBacteriome, [[c_fileBactTXT], [True,c_fileIDRawDAT]] )
 
 #Launch gene mapping 
 execfile(str(c_fileInputSConscriptGM)) 
-astrMapped = funcGeneIDMapping( pE, c_fileOutDAT, c_strGeneFrom, c_fileStatus,
+astrMapped = funcGeneIDMapping( pE, c_fileIDRawDAT, c_strGeneFrom, c_fileStatus,
         arepa.org2taxid( "Escherichia coli str. K-12 substr. MG1655" ) )
 # Note that this must currently correspond to the "best" mapping file from GeneMapper
 # For whatever reason, this is hard-coded to the type strain, not the species
@@ -45,10 +47,11 @@ astrMapped = funcGeneIDMapping( pE, c_fileOutDAT, c_strGeneFrom, c_fileStatus,
 astrUnique = funcMakeUnique( pE, astrMapped[0] )
 
 #Make metadata 
-sfle.pipe( pE, c_fileInMeta, c_fileProgUnpickle, c_fileOutPKL, ["-r","-l", [c_fileStatus]] )
+sfle.pipe( pE, c_fileInMeta, c_fileProgUnpickle, c_fileIDPKL, ["-r","-l", [c_fileStatus]] )
 
 #DAT to DAB
 execfile( str(c_fileInputSConscriptDAB) )
-astrDAB = funcDAB( pE, c_fileOutDAB, [c_fileOutDAT, astrUnique[0]] )
-funcQUANT( pE, c_fileOutQUANT )
+astrDAB = funcDAB( pE, c_fileIDDAB, [c_fileIDRawDAT, astrUnique[0]] )
+funcPCL( pE, c_fileIDDAT, astrUnique[0] )
+funcQUANT( pE, c_fileIDQUANT )
 

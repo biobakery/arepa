@@ -19,7 +19,9 @@ c_fileInputBioGridC			= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirTmp, "biogr
 
 c_fileIDPKL				= sfle.d( pE, c_strID + ".pkl" )
 c_fileIDDAB				= sfle.d( pE, c_strID + ".dab" )
-c_fileIDDAT			 	= sfle.d( pE, c_strID + "_00raw.dat" )
+
+c_fileIDRawDAT			 	= sfle.d( pE, c_strID + "_00raw.dat" )
+c_fileIDDAT					= sfle.d( pE, c_strID + ".dat")
 c_fileIDQUANT		 		= sfle.d( pE, c_strID + ".quant" )
 	
 c_fileProgC2Metadata			= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "c2metadata.py" ) 
@@ -31,11 +33,11 @@ c_fileInputSConscriptDAB	= sfle.d( pE, arepa.path_arepa(), sfle.c_strDirSrc, "SC
 c_fileStatus			= sfle.d( pE,"status.txt" )
 
 # Get data 
-afileIDDAT = sfle.pipe( pE, c_fileInputBioGridC, c_fileProgC2DAT, c_fileIDDAT, [c_strID] )
+afileIDDAT = sfle.pipe( pE, c_fileInputBioGridC, c_fileProgC2DAT, c_fileIDRawDAT, [c_strID] )
 
 # Launch gene mapping 
 execfile(str(c_fileInputSConscriptGM))
-astrMapped = funcGeneIDMapping( pE, c_fileIDDAT, arepa.genemap_genename( ), c_fileStatus ) 
+astrMapped = funcGeneIDMapping( pE, c_fileIDRawDAT, arepa.genemap_genename( ), c_fileStatus ) 
 
 # Make identifiers unique 
 astrUnique = funcMakeUnique( pE, astrMapped[0] )
@@ -45,5 +47,6 @@ afileIDTXT = sfle.pipe( pE, c_fileInputBioGridC, c_fileProgC2Metadata, c_fileIDP
 execfile(str(c_fileInputSConscriptDAB))
 
 # DAT to DAB
-astrDAB = funcDAB( pE, c_fileIDDAB, [c_fileIDDAT, astrUnique[0]] )
+astrDAB = funcDAB( pE, c_fileIDDAB, [c_fileIDRawDAT, astrUnique[0]] )
+funcPCL( pE, c_fileIDDAT, astrUnique[0] )
 funcQUANT( pE, c_fileIDQUANT )

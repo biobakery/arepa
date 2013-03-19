@@ -14,6 +14,10 @@ def funcDAB( pE, fileOutDAB, afileInDAT ):
 
 	return pE.Command( fileOutDAB, afileInDAT, _funcDAB)
 
+def funcPCL( pE, fileOutPCL, fileInPCL ):
+	
+	return sfle.sop( pE, "cp", [[fileInPCL], [True,fileOutPCL]] )
+
 def funcQUANT( pE, fileQUANTin ):
 	
 	return sfle.scmd( pE, "echo '0.5\t1.5'", fileQUANTin ) 	

@@ -15,10 +15,11 @@ c_fileProgUnpickle			= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "unpic
 
 c_fileInMeta				= sfle.d( pE, sfle.c_strDirEtc, "regulondb.txt" )
 
-c_fileOutDAT				= sfle.d( pE, sfle.c_strDirData, "regulondb_00raw.dat" )
-c_fileOutDAB				= sfle.d( pE, sfle.c_strDirData, sfle.rebase(str(c_fileOutDAT), ".dat", ".dab" ))
-c_fileOutQUANT				= sfle.d( pE, sfle.c_strDirData, sfle.rebase(str(c_fileOutDAT), ".dat", ".quant" ))
-c_fileOutPKL				= sfle.d( pE, sfle.c_strDirData, "regulondb.pkl" )
+c_fileIDRawDAT				= sfle.d( pE, sfle.c_strDirData, "regulondb_00raw.dat" )
+c_fileIDDAT					= sfle.d( pE, sfle.c_strDirData, "regulondb.dat" )
+c_fileIDDAB					= sfle.d( pE, sfle.c_strDirData, sfle.rebase(str(c_fileIDRawDAT), ".dat", ".dab" ))
+c_fileIDQUANT				= sfle.d( pE, sfle.c_strDirData, sfle.rebase(str(c_fileIDRawDAT), ".dat", ".quant" ))
+c_fileIDPKL					= sfle.d( pE, sfle.c_strDirData, "regulondb.pkl" )
 
 #For GeneMapper:
 c_fileInputSConscriptGM		= sfle.d( pE, arepa.path_arepa(),sfle.c_strDirSrc,"SConscript_genemapping.py")
@@ -32,21 +33,22 @@ c_fileStatus			= sfle.d( pE, sfle.c_strDirData, "status.txt" )
 sfle.download( pE,c_strURL,c_fileRegDBTXT )
 
 #Extractor 
-sfle.op( pE, c_fileProgRegDB, [[c_fileRegDBTXT], [True,c_fileOutDAT]] )
+sfle.op( pE, c_fileProgRegDB, [[c_fileRegDBTXT], [True,c_fileIDRawDAT]] )
 
 #Launch gene mapping 
 execfile(str(c_fileInputSConscriptGM))
-astrMapped = funcGeneIDMapping( pE, c_fileOutDAT, arepa.genemap_genename( ), c_fileStatus,
+astrMapped = funcGeneIDMapping( pE, c_fileIDRawDAT, arepa.genemap_genename( ), c_fileStatus,
 	arepa.org2taxid( "Escherichia coli str. K-12 substr. MG1655" ) )
 # Note that this must currently correspond to the "best" mapping file from GeneMapper
 # For whatever reason, this is hard-coded to the type strain, not the species
 
 #Make identifiers unique 
 astrUnique = funcMakeUnique( pE, astrMapped[0] )
-sfle.pipe( pE, c_fileInMeta, c_fileProgUnpickle, c_fileOutPKL, ["-r","-l",[c_fileStatus]] )
+sfle.pipe( pE, c_fileInMeta, c_fileProgUnpickle, c_fileIDPKL, ["-r","-l",[c_fileStatus]] )
 
 execfile(str(c_fileInputSConscriptDAB))
 
 #DAT to DAB 
-astrDAB = funcDAB( pE, c_fileOutDAB, [c_fileOutDAT, astrUnique[0]] )
-funcQUANT( pE, c_fileOutQUANT ) 
+astrDAB = funcDAB( pE, c_fileIDDAB, [c_fileIDRawDAT, astrUnique[0]] )
+funcPCL( pE, c_fileIDDAT, astrUnique[0] )
+funcQUANT( pE, c_fileIDQUANT ) 
