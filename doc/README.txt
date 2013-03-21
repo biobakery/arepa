@@ -85,11 +85,11 @@ Section 0.2 Software Prerequisites
 Before downloading ARepA, you should have the following software on your machine:
 
 * Required 
-	* Python (ver >= 2.7.1) 
-	* SCons (ver >= 2.1.0)  
-	* R (ver >= 2.13.1) with GEOquery package (part of Bioconductor)
-	* Java SE 6 (ver >= 1.6.0): Java is needed for gene identifier conversion service
-	* Subversion Source Control Management (ver >= 1.7.8): for automated acquisition of BridgeDB
+	* Python (ver >= 2.7) 
+	* SCons (ver >= 2.1)  
+	* R (ver >= 2.13) with GEOquery package (part of Bioconductor)
+	* Java SE 6 (ver >= 1.6): Java is needed for gene identifier conversion service
+	* Subversion Source Control Management (ver >= 1.7): for automated acquisition of BridgeDB
 
 * Recommended 
 	* Sleipnir Library for Computational Functional Genomics (Optional, but necessary for some normalization 	steps)
@@ -97,13 +97,13 @@ Before downloading ARepA, you should have the following software on your machine
 Section 0.3 Downloading ARepa 
 ------------------------------------------------
 
-You can download ARepA from the following url: http://huttenhower.sph.harvard.edu/arepa. Once you have downloaded arepa, you must set up the correct UNIX paths, which is described in the next section. 
+You can download ARepA from the following url: http://huttenhower.sph.harvard.edu/arepa. Once you have downloaded arepa, you must set up the correct python paths, which is described in the next section. 
 
 Section 0.4 Setting up the Path 
 --------------------------------------------
 
-Once you have cloned arepa into a local directory, you must set up the correct UNIX paths
-so that the necessary files in ARepA are recognized by your system. Make sure you are at the root level of arepa. Check by typing in your terminal ::
+Once you have cloned arepa into a local directory, you must set up the correct python paths
+so that the necessary files in ARepA are recognized by your python interpreter. Make sure you are at the root level of arepa. Check by typing in your terminal ::
 
 $ ls 
 
@@ -129,13 +129,12 @@ While in the root level in arepa, set the path by typing ::
 
 	$ export PYTHONPATH=`pwd`/src:$PYTHONPATH 
 
-This command adds the main source directory to both the UNIX path for the bash shell and the environmental path for Python. These two lines should be added to your bashrc file to avoid repeating this exportation procedure every time you want to run arepa. 
+This command adds the main source directory to the environmental variable PYTHONPATH. These two lines should be added to your bashrc file to avoid repeating this exportation procedure every time you want to run arepa. 
 
 Section 0.5 ARepA Basics 
 --------------------------------------------- 
 
-ARepA is built with *hierarchical modularity* in mind. This means that a computational process can be initiated 
-from just about any node in the program tree. At every executable directory, you will see an "SConstruct" file.This file can be launched with the command "scons". 
+ARepA is built with *hierarchical modularity* in mind. This means that a computational process can be initiated from just about any node in the program tree. At every executable directory, you will see an "SConstruct" file.This file can be launched with the command "scons". 
 
 Things to note: 
 
