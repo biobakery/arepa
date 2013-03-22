@@ -7,7 +7,7 @@ ARepA: Automated Repository Acquisition
 	For instructions on how to do so, visit the reStructeredText webpage. 
 
 -------------------------------------------------------
-User Manual, Version 0.9.5
+User Manual, Version 0.9.6
 -------------------------------------------------------
 
 Authors 

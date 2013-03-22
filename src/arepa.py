@@ -33,8 +33,8 @@ import argparse
 # ARepA Documentation
 #===============================================================================
 
-c_strVersion		= "0.9.5"
-c_strDate			= "2013-03-15"
+c_strVersion		= "0.9.6"
+c_strDate			= "2013-03-22"
 c_strURL			= "http://huttenhower.sph.harvard.edu/arepa"
 c_strLicense		= "MIT license"
 c_astrAuthors		= ["Yo Sup Moon", "Daniela Boernigen", "Levi Waldron", "Eric Franzosa", "Curtis Huttenhower"]
@@ -182,11 +182,18 @@ def get_mappingfile( strTaxID, fApprox = True, strDir = c_strDirMapping ):
 
 argp = argparse.ArgumentParser( prog = "arepa.py",
         description = 	"""Main python script for arepa.""" )
-
+argp.add_argument( "-m",		dest = "strID",	metavar = "mapping",
+		type = str,					required = False,
+		help = "Convert between taxid to organism and vice versa" )
 
 def _main( ):
-	pass 
-	
+	args = argp.parse_args( )
+	try: 
+		int(args.strID)
+		print taxid2org( args.strID )
+	except ValueError:
+		print org2taxid( args.strID, True )
+
 #------------------------------------------------------------------------------ 
 if __name__ == "__main__":
 	_main() 
