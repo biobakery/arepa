@@ -9,9 +9,6 @@ import gzip
 import metadata 
 import re 
 
-c_strFileSkip			= sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, "skip" )
-m_iSkip					= int((sfle.readcomment( open(c_strFileSkip) ) or ["3"])[0])
-
 def test( iLevel, strID, hashArgs ):
 	return ( iLevel == 2 ) and ( strID.find( "GSE" ) == 0 ) 
 if locals( ).has_key( "testing" ):
@@ -37,6 +34,7 @@ c_fileIDPKL    			= sfle.d( pE, c_strID + ".pkl" )
 c_strURLGPL    			= hashArgs["c_strURLGPL"]
 c_strHost      			= "ftp.ncbi.nih.gov"
 c_strPath      			= "pub/geo/DATA/annotation/platforms/"
+c_strGPLPath			= r"http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?view=data&acc="
 
 c_strDirR				= "R"
 c_dirR					= sfle.d( c_strDirR )
@@ -72,7 +70,8 @@ c_fileProgSeries2Metadata 	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "
 c_fileProgPkl2Metadata    	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "pkl2metadata.py" ) 
 c_fileProgSeries2GSM      	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "series2gsm.py" ) 
 c_fileProgProcessRaw      	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "preprocessRaw.R" ) 
-c_fileProgAnnot2Map      	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "annot2map.py" ) 
+c_fileProgAnnot2Map      	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "annot2map.py" )
+c_fileProgGPL2TXT			= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "gpl2txt.py") 
 c_fileProgMergeMapping    	= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "merge_genemapping.py" )
 c_fileProgGetInfo         	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "getinfo.py" )
 c_fileProgEset2Help       	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "eset2help.R" )
@@ -120,19 +119,15 @@ def getGPL( target, source, env ):
 	astrTs, astrSs = ([f.get_abspath( ) for f in a] for a in (target,source))
 	strAnnot		= astrTs[0]
 	strRMeta		= astrSs[0]
-	pid = [row for row in csv.DictReader(open( strRMeta ))]\
-		[0]["platform_id"] 
+	pid = [row for row in csv.DictReader(open( strRMeta ))][0]["platform_id"] 
 	strGPLID = c_strID.split("-")[1] if len( c_strID.split("-") ) == 2 else pid
-	listGPL = map( lambda v: v.replace(".annot.gz",""), \
-		sfle.readcomment( c_fileAnnot ) )
+	listGPL = map( lambda v: v.replace(".annot.gz",""), sfle.readcomment( c_fileAnnot ) )
 	if strGPLID in listGPL:
 		#Annotation file exist, download
-		sfle.ex( ["wget", sfle.d( c_strURLGPL, strGPLID + ".annot.gz" ), "-O", \
-			strAnnot ] )	
+		sfle.ex( ["wget", sfle.d( c_strURLGPL, strGPLID + ".annot.gz" ), "-O", strAnnot ] )	
 	else:
 		#Annotation file does not exist, skip download 
-		with open( strGPLID + ".annot.gz", "w") as outputf:
-			outputf.write(" ")
+		sfle.ex( ["touch", strAnnot] )
 
 fileAnnot = Command( c_fileIDAnnot, c_fileRMetadataTXT, getGPL ) 
 

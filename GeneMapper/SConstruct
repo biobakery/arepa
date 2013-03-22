@@ -50,7 +50,7 @@ while not fLocked:
 		def funcCheckoutTrunk( target, source, env ):
 			strT, astrSs = sfle.ts( target, source )
 			return ( sfle.ex(["svn checkout -r", c_strRevision, c_strURL]) or
-				sfle.ex(["sed", "-i.orig", "'s/^java -jar/java -Xmx1024m -jar/g'", c_fileBatchmapper]) or
+				sfle.ex(["sed", "-i.orig", "'s/^java -jar/java -Xmx4096m -jar/g'", c_fileBatchmapper]) or
 				sfle.ex("echo checked out OK", strT) )
 		Command( c_fileCheckLOG, None, funcCheckoutTrunk )
 		

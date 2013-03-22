@@ -1,7 +1,11 @@
 #!/usr/bin/env python 
-''' parse mapping files
+
+''' 
+parse mapping files
 begins with !platform_table_begin 
-ends with !platform_table_end '''
+ends with !platform_table_end 
+'''
+
 import sfle 
 import glob
 import csv  
@@ -14,16 +18,21 @@ c_hashHead 	= { k:v for (k,v) in map( lambda x: map(lambda y: y.strip(), x.split
 		sfle.readcomment( open( c_fileMapping)) ) } if sfle.readcomment(open(c_fileMapping))\
 		else {	
 		"^ID .*? platform"             	: "Affy",
-		"Entrez Gene Symbol"       	: "HGNC",
-		"Uniprot .*? Symbol"  		: "Uniprot/TrEMBL",
-		"^(Entrez)? UniGene Symbol"	: "UniGene",	
+		"Entrez Gene Symbol"       		: "HGNC",
+		"Uniprot .*? Symbol"  			: "Uniprot/TrEMBL",
+		"^(Entrez)? UniGene Symbol"		: "UniGene",	
 		"Entrez Unigene Identifier"     : "UniGene_ID",
 		"GenBank Accession"             : "GB_ACC",
 		"Entrez Gene identifier"        : "EntrezGene",
 		"GenBank Identifier"            : "GenBank_ID"
 		}
 
-strAnnotGZ = sys.stdin.read()
+iArg			- len(sys.argv)
+strFileAnnotGZ	= sys.argv[1] if iArg > 1 else None 
+strFileOut 		= sys.argv[2] if iArg > 2 else None 
+
+strAnnotGZ 	= gzip.open( strFileAnnotGZ ).read() if strFileAnnotGZ else sys.stdin.read()
+fileOut		= open( strFileOut, "w" ) if strFileOut else sys.stdout
 
 if strAnnotGZ:
 	aHead = re.findall(r"^#(.+?)\n", strAnnotGZ, re.MULTILINE )
@@ -36,10 +45,9 @@ if strAnnotGZ:
 			if reLine:
 				aOutKeys.extend( [aKeys[aDesc.index(desc)]] )
 				hOutDict[ aKeys[aDesc.index(desc)]  ] = c_hashHead[item] 	
-	strTable = re.findall(r"!platform_table_begin(.+)!platform_table_end", \
-		strAnnotGZ, re.S )[0].strip()
+	strTable = re.findall(r"!platform_table_begin(.+)!platform_table_end", strAnnotGZ, re.S )[0].strip()
 	dr = csv.DictReader( strTable.split("\n"), delimiter = "\t" ) 
-	with sys.stdout as outputf:
+	with fileOut as outputf:
 		#write header
 		outputf.write( "\t".join( [hOutDict[k] for k in aOutKeys] ) + "\n" )
 		#write data
@@ -48,6 +56,7 @@ if strAnnotGZ:
 				outputf.write( "\t".join( [item[k] for k in aOutKeys] ) + "\n" )
 			except Exception:
 				continue 
-		sys.stdout.write(" ") 
+		outputf.write(" ") 
 else:
-	sys.stdout.write(" ") 
+	with fileOut as outputf: 
+		outputf.write(" ") 

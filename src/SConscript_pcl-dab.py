@@ -11,6 +11,7 @@ import arepa
 import os
 import metadata
 import glob 
+from subprocess import call as ex 
 
 c_aiCOL            = [0]
 c_iSkip            = 2
@@ -64,6 +65,16 @@ def funcIDQUANT( target, source, env ):
 	iLC = sfle.lc( strS )
 	return (sfle.ex("echo '-1.5\t-0.5\t0.5\t1.5\t2.5\t3.5\t4.5' >" + strT))
 
+def funcRawMap( target, source, env ):
+	strT, astrSs = sfle.ts( target, source )
+	strGPLTXTGZ, strRMeta, strProgAnnot2Map, strProgGPL2TXT = astrSs[:4]
+	pid = [row for row in csv.DictReader(open( strRMeta ))][0]["platform_id"] 
+	strGPLID = c_strID.split("-")[1] if len( c_strID.split("-") ) == 2 else pid
+	if not(sfle.isempty(str(strGPLTXTGZ))):
+		ex( [strProgAnnot2Map, strGPLTXTGZ, strT] )
+	else:
+		ex( [strProgGPL2TXT, c_strGPLPath + strGPLID, strT] )
+
 def funcMergeMap( target, source, env ):
 	strT, astrSs = sfle.ts( target, source)
 	fileTaxa, fileMerge, fileIDRaw =  astrSs[:3]
@@ -78,8 +89,8 @@ def funcPCL2DAB( pE, fileIDRawPCL, fileGPLTXTGZ, fileProgAnnot2Map, fileProgMerg
 
 	print "sleipnir", ("On" if bSleipnir else "Off")
 	#Produce raw mapping file for gene mapping 
-	astrMapRaw = sfle.pipe( pE, fileGPLTXTGZ, fileProgAnnot2Map, c_fileIDMapRaw )
-
+	astrMapRaw = pE.Command( c_fileIDMapRaw, [fileGPLTXTGZ, c_fileRMetadataTXT, fileProgAnnot2Map, c_fileProgGPL2TXT], funcRawMap )
+	
 	#Produce merged mapping file
 	astrMap = pE.Command( c_fileIDMap, [fileTaxa, fileProgMergeMapping, astrMapRaw[0]], funcMergeMap )
 	
