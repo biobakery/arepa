@@ -44,7 +44,8 @@ m_hashGeneIDs			= { k:v for k,v in map( lambda x: x.split("\t"),
 def funcCounter( iter ):
 	return ( "%02d" % next( iter ) )
 
-def funcGeneIDMapping( pE, fileDATin, strGeneFrom = None, fileLOGout = None, strMAPin = None, aiCOL = [0,1], iSkip = 0, iLevel = 2):
+def funcGeneIDMapping( pE, fileDATin, strGeneFrom = None, fileLOGout = None, strMAPin = None, aiCOL = [0,1], 
+	iSkip = 0, iLevel = 2 ):
 	try:
 		int(strMAPin)
 		strTaxID, strMAPin = strMAPin, None

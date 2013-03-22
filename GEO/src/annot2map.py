@@ -12,6 +12,7 @@ import csv
 import sys 
 import re 
 import arepa 
+import gzip 
 
 c_fileMapping	= sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, "mapping" )
 c_hashHead 	= { k:v for (k,v) in map( lambda x: map(lambda y: y.strip(), x.split("%")),\
@@ -27,7 +28,7 @@ c_hashHead 	= { k:v for (k,v) in map( lambda x: map(lambda y: y.strip(), x.split
 		"GenBank Identifier"            : "GenBank_ID"
 		}
 
-iArg			- len(sys.argv)
+iArg			= len(sys.argv)
 strFileAnnotGZ	= sys.argv[1] if iArg > 1 else None 
 strFileOut 		= sys.argv[2] if iArg > 2 else None 
 

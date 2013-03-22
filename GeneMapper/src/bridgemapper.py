@@ -15,6 +15,7 @@ import sys
 import tempfile
 import metadata 
 import sys 
+import sfle 
 
 # These are the only genes that we are keeping track of for now 
 
@@ -171,6 +172,9 @@ argp.add_argument( "-f",		dest = "strFrom",	metavar = "from_format",
 argp.add_argument( "-t",		dest = "strTo",		metavar = "to_format",
 	type = str,				default = "H",
 	help = "BridgeMapper single-character type code for output format" )
+argp.add_argument( "-u",		dest = "iMaxLines",	metavar = "max_lines",
+	type = int,					default = 100000,
+	help = "Maximum lines in input file; this is done for memory reasons" )
 argp.add_argument( "-s",		dest = "iSkip",		metavar = "skip_rows",
 	type = int,					default = 0,
 	help = "Number of header rows to skip at top of file" )
@@ -182,8 +186,12 @@ argp.add_argument('-x', 		dest = "fSniffer" ,	action="store_true", default=False
 
 def _main( ):
 	args = argp.parse_args( )
-	if args.strFrom == args.strTo:
-		#if the two gene identifier types are the same, return the input file 
+	iLC = sfle.lc( args.istm.name )
+ 
+	if (args.strFrom == args.strTo) or (iLC >= args.iMaxLines):
+		#if the two gene identifier types are the same, or if the line count exceeds iMaxLines, 
+		#return the input file 
+		
 		pAastrData = csv.reader(args.istm,csv.excel_tab)
 		csvw = csv.writer( args.ostm, csv.excel_tab )
 		for astrLine in pAastrData:
@@ -206,6 +214,7 @@ def _main( ):
 		#if gene sniffer flag is on, try to guess the best possible gene identifier 
 		if args.fSniffer:
 			args.strFrom = gene_sniffer( args.istm, args.strCols )
+		
 		bridgemapper( args.istm, args.ostm, args.strMap, args.strCols, args.strFrom, args.strTo, args.ostmLog, args.iSkip )
 
 if __name__ == "__main__":

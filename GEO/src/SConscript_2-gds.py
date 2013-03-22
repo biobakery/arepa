@@ -14,9 +14,7 @@ if locals( ).has_key( "testing" ):
 pE = DefaultEnvironment( )
 
 c_strID				= arepa.cwd( )
-astrID				= c_strID.split( "-" )
-c_strGDS			= astrID[0]
-c_strGPL			= astrID[1]
+c_strGDS, c_strGPL	= c_strID.split( "-" )[:2]
 
 c_fileInputSConscript	= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "SConscript_pcl-dab.py" ) 
 c_fileRSConscript		= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "SConscript_rpackage.py" )
@@ -26,6 +24,7 @@ c_strPPfun 				= sfle.readcomment( c_filePPfun )[0]
                     
 c_fileTaxa				= sfle.d( pE, "taxa.txt" )
 c_fileStatus			= sfle.d( pE, "status.txt" )
+c_filePlatform			= sfle.d( pE, "platform.txt" ) 
 c_fileIDMap				= sfle.d( pE, c_strID + ".map" )
 c_fileIDMapRaw			= sfle.d( pE, c_strID + "_raw.map" )
 c_fileIDPKL				= sfle.d( pE, c_strID + ".pkl" )
@@ -45,14 +44,15 @@ c_fileRMaster			= sfle.d( c_strDirR, c_strDirRman, c_strID + "-package.Rd")
 c_fileEset 				= sfle.d( pE, c_strDirR, c_strDirRdata, c_strID + ".RData" )
 c_fileHelp				= sfle.d( pE, c_strDirR, c_strDirRman, c_strID + ".Rd" )
 
-c_fileProgSOFT2PCL	   	   = sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "soft2pcl.py" ) 
-c_fileProgSOFT2Metadata	   = sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "soft2metadata.py" ) 
-c_fileProgProcessRaw   	   = sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "preprocessRaw.R" ) 
-c_fileProgEset2Help	   	   = sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "eset2help.R" )
-c_fileProgAnnot2Map	   	   = sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "annot2map.py" ) 	
-c_fileProgMergeMapping 	   = sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "merge_genemapping.py"      )
-c_fileProgGetInfo	   	   = sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "getinfo.py" )
-c_fileProgPkl2Metadata 	   = sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "pkl2metadata.py" ) 
+c_fileProgSOFT2PCL	   	   	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "soft2pcl.py" ) 
+c_fileProgSOFT2Metadata	   	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "soft2metadata.py" ) 
+c_fileProgProcessRaw   	   	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "preprocessRaw.R" ) 
+c_fileProgEset2Help	   	   	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "eset2help.R" )
+c_fileProgAnnot2Map			= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "annot2map.py" ) 	
+c_fileProgGPL2TXT			= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "gpl2txt.py") 
+c_fileProgMergeMapping 	   	= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "merge_genemapping.py"      )
+c_fileProgGetInfo	   	   	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "getinfo.py" )
+c_fileProgPkl2Metadata 	   	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "pkl2metadata.py" ) 
                        
 m_boolRPackage	= sfle.readcomment( c_fileConfigPacakge ) == ["True"] or False
 
@@ -65,6 +65,9 @@ Import( "hashArgs" )
 #Produce taxa file 
 sfle.pipe( pE, c_fileInputSOFTGZ, c_fileProgGetInfo, c_fileTaxa )
 
+#Produce platform file
+sfle.scmd( pE, "echo " + c_strGPL, c_filePlatform )
+
 #Download annotation files: in the case for GDS, GPLid is always included in name and always exists
 sfle.download( pE, hashArgs["c_strURLGPL"] + os.path.basename( str( c_fileGPLTXTGZ ) ) )
 
@@ -74,7 +77,8 @@ sfle.pipe( pE, c_fileInputSOFTGZ, c_fileProgSOFT2PCL, c_fileIDRawPCL,
 
 #Clean microarray data -- Impute, Normalize, Gene Mapping 
 execfile( str(c_fileInputSConscript) )
-funcPCL2DAB( pE, c_fileIDRawPCL, c_fileGPLTXTGZ, c_fileProgAnnot2Map, c_fileProgMergeMapping, c_fileTaxa )
+funcPCL2DAB( pE, c_fileIDRawPCL, c_fileGPLTXTGZ, c_fileProgAnnot2Map, c_fileProgGPL2TXT, 
+	c_fileProgMergeMapping, c_fileTaxa, c_filePlatform )
 
 #Get metadata from soft file 
 sfle.pipe( pE, c_fileInputSOFTGZ, c_fileProgSOFT2Metadata, c_fileIDPKL,

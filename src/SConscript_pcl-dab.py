@@ -67,9 +67,8 @@ def funcIDQUANT( target, source, env ):
 
 def funcRawMap( target, source, env ):
 	strT, astrSs = sfle.ts( target, source )
-	strGPLTXTGZ, strRMeta, strProgAnnot2Map, strProgGPL2TXT = astrSs[:4]
-	pid = [row for row in csv.DictReader(open( strRMeta ))][0]["platform_id"] 
-	strGPLID = c_strID.split("-")[1] if len( c_strID.split("-") ) == 2 else pid
+	strGPLTXTGZ, strPlatformTXT, strProgAnnot2Map, strProgGPL2TXT = astrSs[:4]
+	strGPLID = (sfle.readcomment( open( strPlatformTXT ) ) or [""])[0]
 	if not(sfle.isempty(str(strGPLTXTGZ))):
 		ex( [strProgAnnot2Map, strGPLTXTGZ, strT] )
 	else:
@@ -82,14 +81,15 @@ def funcMergeMap( target, source, env ):
 	strMap = arepa.get_mappingfile( astrTaxa[0] ) if astrTaxa else ""
 	return ( sfle.ex( [fileMerge, fileIDRaw, strMap, strT] ) if strMap else sfle.ex(["cp", fileIDRaw, strT]) )
 
-def funcPCL2DAB( pE, fileIDRawPCL, fileGPLTXTGZ, fileProgAnnot2Map, fileProgMergeMapping, fileTaxa ):
+def funcPCL2DAB( pE, fileIDRawPCL, fileGPLTXTGZ, fileProgAnnot2Map, fileProgGPL2TXT, fileProgMergeMapping, fileTaxa, filePlatform ):
 	
 	astrSleipnir = sfle.readcomment(c_fileFlagSleipnir)
 	bSleipnir = astrSleipnir[0]=="True" if astrSleipnir else False   
 
 	print "sleipnir", ("On" if bSleipnir else "Off")
+	
 	#Produce raw mapping file for gene mapping 
-	astrMapRaw = pE.Command( c_fileIDMapRaw, [fileGPLTXTGZ, c_fileRMetadataTXT, fileProgAnnot2Map, c_fileProgGPL2TXT], funcRawMap )
+	astrMapRaw = pE.Command( c_fileIDMapRaw, [fileGPLTXTGZ, filePlatform, fileProgAnnot2Map, fileProgGPL2TXT], funcRawMap )
 	
 	#Produce merged mapping file
 	astrMap = pE.Command( c_fileIDMap, [fileTaxa, fileProgMergeMapping, astrMapRaw[0]], funcMergeMap )

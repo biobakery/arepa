@@ -50,6 +50,7 @@ c_fileIDMap    			= sfle.d( pE, c_strID + ".map" )
 
 c_fileTaxa          	= sfle.d( pE, "taxa.txt" )
 c_fileStatus        	= sfle.d( pE, "status.txt" )
+c_filePlatform			= sfle.d( pE, "platform.txt")
 c_fileTXTGSM        	= sfle.d( pE, "GSM.txt" )
 c_fileIDSeriesTXTGZ 	= sfle.d( pE, c_strID + "_series_matrix.txt.gz" )
 c_fileRDataTXT     		= sfle.d( pE, c_strID + "_rdata.txt" )
@@ -76,6 +77,7 @@ c_fileProgMergeMapping    	= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, 
 c_fileProgGetInfo         	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "getinfo.py" )
 c_fileProgEset2Help       	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "eset2help.R" )
 
+m_strGPLID		= None 
 m_strPPfun   	= (sfle.readcomment( c_filePPfun ) or ["affy::rma"])[0]
 m_boolRunRaw 	= sfle.readcomment( c_fileRunRaw ) == ["True"] or False 
 m_boolRPackage	= sfle.readcomment( c_fileConfigPacakge ) == ["True"] or False
@@ -117,8 +119,8 @@ if m_boolRPackage:
 # Download annotation files for specific platform, if they exist 
 def getGPL( target, source, env ):
 	astrTs, astrSs = ([f.get_abspath( ) for f in a] for a in (target,source))
-	strAnnot		= astrTs[0]
-	strRMeta		= astrSs[0]
+	strAnnot, strPlatform	= astrTs[:2]
+	strRMeta				= astrSs[0]
 	pid = [row for row in csv.DictReader(open( strRMeta ))][0]["platform_id"] 
 	strGPLID = c_strID.split("-")[1] if len( c_strID.split("-") ) == 2 else pid
 	listGPL = map( lambda v: v.replace(".annot.gz",""), sfle.readcomment( c_fileAnnot ) )
@@ -128,8 +130,11 @@ def getGPL( target, source, env ):
 	else:
 		#Annotation file does not exist, skip download 
 		sfle.ex( ["touch", strAnnot] )
+	#Make platform file containing gpl identifier 
+	with open( strPlatform, "w" ) as outputf:
+		outputf.write( strGPLID )
 
-fileAnnot = Command( c_fileIDAnnot, c_fileRMetadataTXT, getGPL ) 
+fileAnnot = Command( [c_fileIDAnnot, c_filePlatform], c_fileRMetadataTXT, getGPL ) 
 
 #Produce Taxa file 
 sfle.pipe( pE, c_fileIDSeriesTXTGZ, c_fileProgGetInfo, c_fileTaxa )
@@ -137,7 +142,8 @@ sfle.pipe( pE, c_fileIDSeriesTXTGZ, c_fileProgGetInfo, c_fileTaxa )
 # Clean Microarray Data -- Imputation, Normalization, Gene Mapping
 # This only executes if the sleipnir configuration file in the etc directory is set to "True"
 execfile( str( c_fileInputSConscript ) )
-funcPCL2DAB( pE, c_fileIDRawPCL, c_fileIDAnnot, c_fileProgAnnot2Map, c_fileProgMergeMapping, c_fileTaxa )
+funcPCL2DAB( pE, c_fileIDRawPCL, c_fileIDAnnot, c_fileProgAnnot2Map, c_fileProgGPL2TXT, 
+	c_fileProgMergeMapping, c_fileTaxa, c_filePlatform )
 
 def scanner( fileExclude = None, fileInclude = None ):
 	setstrExclude = set(readcomment( fileExclude ) if fileExclude else [])
