@@ -214,21 +214,21 @@ For instance, if you want to fetch human network and expression data across a mu
 	Here is a list of supported gene identifiers (can be extended by giving arepa custom gene mapping files provided by the user)
 
 
-+-----------------+---------------------
++-----------------+--------------------+
 | Name            | ARepA Symbol       |
-+=================+=====================
-| UniRef      	  | U    			   |
-+-----------------+---------------------
++=================+====================+
+| UniRef      	  | U                  |
++-----------------+--------------------+
 | Gene Symbol     | H                  | 
-+-----------------+---------------------
++-----------------+--------------------+
 | KEGG Ortholog   | Ck                 |
-+-----------------+---------------------
++-----------------+--------------------+
 | UniProt         | S                  |
-+-----------------+---------------------
++-----------------+--------------------+
 | KEGG Entry      | Kg                 |
-+-----------------+---------------------
++-----------------+--------------------+
 | Affymetrix      | X                  |
-+-----------------+---------------------
++-----------------+--------------------+
 	
 	
 
@@ -447,18 +447,15 @@ Databases
 * STRING [#]_
 
 .. [#] Curtis Huttenhower, Mark Schroeder, Maria D. Chikina, and Olga G. Troyanskaya "The Sleipnir library for computational functional genomics", Bioinformatics 2008 PMID 18499696
-.. [#] Davis, S. and Meltzer, P. S. GEOquery: a bridge between the Gene
-  Expression Omnibus (GEO) and BioConductor. Bioinformatics, 2007, 14,
-  1846-1847
+.. [#] Davis, S. and Meltzer, P. S. GEOquery: a bridge between the Gene Expression Omnibus (GEO) and BioConductor. Bioinformatics, 2007, 14, 1846-1847
 .. [#] Martijn van Iersel, Alexander Pico, Thomas Kelder, et al. "The BridgeDb framework: standardized access to gene, protein and metabolite identifier mapping services", BMC Bioinformatics, Vol. 11, No. 1. (2010), 5, doi:10.1186/1471-2105-11-5 
-
-.. [#] Bacteriome 
-.. [#] IntAct
-.. [#] GEO
-.. [#] MPIDB
-.. [#] BioGRID
-.. [#] RegulonDB
-.. [#] STRING
+.. [#] 
+.. [#] 
+.. [#] 
+.. [#] 
+.. [#] 
+.. [#] 
+.. [#] 
 
 License  
 ==============================================
