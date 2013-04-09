@@ -6,6 +6,8 @@ import time
 
 pE = DefaultEnvironment( )
 
+fTest 			= True 
+
 c_strURL		= "http://svn.bigcat.unimaas.nl/bridgedb/trunk/"
 c_strRevision	= "587"
 c_strTrunk		= "trunk"
@@ -22,7 +24,8 @@ c_fileRaceLOG		= sfle.d( pE, sfle.c_strDirTmp, "race.log" )
 
 ##Predefined mappingfiles from Bridgedb for human,  mouse and yeast:
 
-c_astrMappingFiles	= ["Hs_Derby_20120602.bridge", "Mm_Derby_20120602.bridge", "Sc_Derby_20120602.bridge"]
+c_astrMappingFiles	= ["Hs_Derby_20120602.bridge", "Mm_Derby_20120602.bridge", "Sc_Derby_20120602.bridge"] if not fTest \
+				else [] 
 c_strMappingURL		= "http://bridgedb.org/data/gene_database/"
 
 #===============================================================================

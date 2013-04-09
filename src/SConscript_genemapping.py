@@ -11,6 +11,7 @@ import sfle
 import pickle 
 import itertools 
 import re 
+import time 
 
 g_iterCounter			= itertools.count(0) 
 
@@ -23,6 +24,8 @@ c_strDirManMap			= sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, "manual_mapping
 c_astrGeneTo			= sfle.readcomment( sfle.d( arepa.path_arepa(),sfle.c_strDirEtc,"geneid" ) 
 							or [arepa.genemap_genename( )] ) 
 c_strPathGeneMapper		= sfle.d( arepa.path_arepa(), "GeneMapper" )
+c_strFileUnzipLog		= sfle.d( c_strPathGeneMapper, sfle.c_strDirTmp, "unzip.log" )
+c_strFileCompileLog		= sfle.d( c_strPathGeneMapper, sfle.c_strDirTmp, "compile.log" )
 c_strPathTopMapping		= sfle.d( c_strPathGeneMapper, sfle.c_strDirEtc, "manual_mapping" )
 c_strPathUniprotKO		= sfle.d( c_strPathGeneMapper, sfle.c_strDirEtc, "uniprotko" )
 c_fileProgMakeUnique	= sfle.d( arepa.path_arepa(), sfle.c_strDirSrc,"makeunique.py")
@@ -101,7 +104,8 @@ def funcGeneIDMapping( pE, fileDATin, strGeneFrom = None, fileLOGout = None, str
 	
 	aastrArgs 		= aastrPrefix + astrGeneFrom + astrGeneTo + astrSkip + afileLOGout + astrMapIn
 	
-	return pE.Depends( sfle.op( pE, c_funcGeneMapper, aastrArgs ), sfle.scons_child( pE, c_strPathGeneMapper ) )
+	pGeneMapper =  sfle.scons_child( pE, c_strPathGeneMapper )
+	return pE.Depends( sfle.op( pE, c_funcGeneMapper, aastrArgs ), pGeneMapper )
 
 def funcMakeUnique( pE, fileDATin, iSkip = 0, iCol = 2 ):
 	strBase, strExt = os.path.splitext(str(fileDATin))
