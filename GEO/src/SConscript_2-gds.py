@@ -19,6 +19,8 @@ c_strGDS, c_strGPL	= c_strID.split( "-" )[:2]
 c_fileInputSConscript	= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "SConscript_pcl-dab.py" ) 
 c_fileRSConscript		= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "SConscript_rpackage.py" )
 c_fileInputSOFTGZ		= sfle.d( pE, "../" + c_strGDS + ".soft.gz" )
+c_fileInputManCurTXT  	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirEtc, "manual_curation/", 
+							c_strID + "_curated_pdata.txt" )
 c_filePPfun				= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirEtc, "preprocess")
 c_strPPfun 				= sfle.readcomment( c_filePPfun )[0]
                     
@@ -82,7 +84,9 @@ funcPCL2DAB( pE, c_fileIDRawPCL, c_fileGPLTXTGZ, c_fileProgAnnot2Map, c_fileProg
 
 #Get metadata from soft file 
 sfle.pipe( pE, c_fileInputSOFTGZ, c_fileProgSOFT2Metadata, c_fileIDPKL,
-	[[c_fileStatus], [c_fileGPLTXTGZ]] )
+	[[c_fileStatus]] + 
+	( [[c_fileInputManCurTXT]] if os.path.exists( str(c_fileInputManCurTXT) ) else [""] ) +
+	[[c_fileGPLTXTGZ]] )
 
 #Create Tables 
 sfle.sop( pE, "python", [[c_fileProgPkl2Metadata],[c_fileIDPKL],[True,c_fileExpTable]] )

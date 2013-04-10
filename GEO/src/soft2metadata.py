@@ -7,9 +7,13 @@ import metadata
 import re
 import soft
 import sys
+import csv
 
 strStatus 	= sys.argv[1]
-astrGPLGZs	= sys.argv[2:]
+strMetadata = sys.argv[2] or None 
+astrGPLGZs	= sys.argv[3:]
+
+c_hashkeyCurated		= "curated"
 
 def metadatum( funcMetadata, strValue ):
 	hashOut.setdefault( strID, set() ).add( strValue )
@@ -29,6 +33,17 @@ for pDS in pSOFT.get( "DATASET" ).values( ):
 	pMetadata.conditions( pDS.get_attribute( "dataset_sample_count" ) )
 	pMetadata.platform( pDS.get_attribute( "dataset_platform" ) )
 	pMetadata.taxid( arepa.org2taxid( pDS.get_attribute( "dataset_sample_organism" ) ) )
+
+# Auxillary Metadata 
+if strMetadata:
+	astrHeaders = None
+	for astrLine in csv.reader( open( strMetadata ), csv.excel_tab ):
+		if astrHeaders:
+			for i in range( len( astrLine ) ):
+				pMetadata.setdefault( astrHeaders[i], [] ).append( astrLine[i] )
+		else:
+			pMetadata[c_hashkeyCurated] = astrLine 
+			astrHeaders = astrLine
 
 # Add Mapping Status and Save
 k,v = sfle.readcomment( open( strStatus ) )[0].split("\t")
