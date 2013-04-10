@@ -66,7 +66,8 @@ while not fLocked:
 		def funcMakeMapFiles( target, source, env ):
 			strT, astrSs = sfle.ts( target, source )
 			return ( sfle.ex(["tar", "-xzf",c_fileUniprotKOTARGZ, "-C", c_strDirEtc]) or \
-				sfle.ex("echo Unzipped OK", strT) )
+				sfle.ex(["ls","etc/uniprotko"], strT) )
+
 		astrFileUnzip = Command( c_fileUnzipLOG, c_fileCompLOG, funcMakeMapFiles )
 
 		Depends( sfle.ex( ["rm","-f", str(c_fileRaceLOG)] ), c_fileUnzipLOG )
