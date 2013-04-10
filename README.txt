@@ -229,7 +229,8 @@ For instance, if you want to fetch human network and expression data across a mu
 +-----------------+--------------------+
 | Affymetrix      | X                  |
 +-----------------+--------------------+
-	
+| Entrez Gene     | L                  | 
++-----------------+--------------------+	
 	
 
 1.3 Output 

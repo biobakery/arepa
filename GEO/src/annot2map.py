@@ -24,8 +24,8 @@ c_hashHead 	= { k:v for (k,v) in map( lambda x: map(lambda y: y.strip(), x.split
 		"^(Entrez)? UniGene Symbol"		: "UniGene",	
 		"Entrez Unigene Identifier"     : "UniGene_ID",
 		"GenBank Accession"             : "GB_ACC",
-		"Entrez Gene identifier"        : "EntrezGene",
-		"GenBank Identifier"            : "GenBank_ID"
+		"Entrez Gene identifier"        : "Entrez Gene",
+		"GenBank Identifier"            : "GenBank"
 		}
 
 iArg			= len(sys.argv)

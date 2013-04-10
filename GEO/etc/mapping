@@ -6,5 +6,5 @@ Uniprot .*? Symbol            		% Uniprot/TrEMBL
 #^(Entrez)? UniGene Symbol     		% UniGene
 #Entrez Unigene Identifier		% UniGene_ID 
 GenBank Accession			% GB_ACC
-Entrez Gene identifier 			% EntrezGene
-GenBank Identifier			% GenBank_ID 
+Entrez Gene identifier 			% Entrez Gene
+GenBank Identifier			% GenBank 
