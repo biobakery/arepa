@@ -4,14 +4,15 @@ ARepA: Automated Repository Acquisition
 
 ..  This document follows reStructuredText syntax and conventions.
 	You can compile this file to a PDF or HTML document. 
-	For instructions on how to do so, visit the reStructeredText webpage. 
+	For instructions on how to do so, visit the reStructeredText webpage
+	(http://docutils.sourceforge.net/rst.html). 
 
 -------------------------------------------------------
-User Manual, Version 0.9.6
+User Manual, Version 0.9.7
 -------------------------------------------------------
 
 Authors 
- Yo Sup Moon, Dr. Daniela Boernigen, Dr. Levi Waldron, Dr. Eric Franzosa, and Dr. Curtis Huttenhower
+ Yo Sup Moon, Daniela Boernigen, Levi Waldron, Eric Franzosa, Xochitl Morgan, and Curtis Huttenhower
 
 Maintainer
  Yo Sup Moon <moon.yosup@gmail.com> 
@@ -26,7 +27,7 @@ Google Group
  arepa-users: https://groups.google.com/forum/?fromgroups#!forum/arepa-users
 
 Citation 
- Daniela Boernigen*, Yo Sup Moon*, Levi Waldron, Eric Franzosa, and Curtis Huttenhower. "ARepA: Automated Repository Acquisition" (In Submission) 
+ Daniela Boernigen*, Yo Sup Moon*, Levi Waldron, Eric Franzosa, Xochitl Morgan, and Curtis Huttenhower. "ARepA: Automated Repository Acquisition" (In Submission) 
  (* contributed equally)
 
 Please direct all questions to the arepa-users google groups list. 
@@ -36,31 +37,31 @@ Please direct all questions to the arepa-users google groups list.
 Chapter 0 Getting Started 
 ============================================
 
-0.0 Overview 
+Section 0.0 Overview 
 --------------------------------------------
 
 ARepA was designed to be a simple command-line interface that consolidates eclectic 'omics data from heterogeneous sources into a consistent, easily manipulable format. 
 Its standard features include data normalization (e.g. log transform), missing value imputation, quality control against malformed data, gene identifier standardization, and basic network inference for expression data. It was written with the Python and R programming languages, alongside the SCons software construction tool for dependency-tracking and automation.
 
-The current implementation of ARepA fetches data cross *seven* different data repositories: (1) Bacteriome, (2) BioGRID, (3) GEO, (4) IntAct, (5) MPIDB, (6) RegulonDB, and (7) STRING. Here is a table describing what we can get out of each repository. 
+The current implementation of ARepA fetches data cross seven different data repositories: (1) Bacteriome, (2) BioGRID, (3) GEO, (4) IntAct, (5) MPIDB, (6) RegulonDB, and (7) STRING. Here is a table describing what we can get out of each repository. 
 
-+-----------------+---------------------+---------------+------------------+-------------------------+
-| Database        | data type           | # Species     | # Interactions   | Ref                     |
-+=================+=====================+===============+==================+=========================+
-| Bacteriome      | physical assoc.     | 1             | 3,888            | {PMID:17942431}         |
-+-----------------+---------------------+---------------+------------------+-------------------------+
-| BioGRID         | physical assoc.     | 32            | 349,696          | {PMID:21071413}         |
-+-----------------+---------------------+---------------+------------------+-------------------------+
-| IntAct          | physical assoc.     | 278           | 239,940          | {PMID:22121220}         |
-+-----------------+---------------------+---------------+------------------+-------------------------+
-| MPIDB           | physical assoc.     | 250           | 24,295           | {PMID:18556668}         |
-+-----------------+---------------------+---------------+------------------+-------------------------+ 
-| RegulonDB       | regulatory assoc.   | 1             | 4,096            | {PMID:21051347}         |
-+-----------------+---------------------+---------------+------------------+-------------------------+
-| STRING          | functional assoc.   | 1,133         | 1,640,707        | {PMID:21045058}         |
-+-----------------+---------------------+---------------+------------------+-------------------------+
-| GEO             | gene expression     | 1,967         |                  | {PMID:21097893}         |
-+-----------------+---------------------+---------------+------------------+-------------------------+
++-----------------+-----------------------+---------------+------------------+-------------------------------------+
+| Database        | data type             | # Species     | # Interactions   | Reference                           |
++=================+=======================+===============+==================+=====================================+
+| Bacteriome      | physical interaction  | 1             | 3,888            | Su, Peregrin-Alvarez et al. 2008    |
++-----------------+-----------------------+---------------+------------------+-------------------------------------+
+| BioGRID         | physical interaction  | 32            | 349,696          | Stark, Breitkreutz et al. 2011      |
++-----------------+-----------------------+---------------+------------------+-------------------------------------+
+| IntAct          | physical interaction  | 278           | 239,940          | Kerrien, Aranda et al. 2012         |
++-----------------+-----------------------+---------------+------------------+-------------------------------------+
+| MPIDB           | physical interaction  | 250           | 24,295           | Goll, Rajagopala et al. 200 8       |
++-----------------+-----------------------+---------------+------------------+-------------------------------------+  
+| RegulonDB       | regulatory interaction| 1             | 4,096            | Gama-Castro, Salgado et al. 2011    |
++-----------------+-----------------------+---------------+------------------+-------------------------------------+
+| STRING          | functional association| 1,133         | 1,640,707        | Szklarczyk, Franceschini et al. 2011|
++-----------------+-----------------------+---------------+------------------+-------------------------------------+
+| GEO             | gene expression       | 1,967         |                  | Barrett, Troup et al. 2011          |
++-----------------+-----------------------+---------------+------------------+-------------------------------------+
 
 Section 0.1 Supported Operating Systems 
 --------------------------------------------
@@ -90,10 +91,11 @@ Before downloading ARepA, you should have the following software on your machine
 	* SCons (ver >= 2.1)  
 	* R (ver >= 2.13) with GEOquery package (part of Bioconductor)
 	* Java SE 6 (ver >= 1.6): Java is needed for gene identifier conversion service
+	* Apache Ant (ver >= 1.8.0)
 	* Subversion Source Control Management (ver >= 1.7): for automated acquisition of BridgeDB
 
 * Recommended 
-	* Sleipnir Library for Computational Functional Genomics (Optional, but necessary for some normalization 	steps)
+	* Sleipnir Library for Computational Functional Genomics (Optional, but necessary for some normalization steps)
 
 Section 0.3 Downloading ARepa 
 ------------------------------------------------
@@ -149,14 +151,14 @@ Things to note:
 Chapter 1 Running ARepA 
 ============================================
 
-1.1 Basics 
+Section 1.0 Basics 
 --------------------------------------------
 
-Typing "scons" in your terminal screen at the root level of arepa will initiate the pipeline process. There are two flags that users should be aware of.
+Typing **scons** in your terminal screen at the root level of arepa will initiate the pipeline process. There are two flags that users should be aware of.
 
-1. The "-k" flag: when an error is encountered in the build process, skip to the next build whenever possible. Without this flag, a single error in the build tree will terminate the entire arepa process. Sometimes datasets contain errors that are beyond arepa's control. In this case, we would like arepa to be robust to these inconsistensies. 
+1. The **-k** flag: when an error is encountered in the build process, skip to the next build whenever possible. Without this flag, a single error in the build tree will terminate the entire arepa process. Sometimes datasets contain errors that are beyond arepa's control. In this case, we would like arepa to be robust to these inconsistensies. 
 
-2. The "-j" flag: this allows for multiple threads to run at once, greatly increasing the speed of the build. Usually, the user should specify the number of threads to be the number of cores on the machine he/she is using. 
+2. The **-j** flag: this allows for multiple threads to run at once, greatly increasing the speed of the build. Usually, the user should specify the number of threads to be the number of cores on the machine he/she is using. 
 
 For example, on a quad-core machine, one would type 
 ::
@@ -171,48 +173,61 @@ When all targets in its computation tree are built, scons will give the followin
 
 	scons: done building targets. 
 
-1.2 Input  
+Section 1.1 Input  
 --------------------------------------------
 
 ARepA requires the user to provide (1) the taxonomic identifier of the organism of interest and (2) the final gene identifier standard (gene name, uniprot, kegg orthologs, etc). 
 This information is relayed onto ARepA in the **etc/taxa** and **etc/geneid** text files, respectively. 
 For instance, if you want to fetch human network and expression data across a multitude of data repositories, you would specify "Homo sapiens" in the input (etc/taxa). 
 
-1. Taxa 
+Taxa
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
 
-	A new copy of ARepA is by default instructed to download a set of model organism data. 
+A new copy of ARepA is by default instructed to download a set of model organism data. 
 
-	Typing ::
+Typing ::
 
-	$ cd etc
-	$ less taxa 
+$ cd etc
+$ less taxa 
 
-	will yield the default set of organisms
-	::
-	
-		Homo sapiens 
-		Escherichia coli
-		Mus musculus 
-		Saccharomyces cerevisiae
-		Pseudomonas aeruginosa
+will yield the default set of organisms
+::
 
-	Following the pythonic standard, you can comment out any line with a hash "#". For example, the following file 
+	Homo sapiens 
+	Escherichia coli
+	Mus musculus 
+	Saccharomyces cerevisiae
+	Pseudomonas aeruginosa
 
-	::
+Following the pythonic standard, you can comment out any line with a hash "#". For example, the following file 
 
-		Homo sapiens 
-		#Escherichia coli
-		#Mus musculus 
-		#Saccharomyces cerevisiae
-		#Pseudomonas aeruginosa
-	
-	will only fetch E. coli data, and nothing else.
+::
 
-2. Gene ID 
+	Homo sapiens 
+	#Escherichia coli
+	#Mus musculus 
+	#Saccharomyces cerevisiae
+	#Pseudomonas aeruginosa
 
-	By default, the gene identifier of choice is specified to be UniRef90/UniRef100 identifiers, given by the symbol "U". 
-	Here is a list of supported gene identifiers (can be extended by giving arepa custom gene mapping files provided by the user)
+will only fetch E. coli data, and nothing else.
 
+Gene ID 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+By default, the gene identifier of choice is specified to be UniRef90/UniRef100 identifiers, given by the symbol "U":
+
+Typing ::
+
+$ cd etc
+$ less geneid 
+
+will yield the default output geneid
+::
+
+	U
+
+
+Here is a list of supported gene identifiers (can be extended by giving arepa custom gene mapping files provided by the user):
 
 +-----------------+--------------------+
 | Name            | ARepA Symbol       |
@@ -231,12 +246,14 @@ For instance, if you want to fetch human network and expression data across a mu
 +-----------------+--------------------+
 | Entrez Gene     | L                  | 
 +-----------------+--------------------+	
-	
 
-1.3 Output 
+It should be noted that the gene id mapping is based on BridgeDB (van Iersel et al. 2010, http://www.bridgedb.org/). A list of system codes supported by arepa for extension can be viewed in the file **arepa/GeneMapper/etc/batchlist.txt**. 
+
+
+Section 1.2 Output 
 --------------------------------------------
 
-ARepA by default fetches data from 7 different public repositories, which are again listed below. For each repository, ARepA acquires the dataset names matching the taxonomic 
+ARepA by default fetches data from seven different public repositories, which are again listed below. For each repository, ARepA acquires the dataset names matching the taxonomic 
 identifier specified by the input file. 
 
 * Gene Expression/Gene co-expression - Data (text, pcl format), Metadata (python pickle), Documented R library containing both   
@@ -251,7 +268,7 @@ identifier specified by the input file.
 
 The output for each directory can be found in $REPOSITORY_NAME/data. Expression tables are saved in a *pcl* format (for a brief description, visit http://www.broadinstitute.org/cancer/software/gsea/wiki/index.php/Data_formats). The final pcl output will always be $DATASET_NAME.pcl. Interaction networks are saved in a *dat/dab* format (http://huttenhower.sph.harvard.edu/content/genomic-data-formats). The final dat/dab output will always be $DATASET_NAME.{dat|dab}. Metadata is saved as a python pickle (http://docs.python.org/2/library/pickle.html), a compressed, structured object. When loaded, metadata is given as a python dictionary, which is essentially a series of key,value pairs http://docs.python.org/2/tutorial/datastructures.html). Metadata is saved as $DATASET_NAME.pkl.  
 
-Example Output 
+Section 1.3 Example Output 
 --------------------------------------------
 Let's look at an example of arepa output. Take a look at the data directory of the Bacteriome repository.
 ::
@@ -270,7 +287,7 @@ Let's look at an example of arepa output. Take a look at the data directory of t
 
 Bacteriome is an interaction repository, so we have dat/dab files as final output. We see that there are multiple dat files; however, only one is the final output. The final output is always given by $DATASET_NAME.dat, or in this case, "bacteriome.dat". Other files, such as "bacteriome_00raw.dat" are intermediate files, which can be also useful to the user. The metadata is given by "bacteriome.pkl". 
 
-Metadata Usage 
+Section 1.4 Metadata Usage 
 --------------------------------------------
 There is a useful script in the main src directory of arepa that can aid in dealing with pickled metadata. 
 
@@ -319,11 +336,22 @@ One can also convert a tab delimited text file into a python pickle.
 
 	$ unpickle.py -r tab_delimtied_file.txt > output.pkl 
 
+One can also quickly view a key,value pair contained in the pickle. For instance, if one wants to view the gene id mapping status of the dataset, perform ::
+
+	$ unpickle.py -k mapped metadata_file
+
+For the case of bacteriome ::
+	$ unpickle.py -k mapped Bacteriome/data/bacteriome.pkl 
+	True 
+
 For full usage of the metadata, see the argument list above. 
 
 
 Chapter 3 Modules 
 ============================================
+
+Section 3.0 Internal vs External Modules 
+--------------------------------------------
 
 The data from each of these repositories are managed in separate directories. Each sub-directory in ARepA conforms to a hierarchical modularity, in which all the sub-directories maintain the same essential structure. Essentially, this amounts to having a "driver file" that launches automated processes (pipeline) and directories containing relevant information to launch them.   
 
@@ -340,20 +368,20 @@ divided into two broad categories: gene expression/co-expression,
 and interaction networks.  
 
 Gene Expression/Gene co-expression 
---------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 1. Gene Expression Omnibus 
 
 Interaction Networks 
---------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 1. Bacteriome 
 2. RegulonDB
 3. IntAct
 4. MPIDB 
-5. BioGrid
+5. BioGRID
 6. STRING 
 
 Hierarchical Modularity 
---------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Each module contains the following:
 
@@ -364,56 +392,379 @@ Each module contains the following:
 5. etc - contains all configuration information for the module, including programmatic and manual overrides. 
 6. doc - contains documentation for the module. 
 
+Section 3.1 Bacteriome 
+--------------------------------------------
+
+* Additional Input 
+	* None 
+
+
+* Final Output 
+	* data/bacteriome.dat - network matrix 
+	* data/bacteriome.pkl - metadata
+
+
+Section 3.2 RegulonDB 
+--------------------------------------------
+
+* Additional Input 
+	* None 
+
+
+* Final Output 
+	* data/regulondb.dat - network matrix 
+	* data/regulondb.pkl - metadata
+
+
+Section 3.3 IntAct
+--------------------------------------------
+
+* Additional Input 
+	* etc/include - include dataset 
+	* etc/exclude - exclude dataset 
+	* etc/manual_curation - use manually curated metadata 
+	* etc/manual_mapping - use manually curated gene mapping 
+
+* Final Output 
+	* data/dataset_name/dataset_name.dat - network matrix 
+	* data/dataset_name/dataset_name.pkl - metadata 
+
+Section 3.4 MPIDB
+--------------------------------------------
+
+* Additional Input 
+	* etc/include - include dataset 
+	* etc/exclude - exclude dataset 
+	* etc/manual_curation - use manually curated metadata 
+	* etc/manual_mapping - use manually curated gene mapping 
+
+
+* Final Output 
+	* data/dataset_name/dataset_name.dat - network matrix 
+	* data/dataset_name/dataset_name.pkl - metadata 
+
+
+Section 3.5 BioGRID 
+--------------------------------------------
+
+* Additional Input 
+	* etc/include - include dataset 
+	* etc/exclude - exclude dataset 
+	* etc/manual_curation - use manually curated metadata 
+	* etc/manual_mapping - use manually curated gene mapping 
+
+* Final Output 
+	* data/dataset_name/dataset_name.dat - network matrix 
+	* data/dataset_name/dataset_name.pkl - metadata 
+
+Section 3.6 STRING  
+--------------------------------------------
+
+* Additional Input 
+	* etc/include - include dataset 
+	* etc/exclude - exclude dataset 
+	* etc/manual_curation - use manually curated metadata 
+	* etc/manual_mapping - use manually curated gene mapping 
+
+* Final Output 
+	* data/dataset_name/dataset_name.dat - network matrix 
+	* data/dataset_name/dataset_name.pkl - metadata 
+
+Section 3.7 GEO
+--------------------------------------------
+
+* Additional Input 
+	* etc/include - include dataset 
+	* etc/exclude - exclude dataset 
+	* etc/manual_curation - use manually curated metadata 
+	* etc/manual_mapping - use manually curated gene mapping 
+	* mapping - configure regex for mining and creating automated mapping file per platform
+	* raw - turn on/off the raw pipeline -- downloading and processing of raw CEL files for each dataset 
+	* preprocess - chooose a processing function for normalizing raw CEL files 
+	* rpackage - turn on/off creation of expression sets and R packages per dataset 
+	* sleipnir - turn on/off sleipnir normalization functions (Normalizer, KNNImpute, Dat2Dab, etc)
+
+
+* Final Output 
+	* data/dataset_name/dataset_name.dat - network matrix 
+	* data/dataset_name/dataset_name.pkl - metadata 
+
+
 Chapter 4 Advanced Topics 
 ============================================ 
 
-Section 4.1 Unit-Testing ARepA 
---------------------------------------------
+Section 4.1 Customized Pipeline 
+---------------------------------------------
 
-ARepA has a built-in unit testing script, located in the main **src** directory. 
-While in the root directory, type ::
+Each module in ARepA can be tweaked to the user's taste: for instance, one can 
+override automatically generated metadata by providing his own; additionally, one can 
+override automatically generated mapping files with a custom-curated one. 
 
-$ python src/test.py 
+Curated Metadata 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The default behavior of the testing script assumes that the entire build of ARepA is completed *prior* to running the script. If this is not the case, one can pass the optional argument "scons" to the test script and scons will be called in each submodule before the targets are checked. This method is error-prone and time-intensive and is not recommended. ::
+Add a tab-delimited text file in **repository/etc/manual_curation/** with the matching dataset name (e.g. IntAct/etc/manual_curation/IntAct_taxid_287.txt)
 
-$ python test.py scons 
+Curated Gene Mapping  
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Section 4.2 Advanced Configuration 
---------------------------------------------
-Mapping status can be checked in every module by either checking the pickle metadata. 
+Add a tab-delimited gene map file in **repository/etc/manual_mapping/** with the matching dataset name (.map). 
+
+Caveat: follow the system code - label key as defined by **GeneMapper/etc/batchlist.txt**
+See GEO/etc/manual_mapping for an example. 
 
 
-Section 4.3 Running Modules Separately 
+Section 4.1 Running Modules Separately 
 ---------------------------------------------
 
 After the taxonomic information has been downloaded
-and processed by the parent node in arepa ("arepa/tmp/taxids" have been built),
-one can launch any internal module separately by going into a desired directory and launching "scons". For instance, if one wants to run GEO, one would type (assuming starting from the root directory) 
+and processed by the parent node in arepa (**arepa/tmp/taxids** have been built),
+one can launch any internal module separately by going into a desired directory and launching **scons**. 
+For instance, if one wants to run GEO, first make sure that the taxids file was built correctly, then launch **scons** in the GEO directory.  
 
 ::
 
+	$ scons tmp/taxids
+	scons: Reading SConscript files ...
+	scons: done reading SConscript files.
+	scons: Building targets ...
+	funcPipe(["tmp/taxids"], ["src/taxdump2taxa.py", "tmp/taxdump.txt", "etc/taxa"])
+	cat "arepa/tmp/taxdump.txt" | arepa/src/taxdump2taxa.py "arepa/etc/taxa" > "arepa/tmp/taxids"
+	scons: done building targets.
+
 	$ cd GEO
 	$ scons 
+
+Section 4.2 Adding New Modules 
+---------------------------------------------
+
+Advanced users who are familiar with scons can write their own modules that download and process data from a repository that is not included in vanilla ARepA. 
+There are TWO basic steps that must take place. 
+
+(1) Initiation script - starts the download of dataset names, filters out only the desired ones, which are passed onto scripts that handles *per dataset* functions. 
+(2) Per dataset parsing scripts - download raw data and metadata, run various vanilla and customized parsing functions. 
+
+Let us go through an example. 
+
+Step 1: The SConstruct file 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Create a directory on the main level of arepa and initiate an **SConstruct** file. For the purpose of this example, we will call this module **my_repo**
+::
+
+	$ mkdir my_repo
+	$ touch SConstruct 
+
+Following the arepa convention, create the directories **tmp**, **etc** and **src**, which will store raw downloaded files, configuration files, and source scripts respectively. 
+
+:: 
+
+	$ mkdir tmp etc src 
+
+Now, the SConstruct file serves as a driver file that launches all processes within the module. For those users that are familiar with make, these are analogous to Makefiles. 
+
+Edit the SConstruct to perform the following actions: (1) Download a batch list of dataset names and parse them into a text file, where each line contains a dataset name (2) Pass dataset names to child directories. This will initiate a separate modular build for each dataset name. 
+
+Suppose that you have created two text files **dataset1.txt** and **dataset2.txt** and that 
+**c_fileInputExclude** and **c_fileInputInclude** are pointers to files that contain dataset names that the user wants to 
+exclude/include respectively (can be empty). A repository can have many different types of datasets (e.g. GEO has GDS and GSE datasets); the names of different datasets should be in separate files (this is why we have two text files in this example case). 
+::
+
+	#SConstruct file 
+	import sfle 
+	# SflE stands for Scientific Flow Environment, a tool that contains various python/arepa wrappers for scons.
+	# It is an extremely convenient and powerful tool. For documentation visit huttenhower.sph.harvard.edu/sfle.  
+	import arepa 
+	# arepa.py contains arepa-specific global utilities 
+
+	pE = DefaultEnvironment()
+	
+	# Download and parse names 
+	# ...
+
+	c_strFileDataset1 = "tmp/dataset1.txt"
+	c_strFileDataset2 = "tmp/dataset2.txt"
+
+	afileTXTs = [c_strFileDataset1, c_strFileDataset2]
+
+IMPORTANT: it is *crucial* that users build their files in the scons standard; i.e. in a tracked manner. Ad-hoc building of files outside of scons will not, in general, give correct builds. 
+
+You can pass the IDs to child directories in the following manner ::
+
+	sfle.sconscript_children( pE, afileTXTs, sfle.scanner( c_fileInputExclude, c_fileInputInclude ), 1, arepa.c_strProgSConstruct )
+
+The "1" here refers to the hierarchy level. Recall that ARepA was designed with hierarchical modularity as a design principle; one can initiate a downstream process at any point in the computational tree. Processes that are stemmed from level 1 should be labeled as level "2" and so on. 
+
+This instructs arepa to do the following: for each name in the provide dataset names, perform actions defined by source scripts in the **src** directory. In particular, do this in a modular way, such that each dataset can be launched independently later on. 
+
+Step 2: The SConscript_n.py Files 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+For each name in the dataset name list (modulo excluded names), arepa looks in the **src** folder and launches the **SConscript_n.py** scripts in numerical order. For instance **SConscript_1.py** will be launched before **SConscript_2.py**. The information in these scripts are loaded into the SCons environment; the users can think of these files as pseudo-SConstruct files in which all SCons python wrappers can be used. 
+
+Let's take a look at an example (IntAct/src/SConscript_1-id.py) :: 
+	
+	#!/usr/bin/env python
+
+	def test( iLevel, strID, hashArgs ):
+		return ( iLevel == 1 )
+	if locals( ).has_key( "testing" ):
+		sys.exit( )
+
+	pE = DefaultEnvironment( )
+
+	c_strID					= arepa.cwd( )
+	c_fileInputIntactC		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirTmp, "intactc" )
+	c_fileIDPKL				= sfle.d( pE, c_strID + ".pkl" )
+	c_fileIDDAB				= sfle.d( pE, c_strID + ".dab" )
+	c_fileIDRawDAT          = sfle.d( pE, c_strID + "_00raw.dat" )
+	c_fileIDDAT				= sfle.d( pE, c_strID + ".dat")
+	c_fileIDQUANT           = sfle.d( pE, c_strID + ".quant" )
+
+	c_fileProgUnpickle      = sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "unpickle.py" )
+	c_fileProgC2Metadata    = sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "c2metadata.py" )
+	c_fileProgC2DAT         = sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "c2dat.py" )
+
+	c_fileInputSConscriptGM         = sfle.d( pE, arepa.path_arepa(),sfle.c_strDirSrc,"SConscript_genemapping.py")
+	c_fileInputSConscriptDAB        = sfle.d( pE, arepa.path_arepa(), sfle.c_strDirSrc, "SConscript_dat-dab.py" )
+
+	c_fileStatus 	    			=  sfle.d(pE, "status.txt")
+	c_strGeneFrom 				    = "S"
+
+	afileIDDAT = sfle.pipe( pE, c_fileInputIntactC, c_fileProgC2DAT, c_fileIDRawDAT, [c_strID] )
+
+	# ... rest of the code omitted ... 
+
+The first piece of code ::
+	
+	def test( iLevel, strID, hashArgs ):
+		return ( iLevel == 1 )
+	if locals( ).has_key( "testing" ):
+		sys.exit( )
+
+makes sure that the script is launched in the right arepa level. This can be modified to take any arbitrary conditional. 
+This is convenient when writing different scripts to handle different types of datasets. For instance, for GEO, two different scripts are used to handle GDS and GSE datasets. For instance, ::
+
+	#GEO/src/SConscript_1-gse.py 
+
+	def test( iLevel, strID, hashArgs ):
+		return ( iLevel == 1 ) and ( strID.find( "GSE" ) == 0 )
+	if locals( ).has_key( "testing" ):
+		sys.exit( )
+
+ensures that this particular script launches only for GSE datasets.
+
+Now, let's take a look at the rest of the code in the IntAct example. Most scons processes can be hidden away by using features available in sfle (included in arepa; visit huttenhower.sph.harvard.edu/sfle for documentation). For instance, **sfle.pipe()** seen in the above example performs a UNIX pipe that is tracked by scons, in a manner that is consistent with conventions in arepa. Customized pipelines can be built by the user providing their own python scripts. Of course, users can also utilize features that are already available in vanilla ARepA. 
+
+Section 4.3 ARepA-provided functions 
+---------------------------------------------
+
+These are scripts that perform routinely performed tasks in arepa. 
+
+* arepa/src/unpickle.py: pickles and unpickles files ::
+
+	$ unpickle.py --help
+	usage: unpickle.py [-h] [-m str_split] [-c columns] [-s skip_rows]
+	                   [-l log.txt] [-r] [-k str_man_key] [-x]
+	                   [input] [output]
+
+	pickle and unpickle files.
+
+	positional arguments:
+	  input           input pickle or text file
+	  output          output pickle or text file
+
+	optional arguments:
+	  -h, --help      show this help message and exit
+	  -m str_split    Split between key and value
+	  -c columns      Number of columns to map
+	  -s skip_rows    Number of header rows to skip at top of file
+	  -l log.txt      Optional log file containing status metavariables
+	  -r              Reverse flag
+	  -k str_man_key  Flag to specify output for specific key in the pickle
+	  -x              Give output in R package metadata format
+
+* arepa/src/makeunique.py: Takes a malformed gene mapping file, removes duplicates and splits up one-to-many mappings ::
+
+	$ makeunique.py --help
+	usage: makeunique.py [-h] [-m str_split] [-c columns] [-s skip_rows]
+	                     [-l log.txt]
+	                     [input.dat] [output.dat]
+
+	Gets rid of duplicate entries from a tab-delimited file of unordered tuples.
+
+	positional arguments:
+	  input.dat     Input tab-delimited text file with one or more columns
+	  output.dat    Input tab-delimited text file with mapped columns
+
+	optional arguments:
+	  -h, --help    show this help message and exit
+	  -m str_split  Ambiguous field element classifier; a or b; e.g. in the case
+	                of a///b the value will be ///
+	  -c columns    Number of columns to map
+	  -s skip_rows  Number of header rows to skip at top of file
+	  -l log.txt    Optional log file containing output mapping status
+
+* arepa/src/merge_genemapping.py: Merges two gene maps ::
+	# Usage: merge_genemapping.py <map1.txt> <map2.txt> <out.txt>
+* arepa/GeneMapper/src/bridgemapper.py: Performs gene mapping (gene standardization) :: 
+
+	$ bridgemapper.py --help
+	usage: bridgemapper.py [-h] [-m mapping.txt] [-c columns] [-f from_format]
+	                       [-t to_format] [-u max_lines] [-s skip_rows]
+	                       [-l log.txt] [-x]
+	                       [input.dat] [output.dat]
+
+	Maps gene IDs from one or more tab-delimited text columns from and to
+	specified formats.
+
+	positional arguments:
+	  input.dat       Input tab-delimited text file with one or more columns
+	  output.dat      Input tab-delimited text file with mapped columns
+
+	optional arguments:
+	  -h, --help      show this help message and exit
+	  -m mapping.txt  Required mapping file in tab-delimited BridgeMapper format
+	  -c columns      Columns to map, formatted as [1,2,3]
+	  -f from_format  BridgeMapper single-character type code for input format
+	  -t to_format    BridgeMapper single-character type code for output format
+	  -u max_lines    Maximum lines in input file; this is done for memory reasons
+	  -s skip_rows    Number of header rows to skip at top of file
+	  -l log.txt      Optional log file containing output mapping status
+	  -x              Optional flag turning on/off gene identifier sniffer
+	                  (automatically decide geneid_from)
+
+
+Section 4.4 Unit-Testing ARepA 
+--------------------------------------------
+
+ARepA has a built-in unit testing script, located in the main **src** directory. 
+While in the root directory, type 
+::
+
+	$ python src/test.py 
+
+The default behavior of the testing script assumes that the entire build of ARepA is completed *prior* to running the script. If this is not the case, one can pass the optional argument "scons" to the test script and scons will be called in each submodule before the targets are checked. This method is error-prone and time-intensive and is not recommended. ::
+
+	$ python test.py scons 
+
 
 Chapter 5 Frequently Asked Questions 
 ============================================
 
 NB: All questions should be directed to the arepa-users group group. 
 
-1. I get the following error when I run ARepA
+1. I get the following error when I run ARepA :: 
 
 	ImportError: No module named arepa
 
 *Solution*
  Make sure you add the **src** directory of ARepA's root level to the python UNIX path. 
 
-2. I get the following error when I run ARepA
+2. I get the following error when I run ARepA ::
 
 	ImportError: No module named sfle
 
 *Solution*
- See above solution.
+ Make sure you add the **src** directory of ARepA's root level to the python UNIX path.
 
 3. Where can I find configuration information for my pipelines?
 
@@ -421,49 +772,39 @@ NB: All questions should be directed to the arepa-users group group.
  All configuration information is in the **etc** folder of every directory. See the chapter on specific modules for more details on configuration information for a particular repository. 
 
 4. How do I cite ARepA? 
-Daniela Boernigen*, Yo Sup Moon*, Levi Waldron, Eric Franzosa, and Curtis Huttenhower. "ARepA: Automated Repository Acquisition" (In Progress)
+
+*Solution*
+ Daniela Boernigen*, Yo Sup Moon*, Levi Waldron, Eric Franzosa, Xochitl Morgan, and Curtis Huttenhower. "ARepA: Automated Repository Acquisition" (In preparation)
 
 Acknowledgements 
 ============================================ 
 
-The authors would like to extend a special thanks to Larissa Miropolsky, who was involved in the development of the proof-of-concept of ARepA. We would also like to thank Felix Wong, Brian Palmer, Timothy Tickle, and <additional authors> for assisting in the testing process of ARepA.   
+The authors would like to extend a special thanks to Larissa Miropolsky, who was involved in the development of the proof-of-concept of ARepA. We would also like to thank Felix Wong, Brian Palmer, Timothy Tickle, Svitlana Tyekucheva, and Markus Schröder for assisting in the testing process of ARepA.   
 
 References
 =============================================
 
-Tools 
+* Tools 
+	* Sleipnir: 		http://huttenhower.sph.harvard.edu/sleipnir/index.html
+	* GEOquery: 		http://watson.nci.nih.gov/~sdavis/
+	* BridgeDb: 		http://www.bridgedb.org/
 
-* Sleipnir [#]_
-* GEOquery (part of the Bioconductor package) [#]_
-* BridgeDb [#]_
+* Databases
+	* Bacteriome: 		http://www.compsysbio.org/bacteriome/
+	* IntAct :			http://www.ebi.ac.uk/intact/
+	* GEO:				http://www.ncbi.nlm.nih.gov/geo/
+	* MPIDB:	 		http://jcvi.org/mpidb/about.php
+	* BioGRID:	 		http://thebiogrid.org/
+	* RegulonDB: 		http://regulondb.ccg.unam.mx/
+	* STRING:	 		http://string-db.org/
 
-Databases
-
-* Bacteriome [#]_
-* IntAct [#]_
-* GEO [#]_
-* MPIDB [#]_
-* BioGRID [#]_
-* RegulonDB [#]_
-* STRING [#]_
-
-.. [#] Curtis Huttenhower, Mark Schroeder, Maria D. Chikina, and Olga G. Troyanskaya "The Sleipnir library for computational functional genomics", Bioinformatics 2008 PMID 18499696
-.. [#] Davis, S. and Meltzer, P. S. GEOquery: a bridge between the Gene Expression Omnibus (GEO) and BioConductor. Bioinformatics, 2007, 14, 1846-1847
-.. [#] Martijn van Iersel, Alexander Pico, Thomas Kelder, et al. "The BridgeDb framework: standardized access to gene, protein and metabolite identifier mapping services", BMC Bioinformatics, Vol. 11, No. 1. (2010), 5, doi:10.1186/1471-2105-11-5 
-.. [#] 
-.. [#] 
-.. [#] 
-.. [#] 
-.. [#] 
-.. [#] 
-.. [#] 
 
 License  
 ==============================================
 
 This software is licensed under the MIT license. 
 
-Copyright (c) 2013 Yo Sup Moon, Dr. Daniela Boernigen, Dr. Levi Waldron, Dr. Eric Franzosa, and Dr. Curtis Huttenhower 
+Copyright (c) 2013 Yo Sup Moon, Daniela Boernigen, Levi Waldron, Eric Franzosa, Xochitl Morgan, and Curtis Huttenhower 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
