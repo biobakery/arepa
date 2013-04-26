@@ -347,10 +347,10 @@ For the case of bacteriome ::
 For full usage of the metadata, see the argument list above. 
 
 
-Chapter 3 Modules 
+Chapter 2 Modules 
 ============================================
 
-Section 3.0 Internal vs External Modules 
+Section 2.0 Internal vs External Modules 
 --------------------------------------------
 
 The data from each of these repositories are managed in separate directories. Each sub-directory in ARepA conforms to a hierarchical modularity, in which all the sub-directories maintain the same essential structure. Essentially, this amounts to having a "driver file" that launches automated processes (pipeline) and directories containing relevant information to launch them.   
@@ -392,7 +392,7 @@ Each module contains the following:
 5. etc - contains all configuration information for the module, including programmatic and manual overrides. 
 6. doc - contains documentation for the module. 
 
-Section 3.1 Bacteriome 
+Section 2.1 Bacteriome 
 --------------------------------------------
 
 * Additional Input 
@@ -404,7 +404,7 @@ Section 3.1 Bacteriome
 	* data/bacteriome.pkl - metadata
 
 
-Section 3.2 RegulonDB 
+Section 2.2 RegulonDB 
 --------------------------------------------
 
 * Additional Input 
@@ -416,7 +416,7 @@ Section 3.2 RegulonDB
 	* data/regulondb.pkl - metadata
 
 
-Section 3.3 IntAct
+Section 2.3 IntAct
 --------------------------------------------
 
 * Additional Input 
@@ -429,7 +429,7 @@ Section 3.3 IntAct
 	* data/dataset_name/dataset_name.dat - network matrix 
 	* data/dataset_name/dataset_name.pkl - metadata 
 
-Section 3.4 MPIDB
+Section 2.4 MPIDB
 --------------------------------------------
 
 * Additional Input 
@@ -444,7 +444,7 @@ Section 3.4 MPIDB
 	* data/dataset_name/dataset_name.pkl - metadata 
 
 
-Section 3.5 BioGRID 
+Section 2.5 BioGRID 
 --------------------------------------------
 
 * Additional Input 
@@ -457,7 +457,7 @@ Section 3.5 BioGRID
 	* data/dataset_name/dataset_name.dat - network matrix 
 	* data/dataset_name/dataset_name.pkl - metadata 
 
-Section 3.6 STRING  
+Section 2.6 STRING  
 --------------------------------------------
 
 * Additional Input 
@@ -470,7 +470,7 @@ Section 3.6 STRING
 	* data/dataset_name/dataset_name.dat - network matrix 
 	* data/dataset_name/dataset_name.pkl - metadata 
 
-Section 3.7 GEO
+Section 2.7 GEO
 --------------------------------------------
 
 * Additional Input 
@@ -490,10 +490,10 @@ Section 3.7 GEO
 	* data/dataset_name/dataset_name.pkl - metadata 
 
 
-Chapter 4 Advanced Topics 
+Chapter 3 Advanced Topics 
 ============================================ 
 
-Section 4.1 Customized Pipeline 
+Section 3.0 Customized Pipeline 
 ---------------------------------------------
 
 Each module in ARepA can be tweaked to the user's taste: for instance, one can 
@@ -514,7 +514,7 @@ Caveat: follow the system code - label key as defined by **GeneMapper/etc/batchl
 See GEO/etc/manual_mapping for an example. 
 
 
-Section 4.1 Running Modules Separately 
+Section 3.1 Running Modules Separately 
 ---------------------------------------------
 
 After the taxonomic information has been downloaded
@@ -535,7 +535,7 @@ For instance, if one wants to run GEO, first make sure that the taxids file was 
 	$ cd GEO
 	$ scons 
 
-Section 4.2 Adding New Modules 
+Section 3.2 Adding New Modules 
 ---------------------------------------------
 
 Advanced users who are familiar with scons can write their own modules that download and process data from a repository that is not included in vanilla ARepA. 
@@ -654,7 +654,7 @@ ensures that this particular script launches only for GSE datasets.
 
 Now, let's take a look at the rest of the code in the IntAct example. Most scons processes can be hidden away by using features available in sfle (included in arepa; visit huttenhower.sph.harvard.edu/sfle for documentation). For instance, **sfle.pipe()** seen in the above example performs a UNIX pipe that is tracked by scons, in a manner that is consistent with conventions in arepa. Customized pipelines can be built by the user providing their own python scripts. Of course, users can also utilize features that are already available in vanilla ARepA. 
 
-Section 4.3 ARepA-provided functions 
+Section 3.3 ARepA-provided functions 
 ---------------------------------------------
 
 These are scripts that perform routinely performed tasks in arepa. 
@@ -733,7 +733,7 @@ These are scripts that perform routinely performed tasks in arepa.
 	                  (automatically decide geneid_from)
 
 
-Section 4.4 Unit-Testing ARepA 
+Section 3.4 Unit-Testing ARepA 
 --------------------------------------------
 
 ARepA has a built-in unit testing script, located in the main **src** directory. 
@@ -747,7 +747,7 @@ The default behavior of the testing script assumes that the entire build of ARep
 	$ python test.py scons 
 
 
-Chapter 5 Frequently Asked Questions 
+Chapter 4 Frequently Asked Questions 
 ============================================
 
 NB: All questions should be directed to the arepa-users group group. 
