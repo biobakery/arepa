@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import intact
+import cfile
 import metadata
 import sys
 import csv 

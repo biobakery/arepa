@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import arepa
-import intact
+import cfile
 import re
 import sys
 

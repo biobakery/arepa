@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import mpidb
+import cfile
 import metadata
 import sys
 import csv 
@@ -23,11 +23,10 @@ def callback( pMetadata, strAs, strBs, strAltAs, strAltBs, strSynAs, strSynBs, s
 	metadatum( pMetadata.platform, [strMethods], 2 )
 
 if len( sys.argv ) < 2:
-	raise Exception( "Usage: c2metadata.py <id> < <intactc>" )
+	raise Exception( "Usage: c2metadata.py <id> < <mpidbc>" )
 
 strTarget = sys.argv[1]
 strStatus = sys.argv[2] if len(sys.argv[1:]) > 1 else None 
-
 
 pMetadata = metadata.open( )
 mpidb.read( sys.stdin, strTarget, callback, pMetadata )

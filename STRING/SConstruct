@@ -5,35 +5,25 @@ import sys
 
 pE = DefaultEnvironment( )
 
-c_iMinimum			= 1
 c_strSufTXT			= ".txt"
 c_strURL			= "ftp://ftp.string-db.org/STRING/9.05/protein.actions.v9.05.txt.gz"
 
-c_fileInputTaxIDs		= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
+c_fileInputTaxIDs	= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
 
-c_fileZIP			= sfle.d( pE, sfle.c_strDirTmp, "string.txt.gz" )
-c_fileTXT			= sfle.d( pE, sfle.c_strDirTmp, "string.txt" )
-c_fileC1                	= sfle.d( pE, sfle.c_strDirTmp, "stringc1" )
+c_fileGZ			= sfle.d( pE, sfle.c_strDirTmp, "string.txt.gz" )
 c_fileC				= sfle.d( pE, sfle.c_strDirTmp, "stringc" )
 
-c_fileProg2C1           	= sfle.d( pE, sfle.c_strDirSrc, "string2c_1.py" )
-c_fileProg2C			= sfle.d( pE, sfle.c_strDirSrc, "string2c.py" )
+c_fileProg2C		= sfle.d( pE, sfle.c_strDirSrc, "string2c.py" )
 
 #===============================================================================
 # Download the zip source file
 #===============================================================================
-sfle.download( pE, c_strURL, c_fileZIP )
-
-#===============================================================================
-# Extract txt from zip
-#===============================================================================
-sfle.scmd( pE, "gunzip", c_fileTXT, [[c_fileZIP]] )
+sfle.download( pE, c_strURL, c_fileGZ )
 
 #===============================================================================
 # Process txt into the more compact txtc
 #===============================================================================
-sfle.op( pE, c_fileProg2C1, [[c_fileTXT], [True, c_fileC1]] )
-afileC = sfle.pipe( pE, c_fileC1, c_fileProg2C, c_fileC, [c_iMinimum, [c_fileInputTaxIDs]] )
+afileC = sfle.spipe( pE, c_fileGZ, c_fileProg2C, c_fileC, [[c_fileInputTaxIDs]] )
 
 #===============================================================================
 # Pass the IDs from intactc to child directories

@@ -42,7 +42,6 @@ astrMapped = funcGeneIDMapping( pE, c_fileIDRawDAT, c_strGeneFrom, c_fileStatus,
 # Note that this must currently correspond to the "best" mapping file from GeneMapper
 # For whatever reason, this is hard-coded to the type strain, not the species
 
-
 #Make identifiers unique 
 astrUnique = funcMakeUnique( pE, astrMapped[0] )
 
@@ -52,6 +51,5 @@ sfle.pipe( pE, c_fileInMeta, c_fileProgUnpickle, c_fileIDPKL, ["-r","-l", [c_fil
 #DAT to DAB
 execfile( str(c_fileInputSConscriptDAB) )
 astrDAB = funcDAB( pE, c_fileIDDAB, [c_fileIDRawDAT, astrUnique[0]] )
-funcPCL( pE, c_fileIDDAT, astrUnique[0] )
 funcQUANT( pE, c_fileIDQUANT )
 

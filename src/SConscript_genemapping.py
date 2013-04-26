@@ -104,7 +104,9 @@ def funcGeneIDMapping( pE, fileDATin, strGeneFrom = None, fileLOGout = None, str
 	
 	aastrArgs 		= aastrPrefix + astrGeneFrom + astrGeneTo + astrSkip + afileLOGout + astrMapIn
 	
-	return pE.Depends( sfle.op( pE, c_funcGeneMapper, aastrArgs ), sfle.scons_child( pE, c_strPathGeneMapper ) )
+	pE.Precious( strMAPin )
+	return pE.Depends( sfle.op( pE, c_funcGeneMapper, aastrArgs ),
+		sfle.scons_child( pE, c_strPathGeneMapper, None, None, None, [strMAPin] ) )
 
 def funcMakeUnique( pE, fileDATin, iSkip = 0, iCol = 2 ):
 	strBase, strExt = os.path.splitext(str(fileDATin))

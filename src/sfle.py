@@ -559,7 +559,7 @@ def testthat( pE, fileProg, fileDir, fileOut ):
 # SConstruct helper functions
 #===============================================================================
 
-def scons_child( pE, fileDir, hashArgs = None, fileSConstruct = None, afileDeps = None ):
+def scons_child( pE, fileDir, hashArgs = None, fileSConstruct = None, afileDeps = None, afileOuts = None ):
 
 	def funcTmp( target, source, env, fileDir = fileDir, fileSConstruct = fileSConstruct ):
 		strDir, strSConstruct = (( ( os.path.abspath( f ) if ( type( f ) == str ) else f.get_abspath( ) ) if f else None )
@@ -579,7 +579,8 @@ def scons_child( pE, fileDir, hashArgs = None, fileSConstruct = None, afileDeps 
 					fileOut.write( "	\"%s\"	: %s,\n" % (strKey, repr( strValue )) )
 				fileOut.write( "}\nExport( \"hashArgs\" )\n" )
 		return subprocess.call( ["scons"] + sys.argv[1:] + ["-C", strDir] )
-	return pE.Command( "dummy:" + os.path.basename( str(fileDir) ), afileDeps, funcTmp )
+	return pE.Command( ["dummy:" + os.path.basename( str(fileDir) )] + ( afileOuts or [] ),
+		afileDeps, funcTmp )
 
 def scons_children( pE, strDir = ".", afileDeps = None, astrExclude = [] ):
 

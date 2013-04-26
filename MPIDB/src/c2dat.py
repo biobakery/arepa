@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import arepa
-import mpidb
+import cfile
 import re
 import sys
 

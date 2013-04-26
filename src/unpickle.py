@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 '''pickle and unpickle files'''
 
 import os 
@@ -6,27 +7,6 @@ import csv
 import pickle
 import sys
 import argparse 
-'''
-
-\name{curatedOvarianData-package}
-\alias{curatedOvarianData}
-\docType{package}
-\title{Clinically Annotated Data for the Ovarian Cancer Transcriptome}
-\description{The curatedOvarianData package provides manually curated
-  clinical data, uniformly processed expression data, and convenience
-  functions for gene expression analysis in patients with ovarian cancer.}
-\details{
-\tabular{ll}{
-Package: \tab curatedOvarianData\cr
-Type: \tab Package\cr
-Version: \tab \Sexpr{packageDescription("curatedOvarianData")$Version}\cr
-Date: \tab \Sexpr{packageDescription("curatedOvarianData")$Date}\cr
-License: \tab Artistic-2.0\cr
-Depends: \tab R (>= 2.10.0), affy\cr
-}
-
-
-'''
 
 def _unpickle( istm, ostm, strSplit, iCols, iSkip, istmLog, strManKey, fRMeta ):
 	hashData = pickle.load( istm )
@@ -36,7 +16,6 @@ def _unpickle( istm, ostm, strSplit, iCols, iSkip, istmLog, strManKey, fRMeta ):
 	else:
 		for strKey, pValue in hashData.items( ):
 			csvw.writerow( (strKey, "%s" % pValue) )
-		
 
 def _pickle( istm, ostm, strSplit, iCols, iSkip, istmLog, strManKey ):
 	pMeta = {}
@@ -50,7 +29,6 @@ def _pickle( istm, ostm, strSplit, iCols, iSkip, istmLog, strManKey ):
 			if line: key,value = line 
 			pMeta[key] = value 
 	return pickle.dump( pMeta, ostm )
-
 
 argp = argparse.ArgumentParser( prog = "unpickle.py",
         description =   """pickle and unpickle files.""" )

@@ -1,6 +1,10 @@
-import arepa
-import sfle
 import sys
+try:
+	import arepa
+except ImportError:
+	sys.stderr.write( "********\nNo arepa.py file found - did you remember to run \"export PYTHONPATH=`pwd`/src\"?\n********\n" )
+	raise
+import sfle
 
 Decider( "MD5-timestamp" )
 pE = DefaultEnvironment( )
