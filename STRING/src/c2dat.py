@@ -6,6 +6,8 @@ import cfile
 import re
 import sys
 
+c_iColumns = 6
+
 def callback( aArgs, strA, strB, strMode, strAction, strActor, strScore ):
 	hashScores = aArgs
 	strA, strB = sorted( (strA, strB) )
@@ -16,7 +18,7 @@ if len( sys.argv ) != 2:
 strTaxid = sys.argv[1]
 
 hashScores = {}
-string1.read( sys.stdin, strTaxid, callback, hashScores )
+cfile.read( sys.stdin,c_iColumns, strTaxid, callback, hashScores )
 csvw = csv.writer( sys.stdout, csv.excel_tab )
 for astrAB, dScore in hashScores.items( ):
 	csvw.writerow( list(astrAB) + [dScore] )

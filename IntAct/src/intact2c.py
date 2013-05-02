@@ -6,7 +6,7 @@ import re
 import sfle
 import sys
 
-c_repo = arepa.cwd()
+c_repo          = arepa.cwd()
 c_strTaxid	= c_repo+"_taxid_"
 c_strPMID	= "pmid_"
 

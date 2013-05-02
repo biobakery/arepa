@@ -18,8 +18,8 @@ c_strID					= arepa.cwd( )
 c_fileInputIntactC			= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirTmp, "intactc" )
 c_fileIDPKL				= sfle.d( pE, c_strID + ".pkl" )
 c_fileIDDAB				= sfle.d( pE, c_strID + ".dab" )
-c_fileIDRawDAT          			= sfle.d( pE, c_strID + "_00raw.dat" )
-c_fileIDDAT						= sfle.d( pE, c_strID + ".dat")
+c_fileIDRawDAT          		= sfle.d( pE, c_strID + "_00raw.dat" )
+c_fileIDDAT				= sfle.d( pE, c_strID + ".dat")
 c_fileIDQUANT           		= sfle.d( pE, c_strID + ".quant" )
 
 c_fileProgUnpickle                      = sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "unpickle.py" )
@@ -35,18 +35,18 @@ c_strGeneFrom 				= "S"
 afileIDDAT = sfle.pipe( pE, c_fileInputIntactC, c_fileProgC2DAT, c_fileIDRawDAT, [c_strID] )
 
 #Launch gene mapping 
-execfile(str(c_fileInputSConscriptGM))
-astrMapped = funcGeneIDMapping( pE, c_fileIDRawDAT, c_strGeneFrom, c_fileStatus )
+#execfile(str(c_fileInputSConscriptGM))
+#astrMapped = funcGeneIDMapping( pE, c_fileIDRawDAT, c_strGeneFrom, c_fileStatus )
 
 #Make identifiers unique 
-astrUnique = funcMakeUnique( pE, astrMapped[0] )
+#astrUnique = funcMakeUnique( pE, astrMapped[0] )
 
-afileIDTXT = sfle.pipe( pE, c_fileInputIntactC, c_fileProgC2Metadata, c_fileIDPKL,[c_strID,[c_fileStatus]] )
+#afileIDTXT = sfle.pipe( pE, c_fileInputIntactC, c_fileProgC2Metadata, c_fileIDPKL,[c_strID,[c_fileStatus]] )
 
-execfile(str(c_fileInputSConscriptDAB))
+#execfile(str(c_fileInputSConscriptDAB))
 
 #DAT to DAB
-astrDAB = funcDAB( pE, c_fileIDDAB, [c_fileIDRawDAT, astrUnique[0]] )
-funcPCL( pE, c_fileIDDAT, astrUnique[0] )
-funcQUANT( pE, c_fileIDQUANT )
+#astrDAB = funcDAB( pE, c_fileIDDAB, [c_fileIDRawDAT, astrUnique[0]] )
+#funcPCL( pE, c_fileIDDAT, astrUnique[0] )
+#funcQUANT( pE, c_fileIDQUANT )
 

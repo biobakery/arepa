@@ -15,7 +15,7 @@ def symbol( hashSymbols, strValue ):
 	return hashSymbols.setdefault( strValue, len( hashSymbols ) )
 
 if len( sys.argv ) < 2:
-	raise Exception( "Usage: intact2c.py <min> [taxa] < <intact.txt>" )
+	raise Exception( "Usage: mpidb2c.py <min> [taxa] < <mpidb.txt>" )
 iMin = int(sys.argv[1])
 strTaxa = None if ( len( sys.argv ) <= 2 ) else sys.argv[2]
 

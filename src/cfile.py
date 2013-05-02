@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
 import re
-
-c_iColumns	= 6
+import sys
 
 def split( strToken ):
 
@@ -12,8 +11,8 @@ def split( strToken ):
 	strID, strGloss = mtch.groups( ) if mtch else (strTmp, "")
 	return (strType, strID, strGloss)
 
-def read( fileC, strTarget, funcCallback, pArgs = None ):
-	
+def read( fileC, ncolumns, strTarget, funcCallback, pArgs = None ):
+
 	astrSymbols = []
 	strID = fHit = None
 	for strLine in fileC:
@@ -26,7 +25,7 @@ def read( fileC, strTarget, funcCallback, pArgs = None ):
 		elif strID == strTarget:
 			fHit = True
 			astrLine = strLine.strip( ).split( "\t" )
-			if len( astrLine ) < c_iColumns:
+			if len( astrLine ) < ncolumns:
 				continue
-			aArgs = [pArgs] + map( lambda s: astrSymbols[int(s)], astrLine[:c_iColumns] )
+			aArgs = [pArgs] + map( lambda s: astrSymbols[int(s)], astrLine[:ncolumns] )
 			funcCallback( *aArgs )

@@ -5,12 +5,14 @@ import metadata
 import sys
 import csv 
 
+c_iColumns	= 15
+
 def metadatum( funcMetadata, astrTokens, iIndex ):
 
 	for strTokens in astrTokens:
 		setstrTokens = set()
 		for strToken in strTokens.split( "|" ):
-			astrToken = intact.split( strToken )
+			astrToken = cfile.split( strToken )
 			setstrTokens.add( astrToken[iIndex] or strToken )
 		funcMetadata( setstrTokens )
 
@@ -30,7 +32,8 @@ strStatus = sys.argv[2] if len(sys.argv[1:]) > 1 else None
 
 
 pMetadata = metadata.open( )
-intact.read( sys.stdin, strTarget, callback, pMetadata )
+cfile.read( sys.stdin,c_iColumns, strTarget, callback, pMetadata )
+
 if strStatus:
         strMapped, strBool = [x for x in csv.reader(open(strStatus),csv.excel_tab)][0]
         fMapped = True if strBool == "True" else False 

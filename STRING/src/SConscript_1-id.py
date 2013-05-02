@@ -38,19 +38,19 @@ c_strGeneFrom				= None # we do not know a priori what the gene identifiers are 
 afileIDDAT = sfle.pipe( pE, c_fileInputC, c_fileProgC2DAT, c_fileIDRawDAT, [c_strID] )
 
 #Launch gene mapping 
-execfile(str(c_fileInputSConscriptGM))
+#execfile(str(c_fileInputSConscriptGM))
 
-astrMapped = funcGeneIDMapping( pE, c_fileIDRawDAT, c_strGeneFrom, c_fileStatus )
+#astrMapped = funcGeneIDMapping( pE, c_fileIDRawDAT, c_strGeneFrom, c_fileStatus )
 
 #Make identifiers unique 
-astrUnique = funcMakeUnique( pE, astrMapped[0] )
+#astrUnique = funcMakeUnique( pE, astrMapped[0] )
 
 #Make metadata
-afileIDTXT = sfle.pipe( pE, c_fileInputC, c_fileProgC2Metadata, c_fileIDPKL, [c_strID, [c_fileStatus]] )
+#afileIDTXT = sfle.pipe( pE, c_fileInputC, c_fileProgC2Metadata, c_fileIDPKL, [c_strID, [c_fileStatus]] )
 
-execfile(str(c_fileInputSConscriptDAB))
+#execfile(str(c_fileInputSConscriptDAB))
 
 #DAT to DAB
-astrDAB = funcDAB( pE, c_fileIDDAB, [c_fileIDRawDAT, astrUnique[0]] )
-funcPCL( pE, c_fileIDDAT, astrUnique[0] )
-funcQUANT( pE, c_fileIDQUANT )
+#astrDAB = funcDAB( pE, c_fileIDDAB, [c_fileIDRawDAT, astrUnique[0]] )
+#funcPCL( pE, c_fileIDDAT, astrUnique[0] )
+#funcQUANT( pE, c_fileIDQUANT )

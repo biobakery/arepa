@@ -5,6 +5,8 @@ import metadata
 import sys
 import csv 
 
+c_iColumns = 6
+
 def callback( pMetadata, strA, strB, strMode, strAction, strActor, strScore ):
 	pass
 
@@ -15,7 +17,7 @@ strStatus = sys.argv[2] if ( len(sys.argv[1:]) > 1 ) else None
 
 pMetadata = metadata.open( )
 pMetadata.taxid( strTarget )
-string1.read( sys.stdin, strTarget, callback, pMetadata )
+cfile.read( sys.stdin,c_iColumns, strTarget, callback, pMetadata )
 if strStatus:
 	strMapped, strBool = [x for x in csv.reader(open(strStatus),csv.excel_tab)][0]
 	fMapped = ( strBool == "True" )

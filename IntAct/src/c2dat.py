@@ -5,6 +5,8 @@ import cfile
 import re
 import sys
 
+c_iColumns	= 15
+
 def callback( aArgs, strAs, strBs, strAltAs, strAltBs, strSynAs, strSynBs, strMethods, strAuthors, strPMIDs,
 	strTaxAs, strTaxBs, strTypes, strDBs, strIDs, strConfs ):
 
@@ -16,7 +18,7 @@ def callback( aArgs, strAs, strBs, strAltAs, strAltBs, strSynAs, strSynBs, strMe
 			astrTokens += strTokens.split( "|" )
 		strGene = None
 		for strToken in astrTokens:
-			strType, strID, strGloss = intact.split( strToken )
+			strType, strID, strGloss = cfile.split( strToken )
 			strCur = hashCache.get( strID )
 			if strCur == None:
 				strCur = hashCache[strID] = strID
@@ -36,6 +38,6 @@ if not mtch:
 strTaxID = mtch.group( 1 )
 
 setPairs = set()
-intact.read( sys.stdin, strTarget, callback, [setPairs, strTaxID, {}] )
+cfile.read( sys.stdin,c_iColumns,strTarget, callback, [setPairs, strTaxID, {}] )
 for astrGenes in setPairs:
 	print( "\t".join( list(astrGenes) + ["1"] ) )

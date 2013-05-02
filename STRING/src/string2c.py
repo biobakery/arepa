@@ -6,6 +6,10 @@ import re
 import sfle
 import sys
 
+c_repo 		= arepa.cwd()
+c_strTaxid	= c_repo+"_taxid_"
+
+
 def symbol( hashSymbols, strValue ):
 	return hashSymbols.setdefault( strValue, len( hashSymbols ) )
 
@@ -37,6 +41,6 @@ aaSymbols = sorted( hashSymbols.items( ), cmp = lambda aOne, aTwo: cmp( aOne[1],
 print( "\n".join( aCur[0] for aCur in aaSymbols ) )
 
 for strTaxon, aaiLines in hashTaxa.items( ):
-	print( ">" + strTaxon )
+	print( ">" + c_strTaxid + strTaxon )
 	for aiLine in aaiLines:
 		print( "\t".join( str(i) for i in aiLine ) )

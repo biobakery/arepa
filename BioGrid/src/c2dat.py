@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 
 import arepa
-import biogrid
+import cfile
 import re
 import sys
 
-def callback( aArgs, strAs, strBs, strAltAs , strAltBs , strSynAs , strSynBs , strMethods , strAuthors , strPMIDs , strTaxAs , strTaxBsi , strTypes , strDBs , strIDs , strConfs  ):
+c_iColumns	= 15
+
+
+def callback( aArgs, strAltAs , strAltBs , strSynAs , strSynBs , strSynAs2, strSynBs2, strAs, strBs,  strSynAs3, strSynBs3, strMethods, strTypes, strAuthors, strPMIDs, strTaxAs):
 	setPairs, strTaxID, hashCache = aArgs
 	astrAB = []
 	for astrCur in ([strAs, strAltAs, strSynAs], [strBs, strAltBs, strSynBs]):
@@ -14,7 +17,7 @@ def callback( aArgs, strAs, strBs, strAltAs , strAltBs , strSynAs , strSynBs , s
 			astrTokens += strTokens.split( "|" )
 		strGene = None
 		for strToken in astrTokens:
-			strType, strID, strGloss = biogrid.split( strToken )
+			strType, strID, strGloss = cfile.split( strToken )
 			strCur = hashCache.get( strID )
 			if strCur == None:
 				strCur = hashCache[strID] = strID 
@@ -34,7 +37,7 @@ if not mtch:
 strTaxID = mtch.group( 1 )
 
 setPairs = set()
-biogrid.read( sys.stdin, strTarget, callback, [setPairs, strTaxID, {}] )
+cfile.read( sys.stdin, c_iColumns, strTarget, callback, [setPairs, strTaxID, {}] )
 for astrGenes in setPairs:
 	print( "\t".join( list(astrGenes) + ["1"] ) )
 
