@@ -11,7 +11,7 @@ def split( strToken ):
 	strID, strGloss = mtch.groups( ) if mtch else (strTmp, "")
 	return (strType, strID, strGloss)
 
-def read( fileC, ncolumns, strTarget, funcCallback, pArgs = None ):
+def read( fileC, iColumns, strTarget, funcCallback, pArgs = None ):
 
 	astrSymbols = []
 	strID = fHit = None
@@ -25,7 +25,7 @@ def read( fileC, ncolumns, strTarget, funcCallback, pArgs = None ):
 		elif strID == strTarget:
 			fHit = True
 			astrLine = strLine.strip( ).split( "\t" )
-			if len( astrLine ) < ncolumns:
+			if len( astrLine ) < iColumns:
 				continue
-			aArgs = [pArgs] + map( lambda s: astrSymbols[int(s)], astrLine[:ncolumns] )
+			aArgs = [pArgs] + map( lambda s: astrSymbols[int(s)], astrLine[:iColumns] )
 			funcCallback( *aArgs )
