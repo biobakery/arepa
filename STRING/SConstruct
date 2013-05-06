@@ -5,15 +5,16 @@ import sys
 
 pE = DefaultEnvironment( )
 
+c_iMinimum			= 10
 c_strSufTXT			= ".txt"
 c_strURL			= "ftp://ftp.string-db.org/STRING/9.05/protein.actions.v9.05.txt.gz"
 
-c_fileInputTaxIDs	= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
+c_fileInputTaxIDs		= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
 
 c_fileGZ			= sfle.d( pE, sfle.c_strDirTmp, "string.txt.gz" )
 c_fileC				= sfle.d( pE, sfle.c_strDirTmp, "stringc" )
 
-c_fileProg2C		= sfle.d( pE, sfle.c_strDirSrc, "string2c.py" )
+c_fileProg2C			= sfle.d( pE, sfle.c_strDirSrc, "string2c.py" )
 
 #===============================================================================
 # Download the zip source file
@@ -23,7 +24,7 @@ sfle.download( pE, c_strURL, c_fileGZ )
 #===============================================================================
 # Process txt into the more compact txtc
 #===============================================================================
-afileC = sfle.spipe( pE, c_fileGZ, c_fileProg2C, c_fileC, [[c_fileInputTaxIDs]] )
+afileC = sfle.pipe( pE, c_fileGZ, c_fileProg2C, c_fileC, [c_iMinimum, [c_fileInputTaxIDs]] )
 
 #===============================================================================
 # Pass the IDs from intactc to child directories

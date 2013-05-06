@@ -36,7 +36,7 @@ afileIDDAT = sfle.pipe( pE, c_fileInputIntactC, c_fileProgC2DAT, c_fileIDRawDAT,
 
 #Launch gene mapping 
 execfile(str(c_fileInputSConscriptGM))
-astrMapped = funcGeneIDMapping( pE, c_fileIDRawDAT, c_strGeneFrom, c_fileStatus )
+astrMapped = funcGeneIDMapping( pE, c_fileIDRawDAT, c_strGeneFrom, c_fileStatus)
 
 #Make identifiers unique 
 astrUnique = funcMakeUnique( pE, astrMapped[0] )

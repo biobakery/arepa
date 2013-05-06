@@ -6,7 +6,7 @@ import sys
 import csv
 
 class CMetadata:
-	c_astrStandards	= ["curated", "taxid", "type", "pmid", "platform", "title", "gloss", "channels", "conditions"]
+	c_astrStandards	= ["curated", "taxid", "type", "pmid", "platform", "title", "gloss", "channels", "conditions", "mode"]
 	c_fCollapse		= True
 	
 	def __init__( self ):
