@@ -26,7 +26,10 @@ def callback( aArgs, strAs, strBs, strAltAs, strAltBs, strSynAs, strSynBs, strMe
 				strGene = strCur
 				break
 		astrAB.append( strGene or astrTokens[0] )
-	setPairs.add( tuple(sorted( astrAB )) )
+	astrAB = sorted(astrAB)
+	astrAB.append(strConfs.split( "intact-miscore:")[1])
+	setPairs.add( tuple(astrAB) )
+
 
 if len( sys.argv ) != 2:
 	raise Exception( "Usage: c2txt.py <id> < <intactc>" )
@@ -40,4 +43,4 @@ strTaxID = mtch.group( 1 )
 setPairs = set()
 cfile.read( sys.stdin,c_iColumns,strTarget, callback, [setPairs, strTaxID, {}] )
 for astrGenes in setPairs:
-	print( "\t".join( list(astrGenes) + ["1"] ) )
+	print( "\t".join( list(astrGenes) ) )

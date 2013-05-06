@@ -22,7 +22,8 @@ def callback( pMetadata, strAs, strBs, strAltAs, strAltBs, strSynAs, strSynBs, s
 	metadatum( pMetadata.taxid, [strTaxAs, strTaxBs], 1 )
 	metadatum( pMetadata.pmid, [strPMIDs], 1 )
 	metadatum( pMetadata.type, [strTypes.lower( )], 2 )
-	metadatum( pMetadata.platform, [strMethods], 2 )
+	metadatum( pMetadata.technique, [strMethods], 2 )
+
 
 if len( sys.argv ) < 2:
 	raise Exception( "Usage: c2metadata.py <id> < <intactc>" )
