@@ -5,10 +5,10 @@ import cfile
 import re
 import sys
 
-c_iColumns	= 15
+c_iColumns	= 16
 
 def callback( aArgs, strAs, strBs, strAltAs, strAltBs, strSynAs, strSynBs, strMethods, strAuthors, strPMIDs,
-	strTaxAs, strTaxBs, strTypes, strDBs, strIDs, strConfs ):
+	strTaxAs, strTaxBs, strTypes, strDBs, strIDs, strConfs, strScore ):
 
 	setPairs, strTaxID, hashCache = aArgs
 	astrAB = []
@@ -26,7 +26,10 @@ def callback( aArgs, strAs, strBs, strAltAs, strAltBs, strSynAs, strSynBs, strMe
 				strGene = strCur
 				break
 		astrAB.append( strGene or astrTokens[0] )
-	setPairs.add( tuple(sorted( astrAB )) )
+	astrAB = sorted(astrAB)
+	astrAB.append(str(float(strScore)/1000))
+	setPairs.add( tuple(astrAB) )
+	
 
 if len( sys.argv ) != 2:
 	raise Exception( "Usage: c2txt.py <id> < <intactc>" )
@@ -40,4 +43,4 @@ strTaxID = mtch.group( 1 )
 setPairs = set()
 cfile.read( sys.stdin,c_iColumns, strTarget, callback, [setPairs, strTaxID, {}] )
 for astrGenes in setPairs:
-	sys.stdout.write( "\t".join( list(astrGenes) + ["1"] ) + "\n" )
+	sys.stdout.write( "\t".join( list(astrGenes) ) + "\n" )
