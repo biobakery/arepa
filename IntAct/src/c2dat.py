@@ -27,8 +27,9 @@ def callback( aArgs, strAs, strBs, strAltAs, strAltBs, strSynAs, strSynBs, strMe
 				break
 		astrAB.append( strGene or astrTokens[0] )
 	astrAB = sorted(astrAB)
-	astrAB.append(strConfs.split( "intact-miscore:")[1])
-	setPairs.add( tuple(astrAB) )
+	if "-" not in astrAB:
+		astrAB.append(strConfs.split( "intact-miscore:")[1])
+		setPairs.add( tuple(astrAB) )
 
 
 if len( sys.argv ) != 2:
