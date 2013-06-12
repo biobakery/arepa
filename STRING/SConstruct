@@ -7,7 +7,7 @@ pE = DefaultEnvironment( )
 
 c_iMinimum			= 10
 c_strSufTXT			= ".txt"
-c_strURL			= "ftp://ftp.string-db.org/STRING/9.05/protein.actions.v9.05.txt.gz"
+c_strURL			= "http://string-db.org/newstring_download/protein.actions.v9.05.txt.gz"
 
 c_fileInputTaxIDs		= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
 

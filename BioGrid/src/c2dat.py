@@ -5,10 +5,10 @@ import cfile
 import re
 import sys
 
-c_iColumns	= 15
+c_iColumns	= 16
 
 
-def callback( aArgs, strAltAs , strAltBs , strSynAs , strSynBs , strSynAs2, strSynBs2, strAs, strBs,  strSynAs3, strSynBs3, strMethods, strTypes, strAuthors, strPMIDs, strTaxAs):
+def callback( aArgs, strInterID, strAltAs , strAltBs , strSynAs , strSynBs , strSynAs2, strSynBs2, strAs, strBs, strSynAs3, strSynBs3, strMethods, strTypes, strAuthors, strPMIDs, strTaxAs):
 	setPairs, strTaxID, hashCache = aArgs
 	astrAB = []
 	for astrCur in ([strAs, strAltAs, strSynAs], [strBs, strAltBs, strSynBs]):

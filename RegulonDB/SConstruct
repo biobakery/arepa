@@ -6,7 +6,8 @@ import pickle
 
 pE = DefaultEnvironment( )
 
-c_strURL				= "http://regulondb.ccg.unam.mx/data/network_tf_gene.txt"
+c_strURL				= "http://regulondb.ccg.unam.mx/menu/download/datasets/files/network_tf_gene.txt"
+
 
 c_fileInputTaxIDs			= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
 c_fileRegDBTXT	 			= sfle.d( pE, sfle.c_strDirTmp, os.path.basename(c_strURL))
