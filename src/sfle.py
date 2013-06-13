@@ -1,26 +1,25 @@
-#######################################################################################
-# This file is provided under the Creative Commons Attribution 3.0 license.
-#
-# You are free to share, copy, distribute, transmit, or adapt this work
-# PROVIDED THAT you attribute the work to the authors listed below.
-# For more information, please see the following web page:
-# http://creativecommons.org/licenses/by/3.0/
-#
-# This file is a component of the SflE Scientific workFLow Environment for reproducible 
-# research, authored by the Huttenhower lab at the Harvard School of Public Health
-# (contact Curtis Huttenhower, chuttenh@hsph.harvard.edu).
-#
-# If you use this environment, the included scripts, or any related code in your work,
-# please let us know, sign up for the SflE user's group (sfle-users@googlegroups.com),
-# pass along any issues or feedback, and we'll let you know as soon as a formal citation
-# is available.
-#######################################################################################
-#!/usr/bin/env python
-
 """
-.. testsetup::
+ARepA: Automated Repository Acquisition 
 
-	from sfle import *
+ARepA is licensed under the MIT license.
+
+Copyright (C) 2013 Yo Sup Moon, Daniela Boernigen, Levi Waldron, Eric Franzosa, Xochitl Morgan, and Curtis Huttenhower
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation 
+files (the "Software"), to deal in the Software without restriction, including without limitation the rights to 
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons 
+to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or 
+substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
 """
 
 import collections
@@ -242,6 +241,16 @@ def current_file( ):
 def isempty( strFile ):
 	
 	return ( not os.stat( strFile )[6] )
+
+import os.path
+
+def in_directory( strFile, strDir ):
+     '''
+     Checks if strFile is in strDir 
+     NB: os.path.realpath needed to ensure correct behavior for symbolic links
+     '''
+     strDir, strFile = map( os.path.realpath, [str(strDir), str(strFile)] )
+     return ( os.path.commonprefix([strFile,strDir]) == strDir ) 
 
 #===============================================================================
 # SCons utilities
@@ -558,7 +567,7 @@ def testthat( pE, fileProg, fileDir, fileOut ):
 #===============================================================================
 # SConstruct helper functions
 #===============================================================================
-
+''
 def scons_child( pE, fileDir, hashArgs = None, fileSConstruct = None, afileDeps = None, afileOuts = None ):
 
 	def funcTmp( target, source, env, fileDir = fileDir, fileSConstruct = fileSConstruct ):

@@ -1,8 +1,32 @@
 #!/usr/bin/env python 
-'''
+"""
+ARepA: Automated Repository Acquisition 
+
+ARepA is licensed under the MIT license.
+
+Copyright (C) 2013 Yo Sup Moon, Daniela Boernigen, Levi Waldron, Eric Franzosa, Xochitl Morgan, and Curtis Huttenhower
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation 
+files (the "Software"), to deal in the Software without restriction, including without limitation the rights to 
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons 
+to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or 
+substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+SConscript_pcl-dab.py 
+
 Microarray pipeline -- gene mapping, normalization, imputation, 
 co-expression network construction
-'''
+
+"""
+
 import sys
 import csv
 import pickle
@@ -69,11 +93,10 @@ def funcRawMap( target, source, env ):
 	strT, astrSs = sfle.ts( target, source )
 	strGPLTXTGZ, strPlatformTXT, strProgAnnot2Map, strProgGPL2TXT = astrSs[:4]
 	strGPLID = (sfle.readcomment( open( strPlatformTXT ) ) or [""])[0]
-	if not(sfle.isempty(str(strGPLTXTGZ))):
-		ex( [strProgAnnot2Map, strGPLTXTGZ, strT] )
-	else:
-		ex( [strProgGPL2TXT, c_strGPLPath + strGPLID, strT] )
-
+	
+	return ( ex( [strProgAnnot2Map, strGPLTXTGZ, strT] ) if not(sfle.isempty(str(strGPLTXTGZ))) 
+		else ex( [strProgGPL2TXT, c_strGPLPath + strGPLID, strT] ) )
+	
 def funcMergeMap( target, source, env ):
 	strT, astrSs = sfle.ts( target, source)
 	fileTaxa, fileMerge, fileIDRaw =  astrSs[:3]
@@ -81,7 +104,8 @@ def funcMergeMap( target, source, env ):
 	strMap = arepa.get_mappingfile( astrTaxa[0] ) if astrTaxa else ""
 	return ( sfle.ex( [fileMerge, fileIDRaw, strMap, strT] ) if strMap else sfle.ex(["cp", fileIDRaw, strT]) )
 
-def funcPCL2DAB( pE, fileIDRawPCL, fileGPLTXTGZ, fileProgAnnot2Map, fileProgGPL2TXT, fileProgMergeMapping, fileTaxa, filePlatform ):
+def funcPCL2DAB( pE, fileIDRawPCL, fileGPLTXTGZ, fileProgAnnot2Map, fileProgGPL2TXT, fileProgMergeMapping, 
+	fileTaxa, filePlatform ):
 	
 	astrSleipnir = sfle.readcomment(c_fileFlagSleipnir)
 	bSleipnir = astrSleipnir[0]=="True" if astrSleipnir else False   
@@ -100,7 +124,8 @@ def funcPCL2DAB( pE, fileIDRawPCL, fileGPLTXTGZ, fileProgAnnot2Map, fileProgGPL2
 
 	#Get rid of duplicate identifiers 
 	astrUnique = funcMakeUnique( pE, astrMapped[0], c_iSkip, c_iCOL ) 
-
+	
+	
 	if bSleipnir:  
 		pE.Command( c_fileIDNormPCL, [c_fileIDRawPCL, astrUnique[0]], funcIDNormPCL )
 		pE.Command( c_fileIDPCL, c_fileIDNormPCL, funcIDKNNPCL )
@@ -108,3 +133,4 @@ def funcPCL2DAB( pE, fileIDRawPCL, fileGPLTXTGZ, fileProgAnnot2Map, fileProgGPL2
 		pE.Command( c_fileIDQUANT, c_fileIDPCL, funcIDQUANT )
 	else:
 		sfle.sop( pE, "cp", [[astrUnique[0]], [True, c_fileIDPCL]] )	
+	

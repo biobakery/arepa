@@ -1,8 +1,31 @@
 #!/usr/bin/env python
-'''
+
+"""
+ARepA: Automated Repository Acquisition 
+
+ARepA is licensed under the MIT license.
+
+Copyright (C) 2013 Yo Sup Moon, Daniela Boernigen, Levi Waldron, Eric Franzosa, Xochitl Morgan, and Curtis Huttenhower
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation 
+files (the "Software"), to deal in the Software without restriction, including without limitation the rights to 
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons 
+to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or 
+substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+SConcsript_genemapping.py: 
+
 Shared utility for magic functions within
 gene mapper 
-'''
+"""
 
 import arepa
 import os
@@ -12,6 +35,7 @@ import pickle
 import itertools 
 import re 
 import time 
+import sfle 
 
 g_iterCounter			= itertools.count(0) 
 
@@ -106,7 +130,8 @@ def funcGeneIDMapping( pE, fileDATin, strGeneFrom = None, fileLOGout = None, str
 	
 	pE.Precious( strMAPin )
 	return pE.Depends( sfle.op( pE, c_funcGeneMapper, aastrArgs ),
-		sfle.scons_child( pE, c_strPathGeneMapper, None, None, None, [strMAPin] ) )
+		sfle.scons_child( pE, c_strPathGeneMapper, None, None, None, ([strMAPin] if not(sfle.in_directory(strMAPin, os.path.abspath(arepa.cwd()))) else None) 
+			) )
 
 def funcMakeUnique( pE, fileDATin, iSkip = 0, iCol = 2 ):
 	strBase, strExt = os.path.splitext(str(fileDATin))

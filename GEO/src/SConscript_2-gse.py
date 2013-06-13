@@ -1,4 +1,25 @@
 #!/usr/bin/env python
+"""
+ARepA: Automated Repository Acquisition 
+
+ARepA is licensed under the MIT license.
+
+Copyright (C) 2013 Yo Sup Moon, Daniela Boernigen, Levi Waldron, Eric Franzosa, Xochitl Morgan, and Curtis Huttenhower
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation 
+files (the "Software"), to deal in the Software without restriction, including without limitation the rights to 
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons 
+to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or 
+substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+"""
 
 import arepa
 import sfle
@@ -101,6 +122,7 @@ sfle.pipe( pE, c_fileIDSeriesTXTGZ, c_fileProgSeries2Metadata, c_fileIDPKL,
 #Create metadata tables 
 sfle.sop( pE, "python", [[c_fileProgPkl2Metadata], [c_fileIDPKL], [True, c_fileExpTable], [True, c_fileCondTable]] )
 
+
 #Series2PCL
 sfle.pipe( pE, c_fileRDataTXT, c_fileProgSeries2PCL, c_fileIDRawPCL,
 	[[c_fileRMetadataTXT], [c_fileRPlatformTXT]] )
@@ -134,7 +156,9 @@ def getGPL( target, source, env ):
 	with open( strPlatform, "w" ) as outputf:
 		outputf.write( strGPLID )
 
+
 fileAnnot = Command( [c_fileIDAnnot, c_filePlatform], c_fileRMetadataTXT, getGPL ) 
+
 
 #Produce Taxa file 
 sfle.pipe( pE, c_fileIDSeriesTXTGZ, c_fileProgGetInfo, c_fileTaxa )
@@ -145,19 +169,18 @@ execfile( str( c_fileInputSConscript ) )
 funcPCL2DAB( pE, c_fileIDRawPCL, c_fileIDAnnot, c_fileProgAnnot2Map, c_fileProgGPL2TXT, 
 	c_fileProgMergeMapping, c_fileTaxa, c_filePlatform )
 
+
 def scanner( fileExclude = None, fileInclude = None ):
 	setstrExclude = set(readcomment( fileExclude ) if fileExclude else [])
 	setstrInclude = set(readcomment( fileInclude ) if fileInclude else [])
-	def funcRet( target, source, env, setstrInclude = setstrInclude, \
-		setstrExclude = setstrExclude ):
+	def funcRet( target, source, env, setstrInclude = setstrInclude, setstrExclude = setstrExclude ):
 		strT, astrSs = sfle.ts( target, source )
 		for strS in astrSs:
 			for astrLine in csv.reader( open( strS ), csv.excel_tab ):
 				if not ( astrLine and astrLine[0] ):
 					continue
 				strID = astrLine[0]
-				if ( setstrInclude and ( strID not in setstrInclude ) ) or \
-					( strID in setstrExclude ):
+				if ( setstrInclude and ( strID not in setstrInclude ) ) or ( strID in setstrExclude ):
 					continue
 				env["sconscript_child"]( target, source[0], env, c_strID + "-RAW" )
 	return funcRet
