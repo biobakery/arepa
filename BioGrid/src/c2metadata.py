@@ -49,12 +49,18 @@ if len( sys.argv ) < 2:
 	raise Exception( "Usage: c2metadata.py <id> < <biogridc.txt>" )
 strTarget = sys.argv[1]
 strStatus = sys.argv[2] if len(sys.argv[1:]) > 1 else None 
-
+strManual = sys.argv[3] if len(sys.argv[1:]) > 2 else None 
 
 pMetadata = metadata.open( )
 cfile.read( sys.stdin,c_iColumns, strTarget, callback, pMetadata )
+
 if strStatus:
-        strMapped, strBool = [x for x in csv.reader(open(strStatus),csv.excel_tab)][0]
-        fMapped = True if strBool == "True" else False 
-        pMetadata.set(strMapped, fMapped)
+	strMapped, strBool = [x for x in csv.reader(open(strStatus),csv.excel_tab)][0]
+	fMapped = ( strBool == "True" )
+	pMetadata.set(strMapped, fMapped)
+
+if strManual:
+	for strKey, strVal in csv.reader(open(strManual), csv.excel_tab):
+		pMetadata.set( strKey, strVal )
+
 pMetadata.save( sys.stdout )

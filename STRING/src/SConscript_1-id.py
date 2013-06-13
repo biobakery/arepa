@@ -49,6 +49,7 @@ c_fileIDDAT					= sfle.d( pE, c_strID + ".dat")
 c_fileProgUnpickle			= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "unpickle.py" )
 c_fileProgC2Metadata		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "c2metadata.py" )
 c_fileProgC2DAT				= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "c2dat.py" )
+c_fileInputManCurTXT		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirEtc, "manual_curation/", c_strID + sfle.c_strSufTXT )
 
 c_fileInputSConscriptGM		= sfle.d( pE, arepa.path_arepa(),sfle.c_strDirSrc,"SConscript_genemapping.py")
 c_fileInputSConscriptDAB	= sfle.d( pE, arepa.path_arepa(), sfle.c_strDirSrc, "SConscript_dat-dab.py" )
@@ -67,7 +68,7 @@ astrMapped = funcGeneIDMapping( pE, c_fileIDRawDAT, c_strGeneFrom, c_fileStatus 
 astrUnique = funcMakeUnique( pE, astrMapped[0] )
 
 #Make metadata
-afileIDTXT = sfle.pipe( pE, c_fileInputC, c_fileProgC2Metadata, c_fileIDPKL, [c_strID, [c_fileStatus]] )
+afileIDTXT = sfle.pipe( pE, c_fileInputC, c_fileProgC2Metadata, c_fileIDPKL, [c_strID, [c_fileStatus]] + ([[c_fileInputManCurTXT]] if os.path.exists(str(c_fileInputManCurTXT)) else []) )
 
 execfile(str(c_fileInputSConscriptDAB))
 

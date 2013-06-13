@@ -103,7 +103,7 @@ sfle.pipe( pE, c_fileInputSOFTGZ, c_fileProgSOFT2PCL, c_fileIDRawPCL,
 execfile( str(c_fileInputSConscript) )
 funcPCL2DAB( pE, c_fileIDRawPCL, c_fileGPLTXTGZ, c_fileProgAnnot2Map, c_fileProgGPL2TXT, 
 	c_fileProgMergeMapping, c_fileTaxa, c_filePlatform )
-'''
+
 #Get metadata from soft file 
 sfle.pipe( pE, c_fileInputSOFTGZ, c_fileProgSOFT2Metadata, c_fileIDPKL,
 	[[c_fileStatus]] + 
@@ -122,4 +122,3 @@ if m_boolRPackage:
 	funcCheckRStructure( pE, c_strID, c_fileIDPKL, c_fileRNAMESPACE, c_fileRDESCRIPTION, c_fileRMaster )
 	funcMakeRPackage( pE, str(c_dirR), c_fileLogPackage )
 	
-'''

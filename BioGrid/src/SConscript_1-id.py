@@ -52,6 +52,8 @@ c_fileProgC2DAT				= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "c2dat.py
 c_fileInputSConscriptGM		= sfle.d( pE, arepa.path_arepa(),sfle.c_strDirSrc,"SConscript_genemapping.py")
 c_fileInputSConscriptDAB	= sfle.d( pE, arepa.path_arepa(), sfle.c_strDirSrc, "SConscript_dat-dab.py" )
 c_fileStatus			= sfle.d( pE,"status.txt" )
+c_fileInputManCurTXT	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirEtc, "manual_curation/", 
+							c_strID + sfle.c_strSufTXT )
 
 # Get data 
 afileIDDAT = sfle.pipe( pE, c_fileInputBioGridC, c_fileProgC2DAT, c_fileIDRawDAT, [c_strID] )
@@ -63,7 +65,7 @@ astrMapped = funcGeneIDMapping( pE, c_fileIDRawDAT, arepa.genemap_genename( ), c
 # Make identifiers unique 
 astrUnique = funcMakeUnique( pE, astrMapped[0] )
 
-afileIDTXT = sfle.pipe( pE, c_fileInputBioGridC, c_fileProgC2Metadata, c_fileIDPKL,[c_strID, [c_fileStatus]] )
+afileIDTXT = sfle.pipe( pE, c_fileInputBioGridC, c_fileProgC2Metadata, c_fileIDPKL,[c_strID, [c_fileStatus]] + ([[c_fileInputManCurTXT]] if os.path.exists(str(c_fileInputManCurTXT)) else []) )
 execfile(str(c_fileInputSConscriptDAB))
 
 # DAT to DAB
