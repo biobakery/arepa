@@ -1,0 +1,19 @@
+# Manual geneid file for STRING 
+
+# Conventions
+
+# HGNC: H 
+# UniGene: U
+# Uniprot/TrEMBL: S
+# Ensembl: En
+# KEGG Genes: Kg
+# KEGG Compound: Ck					
+
+Escherichia coli	Kg
+Homo sapiens	En
+Pseudomonas aeruginosa	S
+Bacillus subutilis	Kg
+Saccharomyces cerevisiae	Kg
+Mus musculus	En
+
+

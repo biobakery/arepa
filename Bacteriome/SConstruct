@@ -1,74 +1,79 @@
+"""
+ARepA: Automated Repository Acquisition 
+
+ARepA is licensed under the MIT license.
+
+Copyright (C) 2013 Yo Sup Moon, Daniela Boernigen, Levi Waldron, Eric Franzosa, Xochitl Morgan, and Curtis Huttenhower
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation 
+files (the "Software"), to deal in the Software without restriction, including without limitation the rights to 
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons 
+to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or 
+substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+"""
+
 import arepa
 import os
 import sys
 import sfle
 import pickle
 
-c_URL			= "http://www.compsysbio.org/bacteriome/dataset/combined_interactions.txt"
-c_strInputTaxIDs	= sfle.d( arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
-c_strFileBactTXT        = File(sfle.d( sfle.c_strDirTmp, os.path.basename(c_URL)))
-c_strProgBacteriome	= File( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "bacteriome.py" ) )
+pE = DefaultEnvironment( )
 
-c_fileOutDAT             = File(sfle.d( sfle.c_strDirData, "bacteriome.dat" ))
+c_strURL			= "http://www.compsysbio.org/bacteriome/dataset/combined_interactions.txt"
+c_strInputTaxIDs		= sfle.d( arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
+c_fileBactTXT       	 	= sfle.d( pE, sfle.c_strDirTmp, os.path.basename(c_strURL))
+c_fileProgBacteriome		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "bacteriome.py" ) 
+c_fileProgUnpickle		= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "unpickle.py" )
+c_fileIDDAT				= sfle.d( pE, sfle.c_strDirData, "bacteriome.dat" )
+c_fileIDRawDAT             	= sfle.d( pE, sfle.c_strDirData, "bacteriome_00raw.dat" ) 
 
+#GeneMapping 
+c_fileInputSConscriptGM		= sfle.d( pE, arepa.path_arepa(),sfle.c_strDirSrc,"SConscript_genemapping.py") 
+c_fileInputSConscriptDAB	= sfle.d( pE, arepa.path_arepa(), sfle.c_strDirSrc, "SConscript_dat-dab.py" )
+c_strGeneFrom			= "Kg"
+c_strMappingfileEcoli   	= sfle.d(arepa.path_arepa(), "GeneMapper", sfle.c_strDirEtc, "uniprotko","511145_eco_ko_uniprot.map")
 
-#For GeneMapper:
-c_fileMapDAT        	= File(sfle.d( sfle.c_strDirData, "bacteriome_mapped.dat" ))
-c_path_GeneMapper       = sfle.d( arepa.path_arepa(), "GeneMapper")
-c_funcGeneMapper        = sfle.d( c_path_GeneMapper, sfle.c_strDirSrc, "bridgemapper.py" )
-c_strMappingfileEcoli   = sfle.d(arepa.path_arepa(), "GeneMapper", sfle.c_strDirEtc, "uniprotko","511145_eco_ko_uniprot.map")
+c_fileInMeta		= sfle.d( pE, arepa.path_repo(), sfle.c_strDirEtc, "bacteriome.txt" )
 
-c_fileInMeta		= sfle.d( arepa.path_repo(), sfle.c_strDirEtc, "bacteriome.txt" )
-
-c_fileOutDAB            = File(sfle.d( sfle.c_strDirData,  File( sfle.rebase(c_fileMapDAT, ".dat", ".dab" ))))
-c_fileOutQUANT          = File(sfle.d( sfle.c_strDirData,  File( sfle.rebase(c_fileMapDAT, ".dat", ".quant" ))))
-c_fileOutPKL		= File(sfle.d( sfle.c_strDirData, "bacteriome.pkl" ))		 
-
-pE = Environment( )
+c_fileIDDAB			= sfle.d( pE, sfle.c_strDirData, sfle.rebase(c_fileIDRawDAT, ".dat", ".dab" ))
+c_fileIDQUANT		= sfle.d( pE, sfle.c_strDirData, sfle.rebase(c_fileIDRawDAT, ".dat", ".quant" ))
+c_fileIDPKL			= sfle.d( pE, sfle.c_strDirData, "bacteriome.pkl" )		 
+c_fileStatus		= sfle.d( pE, sfle.c_strDirData, "status.txt" )
 
 #===============================================================================
-# Download the source text file
+# Download the source file and process 
 #===============================================================================
-sfle.download( pE,c_URL,c_strFileBactTXT )
-NoClean( c_strFileBactTXT )
+sfle.download( pE, c_strURL, c_fileBactTXT )
 
-def funcBacteriomeExtracter(target, source, env):
-	strT, astrSs = sfle.ts( target, source )
-        strProg,strIn = astrSs[:2]
-	return 	sfle.ex([strProg, strIn, strT])
-Command( c_fileOutDAT, [c_strProgBacteriome,c_strFileBactTXT], funcBacteriomeExtracter )
+#Extractor 
+sfle.op( pE, c_fileProgBacteriome, [[c_fileBactTXT], [True,c_fileIDRawDAT]] )
 
+#Launch gene mapping 
+execfile(str(c_fileInputSConscriptGM)) 
+astrMapped = funcGeneIDMapping( pE, c_fileIDRawDAT, c_strGeneFrom, c_fileStatus,
+        arepa.org2taxid( "Escherichia coli str. K-12 substr. MG1655" ) )
+# Note that this must currently correspond to the "best" mapping file from GeneMapper
+# For whatever reason, this is hard-coded to the type strain, not the species
 
-def funcGeneIdMapping( target, source, env):
-        strT, astrSs = sfle.ts( target, source )
-        strFunc, strDATin  = astrSs[:2]
-        return sfle.ex([ strFunc,strDATin, strT, c_strMappingfileEcoli,  "[0,1]", "Kg", "Ck", "None"]) 
-Command( c_fileMapDAT,[c_funcGeneMapper, c_fileOutDAT ], funcGeneIdMapping)
+#Make identifiers unique 
+astrUnique = funcMakeUnique( pE, astrMapped[0] )
 
+#Make metadata 
+sfle.pipe( pE, c_fileInMeta, c_fileProgUnpickle, c_fileIDPKL, ["-r","-l", [c_fileStatus]] )
 
-def funcDAB(target, source, env):
-	strT, astrSs = sfle.ts( target, source )
-        fileOut,fileMap = astrSs[:2]
-	if os.stat(fileMap)[6]!=0: 		
-        	return sfle.ex([" Dat2Dab -o", strT, "-i", fileMap])
-	else:
-		return sfle.ex([" Dat2Dab -o", strT, "-i", fileOut])
-Command( c_fileOutDAB, [c_fileOutDAT,c_fileMapDAT], funcDAB )
+#DAT to DAB
+execfile( str(c_fileInputSConscriptDAB) )
+astrDAB = funcDAB( pE, c_fileIDDAB, [c_fileIDRawDAT, astrUnique[0]] )
+funcQUANT( pE, c_fileIDQUANT )
 
-
-def funcMeta( target, source, env ):
-	strT, astrSs = sfle.ts( target, source )
-	strS = astrSs[0]
-	with open( strT,"wb" ) as outputf:
-		pickle.dump({k:v for k,v in map( lambda k: k.split("\t"), sfle.readcomment( strS ) )},\
-			outputf	)
-Command( c_fileOutPKL, [c_fileInMeta], funcMeta )
-Default( c_fileOutPKL )
-
-def funcQUANT( target, source, env ):
-        strT, astrSs = sfle.ts( target, source )
-        strS = astrSs[0]
-        return (sfle.ex("echo '0.5\t1.5' >" + strT))
-Command( c_fileOutQUANT, c_fileOutDAB ,funcQUANT )
-Default( c_fileOutQUANT )
-
+#Make final PCL
+funcPCL( pE, c_fileIDDAT, astrUnique[0] ) 

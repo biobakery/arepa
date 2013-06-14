@@ -1,3 +1,25 @@
+"""
+ARepA: Automated Repository Acquisition 
+
+ARepA is licensed under the MIT license.
+
+Copyright (C) 2013 Yo Sup Moon, Daniela Boernigen, Levi Waldron, Eric Franzosa, Xochitl Morgan, and Curtis Huttenhower
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation 
+files (the "Software"), to deal in the Software without restriction, including without limitation the rights to 
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons 
+to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or 
+substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+"""
+
 import arepa
 import os
 import re
@@ -10,38 +32,38 @@ c_strPre			= "_pre"
 c_strSufTXT			= ".txt"
 c_strSufXML			= ".xml"
 c_strAll			= "_all"
-c_strURLLeft			= "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gds&term="
-c_strURLRight			= "[ETYP]&retmax=1000000&usehistory=y"
+c_strURLLeft		= "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gds&term="
+c_strURLRight		= "[ETYP]&retmax=1000000&usehistory=y"
 c_strURLSum			= "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=gds&retstart=%s&retmax=1000000&query_key=%s&WebEnv=%s"
 c_strURL			= "ftp://ftp.ncbi.nih.gov/pub/geo/DATA/"
 
-c_strType                       = "type"
-c_strCount                      = "count"
-c_strQuery                      = "query_key"
-c_strWebEnv                     = "WebEnv"
-c_iIncrement                    = 10000
-c_iRetMax                       = 1000000
+c_strType           = "type"
+c_strCount          = "count"
+c_strQuery          = "query_key"
+c_strWebEnv         = "WebEnv"
+c_iIncrement        = 10000
+c_iRetMax           = 1000000
 
 c_strURLGDS			= c_strURL + "SOFT/GDS/"
 c_strURLGSE			= c_strURL + "SeriesMatrix/"
 c_strURLGPL			= c_strURL + "annotation/platforms/"
 
 c_strHost 			= "ftp.ncbi.nih.gov"
-c_strPathAnnot 			= "pub/geo/DATA/annotation/platforms/"
+c_strPathAnnot 		= "pub/geo/DATA/annotation/platforms/"
 
-c_fileInputInclude		= sfle.d( sfle.c_strDirEtc, "include" )
-c_fileInputExclude		= sfle.d( sfle.c_strDirEtc, "exclude" )
-c_fileInputTaxIDs		= sfle.d( arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
+c_fileInputInclude	= sfle.d( sfle.c_strDirEtc, "include" )
+c_fileInputExclude	= sfle.d( sfle.c_strDirEtc, "exclude" )
+c_fileInputTaxIDs	= sfle.d( arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
 
-c_fileTmpAnnot			= sfle.d( arepa.path_repo( ), sfle.c_strDirTmp, "annot" + c_strSufTXT ) 
+c_fileTmpAnnot		= sfle.d( arepa.path_repo( ), sfle.c_strDirTmp, "annot" + c_strSufTXT ) 
 
 c_hashFiles			= {
-				"GDS"			: "gds",
-				"GSE"			: "gse",
-				"GPL+NOT+GSE+NOT+GSM"	: "gpl"
-				}		
+	"GDS"					: "gds",
+	"GSE"					: "gse",
+	"GPL+NOT+GSE+NOT+GSM"	: "gpl"
+}		
 
-c_fileProgXML2TXT		= sfle.d( sfle.c_strDirSrc, "xml2txt.py" )
+c_fileProgXML2TXT	= sfle.d( sfle.c_strDirSrc, "xml2txt.py" )
 
 pE = DefaultEnvironment( )
 
@@ -58,42 +80,39 @@ for strSet, strBase in c_hashFiles.items( ):
 
 	def funcXML( target, source, env ):
 		strT, astrSs = sfle.ts( target, source )
-		strCount = strKey = strEnv = None
+		iCount = strKey = strEnv = None
 		for strLine in open( astrSs[0] ):
-			cmtch = re.search( r'<Count>(\d+)</Count>', strLine )
-			if cmtch:
-				strCount = cmtch.groups( )[0]
+			mtch = re.search( r'<Count>(\d+)</Count>', strLine )
+			if mtch:
+				iCount = int(mtch.groups( )[0])
 			mtch = re.search( r'QueryKey>(\d+)<.*WebEnv>([^<]+)<', strLine )
 			if mtch:
 				strKey, strEnv = mtch.groups( )
 				break
-		def discrete_list( num, increment ):
-    			iTries = int(( num / increment ) + 1)
-    			return [str( 1 + ( a * increment ) ) for a in range( iTries )]
-
-		geo_id = os.path.basename(strT).replace(c_strSufXML,"") 
-		count_list =  discrete_list( int(strCount), c_iIncrement )
-		astrOutput = [sfle.d(sfle.c_strDirTmp,geo_id + str(i) + c_strSufXML) for i in range(1,len(count_list)+1)]
-		query_list = zip( astrOutput, count_list, [strKey] * len(count_list), [strEnv] * len(count_list) )
-
-		#Download temporary files 
-		for astr in query_list:
-			strItemTemp, strItemCount, strItemQuery, strItemWeb = astr
-        		sfle.ex( ["curl", "-g", "-f", "-z", '"' + strItemTemp +  '"', '"' + c_strURLSum % (strItemCount,strItemQuery,strItemWeb) + '"', ">", strItemTemp] )
+		
+		astrXMLs = []
+		for i in xrange( int(1 + ( ( iCount - 1 ) / c_iIncrement )) ):
+			iCur = 1 + ( c_iIncrement * i )
+			strCur = re.sub( r'\.[^.]*$', ( "%d" % iCur ) + sfle.c_strSufXML, strT )
+			sfle.ex( ("curl", '"' + ( c_strURLSum % ( iCur, strKey, strEnv ) ) + '"'), strCur )
+			astrXMLs.append( strCur )
 
 		#Merge XMLs and save  
-		with open( strT,"w" ) as idXML:
-			astrOutTemp = zip(*query_list)[0]
-			strHeader = "".join(open(astrOutTemp[0],"r").readlines()[:3])
-			strBody = "".join([re.findall(r'<DocSum>.+</DocSum>', open(f).read(),re.S)[0] for f in astrOutTemp])
-			idXML.write(strHeader + strBody + "</eSummaryResult>")	
+		with open( strT, "w" ) as ostm:
+			for iCur, strCur in enumerate( astrXMLs ):
+				astrLines = open( strCur ).readlines( )
+				if iCur:
+					astrLines = astrLines[3:]
+				if ( iCur + 1 ) < len( astrXMLs ):
+					astrLines = astrLines[:-2]
+				ostm.write( "".join( astrLines ) )
 
 	afileXMLs = Command( strOut + c_strSufXML, afilePreXMLs, funcXML )
 	NoClean( afileXMLs )
 
 # Process XML into the more compact gds/gse/gpl.txt
 	afileCur = sfle.pipe( pE, afileXMLs[0], c_fileProgXML2TXT, strOut + c_strSufTXT,
-		[[False, strBase], [True, c_fileInputTaxIDs]] )
+		[strBase, [c_fileInputTaxIDs]] )
 # Save GDS and GSEs for later
 	if strBase != "gpl":
 		afileTXTs += afileCur
@@ -121,7 +140,6 @@ def getAnnot( target, source, env ):
 
 afileAnnot = Command( c_fileTmpAnnot, None, getAnnot )
 NoClean( afileAnnot )
-
 
 #===============================================================================
 # Pass the IDs from gds/gse/gpl.txt to child directories

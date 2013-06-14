@@ -1,51 +1,97 @@
+"""
+ARepA: Automated Repository Acquisition 
+
+ARepA is licensed under the MIT license.
+
+Copyright (C) 2013 Yo Sup Moon, Daniela Boernigen, Levi Waldron, Eric Franzosa, Xochitl Morgan, and Curtis Huttenhower
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation 
+files (the "Software"), to deal in the Software without restriction, including without limitation the rights to 
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons 
+to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or 
+substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+"""
+
 import arepa
 import os
 import sys
 import sfle
+import time
 
+pE = DefaultEnvironment( )
 
-#------------------------------------------------------------------------------
+fTest 			= True 
 
-c_URL			= "http://svn.bigcat.unimaas.nl/bridgedb/trunk/"
-c_dirProg		= sfle.d("trunk")
-c_dirKegg		= sfle.d(arepa.path_repo( ), sfle.c_strDirEtc, "kegg" )
-c_dirUniprotKO		= sfle.d(arepa.path_repo( ), sfle.c_strDirEtc, "uniprotko" )
-c_fileBuilder		= File(sfle.d(c_dirProg, "build.xml"))
-c_progBatchmapper	= File(sfle.d(c_dirProg, "batchmapper.sh"))
-c_logfilecheck		= File(sfle.d(sfle.c_strDirTmp, "checkout.log"))
-c_logfilecomp		= File(sfle.d(sfle.c_strDirTmp, "compile.log"))
-c_fileGZKegg		= File(sfle.d( c_dirKegg, "kegg.gz" ) )
-c_fileUniprotKO		= File(sfle.d( c_dirUniprotKO, "uniprotko.gz" )) 
+c_strURL		= "http://svn.bigcat.unimaas.nl/bridgedb/trunk/"
+c_strRevision	= "587"
+c_strTrunk		= "trunk"
 
-c_fileHSMappingfileURL	= "http://bridgedb.org/data/gene_database/Hs_Derby_20110601.bridge"
-c_dirMappingfiles       = sfle.d(sfle.c_strDirEtc)
-c_fileHSMappingfile	= File(sfle.d(c_dirMappingfiles, os.path.basename(c_fileHSMappingfileURL))) 
+c_dirUniprotKO	= Dir(sfle.d( pE, sfle.c_strDirEtc, "uniprotko" ))
+c_strDirEtc		= sfle.d( pE, sfle.c_strDirEtc )
+c_fileInputBuilder	= sfle.d( pE, c_strTrunk, "build.xml" )
+c_fileBatchmapper	= sfle.d( pE, c_strTrunk, "batchmapper.sh" )
+c_fileUniprotKOTARGZ= sfle.d( pE, c_dirUniprotKO, "uniprotko.tar.gz" ) 
+c_fileCheckLOG		= sfle.d( pE, sfle.c_strDirTmp, "checkout.log" )
+c_fileCompLOG		= sfle.d( pE, sfle.c_strDirTmp, "compile.log" )
+c_fileUnzipLOG		= sfle.d( pE, sfle.c_strDirTmp, "unzip.log" )
+c_fileRaceLOG		= sfle.d( pE, sfle.c_strDirTmp, "race.log" )
 
-pE = Environment( )
+##Predefined mappingfiles from Bridgedb for human,  mouse and yeast:
+
+c_astrMappingFiles	= ["Hs_Derby_20120602.bridge", "Mm_Derby_20120602.bridge", "Sc_Derby_20120602.bridge"] if not fTest \
+				else [] 
+c_strMappingURL		= "http://bridgedb.org/data/gene_database/"
+
+#===============================================================================
+# Lock file to prevent race condition
+#===============================================================================
+
+fLocked = False
+while not fLocked:
+	if not os.path.exists( str(c_fileRaceLOG) ):
+		try:
+			os.makedirs( os.path.dirname( str(c_fileRaceLOG) ) )
+		except OSError:
+			pass
+		open( str(c_fileRaceLOG), "w" ).close( )
+		fLocked = True
 
 #===============================================================================
 # Check out last version of the tool and compile
 #===============================================================================
 
-sfle.download(pE, c_fileHSMappingfileURL, c_fileHSMappingfile)
-NoClean(c_fileHSMappingfile)
+		for strMappingFile in c_astrMappingFiles:
+			sfle.download( pE, c_strMappingURL + strMappingFile,
+				sfle.d( sfle.c_strDirEtc, strMappingFile ) )
+		
+		def funcCheckoutTrunk( target, source, env ):
+			strT, astrSs = sfle.ts( target, source )
+			return ( sfle.ex(["svn checkout -r", c_strRevision, c_strURL]) or
+				sfle.ex(["sed", "-i.orig", "'s/^java -jar/java -Xmx4096m -jar/g'", c_fileBatchmapper]) or
+				sfle.ex("echo checked out OK", strT) )
+		Command( c_fileCheckLOG, None, funcCheckoutTrunk )
+		
+		def funcCompileTrunk( target, source, env ):
+			strT, astrSs = sfle.ts( target, source )
+			return ( sfle.ex(["ant -buildfile", c_fileInputBuilder]) or
+				sfle.ex("echo compiled OK", strT) )
+		Command( c_fileCompLOG, c_fileCheckLOG, funcCompileTrunk )
+		
+		def funcMakeMapFiles( target, source, env ):
+			strT, astrSs = sfle.ts( target, source )
+			return ( sfle.ex(["tar", "-xzf",c_fileUniprotKOTARGZ, "-C", c_strDirEtc]) or \
+				sfle.ex(["ls","etc/uniprotko"], strT) )
 
-def funcCheckoutTrunk( target, source, env ):
-        strT, astrSs = sfle.ts( target, source )
-	sfle.ex(["svn checkout", c_URL])
-	return sfle.ex(["echo 'checked out OK' > ", strT])
-Command(c_logfilecheck, c_fileHSMappingfile, funcCheckoutTrunk )
+		astrFileUnzip = Command( c_fileUnzipLOG, c_fileCompLOG, funcMakeMapFiles )
 
-def funcCompileTrunk( target, source, env ):
-        strT, astrSs = sfle.ts( target, source )
-        sfle.ex(["ant -buildfile", c_fileBuilder])
-        return sfle.ex(["echo 'compiled OK' > ", strT])
-Command(c_logfilecomp, c_logfilecheck, funcCompileTrunk )
-
-#Default(c_logfilecomp)
-
-#unzip Kegg file 
-sfle.ex(["unzip",c_fileGZKegg, "-d", c_dirKegg])
-#unzip UniprotKO file 
-sfle.ex(["unzip",c_fileUniprotKO, "-d", c_dirUniprotKO])
- 
+		Depends( sfle.ex( ["rm","-f", str(c_fileRaceLOG)] ), c_fileUnzipLOG )
+	else:
+		time.sleep( 5 )

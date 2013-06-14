@@ -1,4 +1,25 @@
 #!/usr/bin/env python 
+"""
+ARepA: Automated Repository Acquisition 
+
+ARepA is licensed under the MIT license.
+
+Copyright (C) 2013 Yo Sup Moon, Daniela Boernigen, Levi Waldron, Eric Franzosa, Xochitl Morgan, and Curtis Huttenhower
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation 
+files (the "Software"), to deal in the Software without restriction, including without limitation the rights to 
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons 
+to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or 
+substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+"""
 
 import sfle 
 import arepa 
@@ -42,7 +63,7 @@ strID 		= sys.argv[1]
 strStatus 	= sys.argv[2]
 strMetadata 	= sys.argv[3] if ( len( sys.argv ) > 3 ) else None
 
-###### Series Matrix Metadata ######
+# Series Matrix Metadata
 
 pMetadata = metadata.open( )
 
@@ -72,7 +93,7 @@ for astrLine in csv.reader( sys.stdin, csv.excel_tab ):
 		if not pMetadata[c_hashkeyCondition]:
 			pMetadata[c_hashkeyCondition] = len( astrCur ) 
 
-###### Auxillary Metadata ###### 
+# Auxillary Metadata
 
 if strMetadata:
 	astrHeaders = None
@@ -90,12 +111,14 @@ else:
 			for i in range( len( astrLine )):
 				pMetadata[astrHeaders[i]].append( astrLine[i] )				
 		else:
+			astrLine = map( lambda s: "sample_" + s if s else "sample_name", astrLine[:] )
 			pMetadata[c_hashkeyCurated] = astrLine 
 			astrHeaders = astrLine
 			for item in astrHeaders:
+				assert( not(pMetadata[item]) )
 				pMetadata.set( item, [] ) 
 
-###### Add Mapping Status and Save ######
+# Add Mapping Status and Save
 k,v = sfle.readcomment( open( strStatus ) )[0].split("\t")
 pMetadata.update({k:v})
 pMetadata.save()

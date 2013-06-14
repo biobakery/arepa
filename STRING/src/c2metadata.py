@@ -1,29 +1,65 @@
 #!/usr/bin/env python
+"""
+ARepA: Automated Repository Acquisition 
 
-import string1
+ARepA is licensed under the MIT license.
+
+Copyright (C) 2013 Yo Sup Moon, Daniela Boernigen, Levi Waldron, Eric Franzosa, Xochitl Morgan, and Curtis Huttenhower
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation 
+files (the "Software"), to deal in the Software without restriction, including without limitation the rights to 
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons 
+to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or 
+substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+"""
+
+import cfile
 import metadata
 import sys
+import csv 
+
+c_iColumns = 6
+
 
 def metadatum( funcMetadata, astrTokens, iIndex ):
 
 	for strTokens in astrTokens:
 		setstrTokens = set()
 		for strToken in strTokens.split( "|" ):
-			astrToken = string1.split( strToken )
+			astrToken = cfile.split( strToken )
 			setstrTokens.add( astrToken[iIndex] or strToken )
 		funcMetadata( setstrTokens )
 
-#def callback( pMetadata, strAs, strBs, strAltAs, strAltBs, strSynAs, strSynBs, strMethods, strAuthors, strPMIDs,	strTaxAs, strTaxBs, strTypes, strDBs, strIDs, strConfs ):
-def callback( aArgs, strAs, strBs, strTaxAs, strTaxBs, strPMIDs, strScores, strSynAs, strSynBs, strMethods, strAuthors, strAltBs, strAltAs, strDBs, strIDs, strConfs ):
-	metadatum( pMetadata.taxid, [strTaxAs, strTaxBs], 1 )
-	metadatum( pMetadata.pmid, [strPMIDs], 1 )
-	metadatum( pMetadata.type, [strTypes.lower( )], 2 )
-	metadatum( pMetadata.platform, [strMethods], 2 )
 
-if len( sys.argv ) != 2:
-	raise Exception( "Usage: c2metadata.py <id> < <intactc>" )
+def callback( pMetadata, strA, strB, strMode, strAction, strActor, strScore ):
+	metadatum( pMetadata.taxid, [strTaxon], 1 )
+	metadatum( pMetadata.mode, [strMode], 1 )
+
+if len( sys.argv ) < 2:
+	raise Exception( "Usage: c2metadata.py <taxid> [status.txt] < <stringc>" )
 strTarget = sys.argv[1]
+strStatus = sys.argv[2] if ( len(sys.argv[1:]) > 1 ) else None 
+strManual = sys.argv[3] if len( sys.argv[1:] ) > 2 else None 
+strTaxon = strTarget.split("_")[2]
 
 pMetadata = metadata.open( )
-string1.read( sys.stdin, strTarget, callback, pMetadata )
+cfile.read( sys.stdin,c_iColumns, strTarget, callback, pMetadata )
+
+if strStatus:
+	strMapped, strBool = [x for x in csv.reader(open(strStatus),csv.excel_tab)][0]
+	fMapped = ( strBool == "True" )
+	pMetadata.set( strMapped, fMapped )
+
+if strManual:
+	for strKey, strVal in csv.reader(open(strManual), csv.excel_tab):
+		pMetadata.set(strKey,strVal)
+
 pMetadata.save( sys.stdout )

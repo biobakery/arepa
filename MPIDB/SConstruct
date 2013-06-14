@@ -1,7 +1,31 @@
+"""
+ARepA: Automated Repository Acquisition 
+
+ARepA is licensed under the MIT license.
+
+Copyright (C) 2013 Yo Sup Moon, Daniela Boernigen, Levi Waldron, Eric Franzosa, Xochitl Morgan, and Curtis Huttenhower
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation 
+files (the "Software"), to deal in the Software without restriction, including without limitation the rights to 
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons 
+to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or 
+substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+"""
+
 import arepa
 import os
 import sfle
 import sys
+
+pE = DefaultEnvironment( )
 
 c_iMinimum			= 10
 c_strSufTXT			= ".txt"
@@ -9,27 +33,23 @@ c_strURL			= "http://www.jcvi.org/mpidb/download.php?&pname=&species_txtbox=&spe
 
 #------------------------------------------------------------------------------ 
 
-c_fileInputTaxIDs	= sfle.d( arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
-c_fileMPIDPTXT		= sfle.d( sfle.c_strDirTmp, "MPIDB.tab" )
-c_fileC			= sfle.d( sfle.c_strDirTmp, "mpidbc" )
-c_fileProg2C		= sfle.d( sfle.c_strDirSrc, "mpidb2c.py" )
+c_fileInputTaxIDs	= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
+c_fileMPIDPTXT		= sfle.d( pE, sfle.c_strDirTmp, "MPIDB.tab" )
+c_fileC			= sfle.d( pE, sfle.c_strDirTmp, "mpidbc" )
+c_fileProg2C		= sfle.d( pE, sfle.c_strDirSrc, "mpidb2c.py" )
 
-
-pE = DefaultEnvironment( )
 
 #===============================================================================
 # Download the  source file
 #===============================================================================
 
 sfle.download( pE, c_strURL, c_fileMPIDPTXT )
-NoClean( c_fileMPIDPTXT )
-
 
 #===============================================================================
 # Process intact.txt into the more compact intactc
 #===============================================================================
 
-afileC = sfle.pipe( pE, c_fileMPIDPTXT, c_fileProg2C,c_fileC, [[False, c_iMinimum], [True, c_fileInputTaxIDs]] )
+afileC = sfle.pipe( pE, c_fileMPIDPTXT, c_fileProg2C, c_fileC, [c_iMinimum, [c_fileInputTaxIDs]] )
 
 #===============================================================================
 # Pass the IDs from intactc to child directories

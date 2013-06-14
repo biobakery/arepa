@@ -1,206 +1,241 @@
 #!/usr/bin/env python
-'''
-Main gene mapping python script
-'''
+"""
+ARepA: Automated Repository Acquisition 
 
-#~/dboernig/arepa/GeneMapper/src/bridgemapper.py ~/dboernig/arepa/STRING/data/taxid_100226_mode_binding/taxid_100226_mode_binding.dat ~/dboernig/arepa/STRING/data/taxid_100226_mode_binding/tester.dat ~/dboernig/arepa/STRING/etc/100226_sco_ko_uniprot.map [0] Kg Ck
+ARepA is licensed under the MIT license.
 
-import sys
+Copyright (C) 2013 Yo Sup Moon, Daniela Boernigen, Levi Waldron, Eric Franzosa, Xochitl Morgan, and Curtis Huttenhower
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation 
+files (the "Software"), to deal in the Software without restriction, including without limitation the rights to 
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons 
+to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or 
+substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Genemapping python wrapper for BridgeDB gene mapper
+
+Type "python bridgemapper.py -h" for help
+"""
+
+import argparse
+import operator 
 import csv
-import pickle
-import sfle
-import arepa
 import os
+import re
+import subprocess
+import sys
+import tempfile
 import metadata 
+import sys 
+import sfle 
 
-if len( sys.argv ) < 7:
-        raise Exception( "Usage: bridgemapper.py <inputfile.dat> <outputfile.dat> \
-			<mappingfile> <columnlist in inputfile to be mapped> \
-			<input system code for bridgemapper> \
-			<output system code for bridgemapper>" )
+# These are the only genes that we are keeping track of for now 
 
-c_inputfile 		= sys.argv[1]
-c_outputfile 		= sys.argv[2]
-c_mappingfilein 	= sys.argv[3]
-c_columnToMap 		= list(sys.argv[4])
-c_origGeneId 		= sys.argv[5]
-c_destGeneId 		= sys.argv[6]
-c_fileStatus		= sys.argv[7]
-
-#Remove the delimiter from the list of strings so that we end up with only the acutal columns in the list:
-c_columnToMap = filter( lambda a: a != (" " or "," or ";"), c_columnToMap[1:-1] )
-
-c_path_GeneMapper 	= sfle.d( arepa.path_arepa(), "GeneMapper")
-c_path_geneidmapper 	= sfle.d(c_path_GeneMapper, "trunk", "batchmapper.sh")
-c_mappingfile 		= c_mappingfilein 
-c_path_mappingfiles 	= os.path.dirname(c_mappingfile)
-
-if c_mappingfile.endswith(".bridge"):
-    c_mappingflag = "-g"
-elif c_mappingfile.endswith(".txt") or c_mappingfile.endswith(".map"):
-    c_mappingflag = "-t"
-
+c_hashGeneNames		= {"HGNC": "H", 
+					"UniGene": "U",
+					"Uniprot/TrEMBL": "S",
+					"Ensembl": "En",
+					"KEGG Genes": "Kg",
+					"Kegg Compound": "Ck"
+					}
+					
+c_strDefaultGeneIDFrom	= "KEGG Genes"
 
 #########################################################
-# Local functions
+# GENE ID MAPPING: Convert Gene Identifiers
 #########################################################
 
-#Gets a specific column from a table file
-def readColFromTable (table,ind):
-    fullcolumn = []
-    columns = csv.reader(open(table),delimiter="\t")
-    [fullcolumn.append(col[ind]) for col in columns]
-    return fullcolumn
+def convertGeneIds( setstrGenes, strMap, strFrom, strTo ):
+	pFrom, pTo = [tempfile.NamedTemporaryFile( delete=False ) for i in xrange( 2 )]
 
-#Reads complete table file into a list
-def readTable(table):
-    content = []
-    f = csv.reader(open(table),delimiter="\t")
-    [content.append(col) for col in f]
-    return content
+	pFrom.write( "\n".join( setstrGenes ) + "\n" )
+	pFrom.flush()
 
-#Transpose a given matrix
-def transpose(matrix):
-    return [[matrix[x][y] for x in range(len(matrix))] for y in range(len(matrix[0]))]
+	strBatchmapperSH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "trunk/batchmapper.sh")
+	strMapFlag = "-g" if strMap.endswith( ".bridge" ) else "-t"
 
-#Saves a column vector as a file
-def saveColumnAsTxtFile (col, txtfile):
-    f = open(txtfile, 'w')
-    f.writelines(["%s\n" % item for item in col])
-    f.close()
+	subprocess.check_call( ("sh",strBatchmapperSH, "-i", pFrom.name, "-is", strFrom,\
+		"-os", strTo, "-o", pTo.name, strMapFlag, strMap,"-mm") )
 
-#Saves a PCL file as a file
-def savePCLAsTxtFile (txtfile, content):
-    with open(txtfile, 'w') as file:
-        file.writelines('\t'.join(i) + '\n' for i in content)
-    
-#Write Empty file in error case to avoid trouble with scons:
-def writeEmptyFile(txtfile):
-    f=open(txtfile,"w")
-    f.write("")
-    f.close()
+	hashMap = {a[1]:a[0] for a in csv.reader( pTo, csv.excel_tab )}
+	pTo.flush()
+	os.unlink(pFrom.name); os.unlink(pTo.name)
+	return hashMap
+		
+def bridgemapper( istm, ostm, strMap, strCols, strFrom, strTo, ostmLog, iSkip ):
 
-#########################################################
-# GENE ID MAPPING: convert geneids_in into geneids_out
-#########################################################
-def convertGeneIds (geneids, mapfile):
-    inputfile = sfle.d(c_path_mappingfiles, 'geneids.txt') 
-    outputfile = sfle.d(c_path_mappingfiles, 'geneids_mapped.txt') 
-    saveColumnAsTxtFile (geneids, inputfile)
-    sfle.ex([c_path_geneidmapper, " -i ", inputfile, " -is",c_origGeneId , \
-	" -os ",c_destGeneId, " -o ",outputfile, c_mappingflag , mapfile ," -mm "])
-    return readTable(outputfile)
+	strCols = strCols[1:-1]
+	aiCols = [int(s) for s in re.split( r'\s*,\s*', strCols )] if strCols else []
+	
+	#Open a blank metadata object and initialize 
+	pMeta = metadata.open( )
+	pMeta.set( "mapped", False )
 
-def listfirstitem (l): return l[0]
+	aastrData = []
+	setstrIn = set()
+	csvr = csv.reader( istm, csv.excel_tab )
+	for astrLine in csvr:
+		aastrData.append( astrLine )
+		if csvr.line_num < iSkip:
+			continue
+		for iCol in aiCols:
+			if iCol < len( astrLine ):
+				setstrIn.add( astrLine[iCol] )
+			else:
+				sys.stderr.write(" +++ ERROR in GeneMapper +++ Number of requested columns to \
+					map is larger than the number of columns in the input data file.\n")
+	
+	hashMap = None
+	# Make sure mapping file exists and has nonzero file size
+	if strMap and os.path.exists( strMap ) and ( os.stat( strMap )[6] > 0 ):
+		hashMap = convertGeneIds( setstrIn, strMap, strFrom, strTo )
+	else:
+		sys.stderr.write("+++ ERROR in GeneMapper +++ Input file does not exist or is empty. \
+			Return empty file. \n")
+	
+	if hashMap:
+		if any(hashMap.values()):
+			pMeta.set( "mapped", True )
+			for iRow in xrange( iSkip, len( aastrData ) ):
+				astrRow = aastrData[iRow]
+				for iCol in aiCols:
+					if iCol < len( astrRow ):
+						strTo = hashMap.get( astrRow[iCol] )
+						if strTo:
+							astrRow[iCol] = strTo
+						else:
+							astrRow[iCol] = ""
+	else:
+		sys.stderr.write("+++Error in GeneMapper +++ Empty mapping. \
+			Return original file. \n")      
+				
+	csvw = csv.writer( ostm, csv.excel_tab )
+	#make sure that if the mapping is empty for one of the columns, delete the entire row
+	for astrLine in aastrData:
+		if all(astrLine): csvw.writerow( astrLine )
+	if ostmLog:
+		pMeta.save_text( ostmLog )
 
-##################################################################
-# Replace the probe set ids in the pcl file with the new gene ids
-##################################################################
-def replaceGeneIdsInPCLMatrix (matrix, vec, col):
-    matrix_out = matrix
-    matrix_out[col] = vec
-    return matrix_out
+#TODO: Add Sniffer For Gene Identifiers
+#IDEA: do some kind of bootstrapping procedure to make sure you are indeed getting the right identifier
 
-#########################################################
-# Handling NxM geneids 
-#########################################################
-def handleNxMgenes (matrix_in, pattern, col):
-    matrix_out = []
-    for row in matrix_in:
-        crow = row
-        gene = crow[col]
-        if gene.find(pattern) != -1:
-            continue
-        elif gene == "":  
-            continue
-        else:
-            matrix_out.append(crow)
-    return matrix_out
-    
-def handleDoubleEntries (matrix_in):
-    vec = []
-    vec2 = []
-    vec22=[]
-    matrix_out=[]
-    pattern = "___"
-    #formatting matrix into simple vector:
-    for row in matrix_in:
-        vec.append(pattern.join(row))
-        vec2.append(pattern.join([row[1], row[0]]))
-        vec22.append(pattern.join(row[:2]))
-    for i,v in enumerate(vec):
-        for j,v2 in enumerate(vec2):
-            if v2 in v:
-                vec[j] = ""
-        for jj,v22 in enumerate(vec22):
-            if i != jj:
-               if v22 in v:
-                   vec[jj] = ""
-    vec = filter(None,vec)
-    #remove equal entries:
-    vec = list(set(vec)) 
-    #reformatting into a matrix:
-    for v in vec:
-        matrix_out.append(v.split(pattern))
-    return matrix_out
+def gene_sniffer( istm, strCols, pGeneNameHash = c_hashGeneNames, default_standard = c_strDefaultGeneIDFrom ):
+	'''
+	takes in input file, outputs gene identifier convention, e.g. HGNC
+	'''
+	def _sniff( name_list ):
+		'''
+		Input: takes in list of gene identifiers
+		Output: name of gene identifier convention; e.g. "HGNC"
+		'''
+		# Define Standards Here 
+		astrUniRef	= ["UniRef" + str(n) for n in [50,90,100]]
+		strEnsembl = "EN"
+		fUniProt	= 0.5 
+		astrKeggCompound = ["K0", "K1"]
+		
+		len_name_list = len(name_list)
+		strHead = name_list[0]
+		#UniRef --> "UniGene"
+		if any(map( lambda x: strHead.startswith(x), astrUniRef )):
+			return "UniGene"
+		elif strHead.startswith( strEnsembl ):
+			return "Ensembl"
+		elif any(map( lambda x: strHead.startswith(x), astrKeggCompound)):
+			return "Kegg Compound"
+		else: 
+			#Uniprot 
+			filter_list = filter( lambda x: len(x) == 6 and (x.startswith("Q") or x.startswith("P")), name_list)
+			if float(len(filter_list))/float(len_name_list) >= fUniProt:
+				return "Uniprot/TrEMBL"
+			else:
+				return default_standard 
+			
+	strCols = strCols[1:-1]
+	aiCols = [int(s) for s in re.split( r'\s*,\s*', strCols )] if strCols else []
+	setstrIn = set()
+	csvr = csv.reader( istm, csv.excel_tab )
+	strGeneID = None 
+	for i in aiCols:
+		if strGeneID: 
+			break 
+		astrData = [x[i] for x in csvr]
+		strGeneID = _sniff( astrData )
+	
+	return pGeneNameHash[(strGeneID or default_standard)]
 
+argp = argparse.ArgumentParser( prog = "bridgemapper.py",
+	description = """Maps gene IDs from one or more tab-delimited text columns from and to specified formats.""" )
+argp.add_argument( "istm",		metavar = "input.dat",
+	type = argparse.FileType( "r" ),	nargs = "?",	default = sys.stdin,
+	help = "Input tab-delimited text file with one or more columns" )
+argp.add_argument( "ostm",		metavar = "output.dat",
+	type = argparse.FileType( "w" ),	nargs = "?",	default = sys.stdout,
+	help = "Input tab-delimited text file with mapped columns" )
+argp.add_argument( "-m",		dest = "strMap",	metavar = "mapping.txt",
+	type = str,					required = False,
+	help = "Required mapping file in tab-delimited BridgeMapper format" )
+argp.add_argument( "-c",		dest = "strCols",	metavar = "columns",
+	type = str,				default = "[]",
+	help = "Columns to map, formatted as [1,2,3]" )
+argp.add_argument( "-f",		dest = "strFrom",	metavar = "from_format",
+	type = str,				default = "X",
+	help = "BridgeMapper single-character type code for input format" )
+argp.add_argument( "-t",		dest = "strTo",		metavar = "to_format",
+	type = str,				default = "H",
+	help = "BridgeMapper single-character type code for output format" )
+argp.add_argument( "-u",		dest = "iMaxLines",	metavar = "max_lines",
+	type = int,					default = 100000,
+	help = "Maximum lines in input file; this is done for memory reasons" )
+argp.add_argument( "-s",		dest = "iSkip",		metavar = "skip_rows",
+	type = int,					default = 0,
+	help = "Number of header rows to skip at top of file" )
+argp.add_argument( "-l",		dest = "ostmLog",	metavar = "log.txt",
+	type = argparse.FileType( "w" ),
+	help = "Optional log file containing output mapping status" )
+argp.add_argument('-x', 		dest = "fSniffer" ,	action="store_true", default=False, 
+	help = "Optional flag turning on/off gene identifier sniffer (automatically decide geneid_from)" )
 
-###########################################################
-# Getting the probe set ids from the pcl file: geneids_in 
-###########################################################
+def _main( ):
+	args = argp.parse_args( )
+	iLC = sfle.lc( args.istm.name )
+ 
+	if (args.strFrom == args.strTo) or (iLC >= args.iMaxLines):
+		#if the two gene identifier types are the same, or if the line count exceeds iMaxLines, 
+		#return the input file 
+		
+		pAastrData = csv.reader(args.istm,csv.excel_tab)
+		csvw = csv.writer( args.ostm, csv.excel_tab )
+		for astrLine in pAastrData:
+			csvw.writerow( astrLine )	
+		if args.ostmLog:
+			pMeta = metadata.open()
+			pMeta.set("mapped", True)			
+			pMeta.save_text( args.ostmLog )
+	elif not(args.strMap) or not(os.stat(str(args.strMap))[6]):
+		#if there is no map file specified 
+		pAastrData = csv.reader(args.istm,csv.excel_tab)
+		csvw = csv.writer( args.ostm, csv.excel_tab )
+		for astrLine in pAastrData:
+			csvw.writerow( astrLine )	
+		if args.ostmLog:
+			pMeta = metadata.open()
+			pMeta.set("mapped",False)
+			pMeta.save_text( args.ostmLog )
+	else:
+		#if gene sniffer flag is on, try to guess the best possible gene identifier 
+		if args.fSniffer:
+			args.strFrom = gene_sniffer( args.istm, args.strCols )
+		
+		bridgemapper( args.istm, args.ostm, args.strMap, args.strCols, args.strFrom, args.strTo, args.ostmLog, args.iSkip )
 
-#Open a blank metadata object
-hashMeta = metadata.open()
-
-#Map
-if os.path.exists(c_inputfile) and os.stat(c_inputfile)[6]!=0:
-    if os.path.exists(c_mappingfile) and os.stat(c_mappingfile)[6]!=0:
-        table_in = readTable(c_inputfile)
-        table_in_columns = len(table_in[0])
-        if table_in_columns > len(c_columnToMap):
-            for col in c_columnToMap:
-                if table_in != []:
-                    col = int(col)
-                    table_in_transp = transpose(table_in)
-                    geneids_in = table_in_transp[col]
-                    geneids_out_tmp = convertGeneIds (geneids_in, c_mappingfile)
-                    geneids_out = map(listfirstitem, geneids_out_tmp)
-                    table_geneids_replaced = transpose(replaceGeneIdsInPCLMatrix \
-			(table_in_transp,geneids_out, col))
-                    ## Handling NxM entry gene names from BridgeDB:
-                    table_out_tmp = handleNxMgenes(table_geneids_replaced, " /// ", col)
-                    #table_out = handleDoubleEntries(table_out_tmp)
-                    table_out = table_out_tmp
-                    table_in = table_out
-                else:
-                    sys.stderr.write( "+++ ERROR in GeneMapper +++ Empty mapping. Return original file.\n")
-		    savePCLAsTxtFile( c_outputfile, readTable( c_inputfile ) )
-		    hashMeta.update({"mapped": False})
-                    break
-            if table_out != []:
-                savePCLAsTxtFile (c_outputfile, readTable( c_inputfile)[:2] + table_out)
-		hashMeta.update({"mapped":True})
-            else:
-                sys.stderr.write( "+++ ERROR in GeneMapper +++ Empty output mapping. Return original file.\n")
-		savePCLAsTxtFile( c_outputfile, readTable( c_inputfile ) )
-		hashMeta.update({"mapped":False})
-        else:
-            sys.stderr.write( "+++ ERROR in GeneMapper +++ Number of requested columns to map is \
-		larger than the number of columns in the input data file.\n")
-	    savePCLAsTxtFile( c_outputfile, table_in )
-	    hashMeta.update({"mapped":False})
-    else:
-        sys.stderr.write("+++ ERROR in GeneMapper +++ Mapping file does not exist or is empty. \
-		Return original file.\n")               
-	savePCLAsTxtFile( c_outputfile, readTable( c_inputfile ) )
-	hashMeta.update({"mapped":False})
-else: 
-    sys.stderr.write( "+++ ERROR in GeneMapper +++ Input file does not exist or is empty. \
-	Return empty file.\n")
-    savePCLAsTxtFile( c_outputfile, readTable( c_inputfile ) )
-    hashMeta.update({"mapped":False})
-
-#Save Metadata
-if c_fileStatus!="None":
-	with open( c_fileStatus, "w" ) as outputf:
-		outputf.write( "\t".join( ["mapped",str(hashMeta.get("mapped"))] ) )
+if __name__ == "__main__":
+	_main( )

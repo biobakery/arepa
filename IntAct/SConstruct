@@ -1,46 +1,63 @@
+"""
+ARepA: Automated Repository Acquisition 
+
+ARepA is licensed under the MIT license.
+
+Copyright (C) 2013 Yo Sup Moon, Daniela Boernigen, Levi Waldron, Eric Franzosa, Xochitl Morgan, and Curtis Huttenhower
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation 
+files (the "Software"), to deal in the Software without restriction, including without limitation the rights to 
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons 
+to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or 
+substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+"""
+
 import arepa
 import os
 import sfle
 import sys
 
-c_iMinimum			= 10
-c_strSufTXT			= ".txt"
-c_strURLIntact		= "ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psimitab/intact-clustered.zip"
-
-#------------------------------------------------------------------------------ 
-
-c_fileInputTaxIDs	= sfle.d( arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
-
-c_fileIntactZIP		= sfle.d( sfle.c_strDirTmp, "intact-clustered.zip" )
-c_fileIntactTXT		= sfle.d( sfle.c_strDirTmp, "intact.txt" )
-c_fileIntactC		= sfle.d( sfle.c_strDirTmp, "intactc" )
-
-c_fileProgIntact2C	= sfle.d( sfle.c_strDirSrc, "intact2c.py" )
 
 pE = DefaultEnvironment( )
+
+c_iMinimum			= 10
+c_strSufTXT			= ".txt"
+c_strURLIntact			= "ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psimitab/intact-micluster.zip"
+
+c_fileInputTaxIDs		= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
+
+c_fileIntactZIP			= sfle.d( pE, sfle.c_strDirTmp, "intact-micluster.zip" )
+c_fileIntactTXT			= sfle.d( pE, sfle.c_strDirTmp, "intact.txt" )
+c_fileIntactC			= sfle.d( pE, sfle.c_strDirTmp, "intactc" )
+
+c_fileProgIntact2C		= sfle.d( pE, sfle.c_strDirSrc, "intact2c.py" )
 
 #===============================================================================
 # Download the intact.zip source file
 #===============================================================================
 
 sfle.download( pE, c_strURLIntact, c_fileIntactZIP )
-NoClean( c_fileIntactZIP )
 
 #===============================================================================
 # Extract intact.txt from intact.zip
 #===============================================================================
 
-def funcIntactTXT( target, source, env ):
-	strT, astrSs = sfle.ts( target, source )
-	return sfle.ex( ("unzip", "-p", astrSs[0]), strT )
-Command( c_fileIntactTXT, c_fileIntactZIP, funcIntactTXT )
+sfle.scmd( pE, "unzip", c_fileIntactTXT, ["-p", [c_fileIntactZIP]] )
 
 #===============================================================================
 # Process intact.txt into the more compact intactc
 #===============================================================================
 
 afileIntactC = sfle.pipe( pE, c_fileIntactTXT, c_fileProgIntact2C,
-	c_fileIntactC, [[False, c_iMinimum], [True, c_fileInputTaxIDs]] )
+	c_fileIntactC, [c_iMinimum, [c_fileInputTaxIDs]] )
 
 #===============================================================================
 # Pass the IDs from intactc to child directories
