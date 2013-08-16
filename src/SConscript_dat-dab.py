@@ -27,13 +27,25 @@ handles all behavior pertaining to
 mapping dat to dab and generating quant files 
 """
 
+import sfle
+import arepa 
+
+c_fileFlagSleipnir = sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirEtc, "sleipnir" )
+
 def funcDAB( pE, fileOutDAB, afileInDAT ):
+
+	astrSleipnir = sfle.readcomment(c_fileFlagSleipnir)
+	bSleipnir = ( astrSleipnir[0]=="True" ) 
+	print "sleipnir", ("On" if bSleipnir else "Off")
+
 	def _funcDAB( target, source, env ):
 		strT, astrSs = sfle.ts( target, source )
 		strOut, strMap = astrSs[:2]
 		return sfle.ex( ("Dat2Dab", "-o", strT, "-i", ( strOut if sfle.isempty( strMap ) else strMap )) )
 
-	return pE.Command( fileOutDAB, afileInDAT, _funcDAB)
+	if bSleipnir: 
+		return pE.Command( fileOutDAB, afileInDAT, _funcDAB)
+
 
 def funcPCL( pE, fileOutPCL, fileInPCL ):
 	
