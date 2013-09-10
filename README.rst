@@ -204,7 +204,7 @@ Following the pythonic standard, you can comment out any line with a hash "#". F
 	#Saccharomyces cerevisiae
 	#Pseudomonas aeruginosa
 
-will only fetch E. coli data, and nothing else.
+will only fetch Homo sapiens data, and nothing else.
 
 Gene ID
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -465,6 +465,7 @@ Section 2.7 GEO
 * Optional Inputs
 	* etc/include - list of dataset IDs to include (one per line)
 	* etc/exclude - list of dataset IDs to exclude (one per line)
+	* etc/batch - turn on/off batch mode; see include/exclude behavior in Advanced Topics for more details 
 	* etc/manual_curation - manually curated metadata, tab-delimited, one row per sample, one column per metadatum
 	* etc/manual_mapping - manually curated gene ID mapping, tab-delimited, one row per gene family equivalence class
 	* etc/mapping - configure regexps for identifying gene ID mapping columns in platform files
@@ -733,6 +734,15 @@ The default behavior of the testing script assumes that the entire build of ARep
 
 	$ python test.py scons
 
+Section 3.5 Include/Exclude Behavior for Submodules 
+---------------------------------------------
+
+The following is a description of the way ARepA handles what datasets it will include or exclude during the downloading process for 
+all the submodules. 
+
+#. ARepA fetches the list of all possible datasets under the specified taxonomy in the `tmp` directory. We call this the "universe" of datasets for each repository. 
+#. If `etc/exclude` and `etc/include` exist, ARepA launches build for datasets specified in (`universe` **intersect** `include`) **setminus** `exclude`.
+#. Sometimes the user will wish to curtail this default behavior and simply download only the files listed in the `etc/include` file. This behavior can be turned off by setting the `etc/batch` configuration to "False". This feature is especially useful for GEO. See the GEO section in the previous chapter for more details. 
 
 Chapter 4 Frequently Asked Questions (FAQ)
 ============================================
@@ -776,7 +786,7 @@ NB: All questions should be directed to the arepa-users Google Group.
 Acknowledgements
 ============================================
 
-The authors would like to extend a special thanks to Larissa Miropolsky, who was involved in the development of the proof-of-concept of ARepA. We would also like to thank Felix Wong, Brian Palmer, Timothy Tickle, Svitlana Tyekucheva, and Markus Schröder for assisting in the testing process of ARepA.
+The authors would like to extend a special thanks to Felix Wong, Timothy Tickle, Svitlana Tyekucheva, Markus Schröder, Owen White, and Arthur Brady for assisting in the testing process of ARepA.
 
 References
 =============================================

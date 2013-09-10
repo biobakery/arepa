@@ -53,6 +53,7 @@ c_strPathAnnot 		= "pub/geo/DATA/annotation/platforms/"
 
 c_fileInputInclude	= sfle.d( sfle.c_strDirEtc, "include" )
 c_fileInputExclude	= sfle.d( sfle.c_strDirEtc, "exclude" )
+c_fileInputBatch	= sfle.d( sfle.c_strDirEtc, "batch" )
 c_fileInputTaxIDs	= sfle.d( arepa.path_arepa( ), sfle.c_strDirTmp, "taxids" )
 
 c_fileTmpAnnot		= sfle.d( arepa.path_repo( ), sfle.c_strDirTmp, "annot" + c_strSufTXT ) 
@@ -145,6 +146,10 @@ NoClean( afileAnnot )
 # Pass the IDs from gds/gse/gpl.txt to child directories
 #===============================================================================
 
-sfle.sconscript_children( pE, afileTXTs, sfle.scanner( c_fileInputExclude, c_fileInputInclude ),
-	1, arepa.c_strProgSConstruct,
+if sfle.readcomment( c_fileInputBatch )[0] == "False":
+	sfle.sconscript_children( pE, [ c_fileInputInclude ], sfle.scanner(), 1, arepa.c_strProgSConstruct, 
 	{"c_strURLGDS" : c_strURLGDS, "c_strURLGSE" : c_strURLGSE, "c_strURLGPL" : c_strURLGPL} )
+else:
+	sfle.sconscript_children( pE, afileTXTs, sfle.scanner( c_fileInputExclude, c_fileInputInclude ),
+		1, arepa.c_strProgSConstruct,
+		{"c_strURLGDS" : c_strURLGDS, "c_strURLGSE" : c_strURLGSE, "c_strURLGPL" : c_strURLGPL} )
