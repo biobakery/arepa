@@ -147,7 +147,7 @@ NoClean( afileAnnot )
 #===============================================================================
 
 if sfle.readcomment( c_fileInputBatch )[0] == "False":
-	sfle.sconscript_children( pE, [ c_fileInputInclude ], sfle.scanner(), 1, arepa.c_strProgSConstruct, 
+	sfle.sconscript_children( pE, c_fileInputInclude, sfle.scanner( None, c_fileInputInclude ), 1, arepa.c_strProgSConstruct, 
 	{"c_strURLGDS" : c_strURLGDS, "c_strURLGSE" : c_strURLGSE, "c_strURLGPL" : c_strURLGPL} )
 else:
 	sfle.sconscript_children( pE, afileTXTs, sfle.scanner( c_fileInputExclude, c_fileInputInclude ),
