@@ -692,7 +692,9 @@ These are scripts that perform routinely performed tasks in arepa.
 	  -l log.txt    Optional log file containing output mapping status
 
 * arepa/src/merge_genemapping.py: Merges two gene maps ::
+	
 	# Usage: merge_genemapping.py <map1.txt> <map2.txt> <out.txt>
+
 * arepa/GeneMapper/src/bridgemapper.py: Performs gene mapping (gene standardization) ::
 
 	$ bridgemapper.py --help
@@ -735,7 +737,7 @@ The default behavior of the testing script assumes that the entire build of ARep
 	$ python test.py scons
 
 Section 3.5 Include/Exclude Behavior for Submodules 
----------------------------------------------
+------------------------------------------------------
 
 The following is a description of the way ARepA handles what datasets it will include or exclude during the downloading process for 
 all the submodules. 
