@@ -1,0 +1,42 @@
+"sample_name"	"alt_sample_name"	"sample_type"	"T"	"substage"	"T_clinical"	"substage_clinical"	"overall_stage_clinical"	"overall_stage_pathological"	"gleasongrade"	"summarygrade"	"age_at_initial_pathologic_diagnosis"	"days_to_tumor_recurrence"	"recurrence_status"	"recurrence_based_on_psa_only"	"days_to_recurrence_or_death"	"dfs_status"	"cancer_specific_death"	"psa_at_diagnosis"	"psa_rising"	"days_to_death"	"vital_status"	"os_binary"	"relapse_binary"	"race"	"smokingstatus"	"extraprostatic_extension"	"perineural_invasion"	"seminal_vesicle_invasion"	"angiolymphatic_invasion"	"androgen_ablation."	"capsule."	"fusion."	"tumor_margins_positive"	"therapy_radiation_initial"	"therapy_radiation_salvage"	"therapy_surgery_initial"	"therapy_hormonal_initial"	"sample_type.1"	"high_grade_PIN"	"M"	"M_detail"	"M_at_surgery"	"M_at_surgery_detail"
+"GSM211188"	"Metastatic Prostate Cancer  1"	"metastatic"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"1"	"c"	NA	NA
+"GSM211189"	"Metastatic Prostate Cancer  2"	"metastatic"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"1"	"c"	NA	NA
+"GSM211190"	"Metastatic Prostate Cancer  3"	"metastatic"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"1"	"c"	NA	NA
+"GSM211191"	"Metastatic Prostate Cancer  4"	"metastatic"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"1"	"c"	NA	NA
+"GSM211192"	"Metastatic Prostate Cancer  5a"	"metastatic"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"1"	"c"	NA	NA
+"GSM211193"	"Metastatic Prostate Cancer  5b"	"metastatic"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"1"	"c"	NA	NA
+"GSM211194"	"Metastatic Prostate Cancer  6"	"metastatic"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"1"	"c"	NA	NA
+"GSM211195"	"Metastatic Prostate Cancer  7"	"metastatic"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"1"	"c"	NA	NA
+"GSM211196"	"Metastatic Prostate Cancer  8"	"metastatic"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"1"	"c"	NA	NA
+"GSM211197"	"Metastatic Prostate Cancer  9"	"metastatic"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"1"	"c"	NA	NA
+"GSM211198"	"Metastatic Prostate Cancer  10"	"metastatic"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"1"	"c"	NA	NA
+"GSM211199"	"Metastatic Prostate Cancer  11"	"metastatic"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"1"	"c"	NA	NA
+"GSM211200"	"Metastatic Prostate Cancer  12"	"metastatic"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	"1"	"c"	NA	NA
+"GSM211201"	"Benign Prostate  1"	"adjacentnormal"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA
+"GSM211202"	"Benign Prostate  2"	"adjacentnormal"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA
+"GSM211203"	"Benign Prostate  3"	"adjacentnormal"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA
+"GSM211204"	"Benign Prostate  4"	"adjacentnormal"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA
+"GSM211205"	"Benign Prostate  5"	"adjacentnormal"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA
+"GSM211206"	"Benign Prostate  6"	"adjacentnormal"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA
+"GSM211207"	"Benign Prostate  7"	"adjacentnormal"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA
+"GSM211208"	"Benign Prostate  8"	"adjacentnormal"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA
+"GSM211209"	"Benign Prostate  9"	"adjacentnormal"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA
+"GSM211210"	"Benign Prostate  10"	"adjacentnormal"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA
+"GSM211211"	"Benign Prostate  11"	"adjacentnormal"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA
+"GSM211212"	"Benign Prostate  12"	"adjacentnormal"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA
+"GSM211213"	"Benign Prostate  13"	"adjacentnormal"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA
+"GSM211214"	"Benign Prostate  14"	"adjacentnormal"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA
+"GSM211215"	"Benign Prostate  15"	"adjacentnormal"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA
+"GSM211216"	"Benign Prostate  16"	"adjacentnormal"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA
+"GSM211217"	"Local Prostate Cancer 1"	"tumor"	NA	NA	NA	NA	NA	NA	"7"	"intermediate"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA
+"GSM211218"	"Local Prostate Cancer 2"	"tumor"	NA	NA	NA	NA	NA	NA	"6"	"low"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA
+"GSM211219"	"Local Prostate Cancer 3"	"tumor"	NA	NA	NA	NA	NA	NA	"6"	"low"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA
+"GSM211220"	"Local Prostate Cancer 4"	"tumor"	NA	NA	NA	NA	NA	NA	"6"	"low"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA
+"GSM211221"	"Local Prostate Cancer 5"	"tumor"	NA	NA	NA	NA	NA	NA	"7"	"intermediate"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA
+"GSM211222"	"Local Prostate Cancer 6"	"tumor"	NA	NA	NA	NA	NA	NA	"7"	"intermediate"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA
+"GSM211223"	"Local Prostate Cancer 7"	"tumor"	NA	NA	NA	NA	NA	NA	"7"	"intermediate"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA
+"GSM211224"	"Local Prostate Cancer 8"	"tumor"	NA	NA	NA	NA	NA	NA	"7"	"intermediate"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA
+"GSM211225"	"Local Prostate Cancer 9"	"tumor"	NA	NA	NA	NA	NA	NA	"8"	"high"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA
+"GSM211226"	"Local Prostate Cancer 10"	"tumor"	NA	NA	NA	NA	NA	NA	"7"	"intermediate"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA
+"GSM211227"	"Local Prostate Cancer 11"	"tumor"	NA	NA	NA	NA	NA	NA	"7"	"intermediate"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA
+"GSM211228"	"Local Prostate Cancer 12"	"tumor"	NA	NA	NA	NA	NA	NA	"7"	"intermediate"	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA

@@ -41,7 +41,7 @@ c_fileInputSConscript	= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "SCon
 c_fileRSConscript		= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "SConscript_rpackage.py" )
 c_fileInputSOFTGZ		= sfle.d( pE, "../" + c_strGDS + ".soft.gz" )
 c_fileInputManCurTXT  	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirEtc, "manual_curation/", 
-							c_strID + "_curated_pdata.txt" )
+							c_strID + ".txt" )
 c_filePPfun				= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirEtc, "preprocess")
 c_strPPfun 				= sfle.readcomment( c_filePPfun )[0]
                     

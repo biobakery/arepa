@@ -46,7 +46,7 @@ c_fileRSConscript		= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "SConscr
 c_fileProgUnpickle    	= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "unpickle.py" ) 
 c_fileInputGSER       	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "gse.R" ) 
 c_fileInputManCurTXT  	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirEtc, "manual_curation/", 
-							c_strID + "_curated_pdata.txt" )
+							c_strID + ".txt" )
 
 c_filePPfun         	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirEtc, "preprocess")
 c_fileRunRaw        	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirEtc,  "raw")
