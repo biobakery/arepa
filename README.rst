@@ -88,6 +88,8 @@ Before downloading ARepA, you should have the following software on your machine
 	* Java SE 6 (ver >= 1.6): Java is needed for gene identifier conversion service
 	* Apache Ant (ver >= 1.8.0)
 	* Subversion Source Control Management (ver >= 1.7): for automated acquisition of BridgeDB
+	* curl
+	* wget
 
 * Recommended
 	* Sleipnir Library for Computational Functional Genomics (Optional, but necessary for some normalization steps)
