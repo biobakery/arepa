@@ -82,7 +82,7 @@ Section 0.2 Software Prerequisites
 Before downloading ARepA, you should have the following software on your machine:
 
 * Required
-	* Python (ver >= 2.7)
+	* Python (ver 2.7.x; 3.x not supported)
 	* SCons (ver >= 2.1)
 	* R (ver >= 2.13) with GEOquery package (part of Bioconductor)
 	* Java SE 6 (ver >= 1.6): Java is needed for gene identifier conversion service
