@@ -78,7 +78,7 @@ for strLine in sys.stdin:
 				strID = hashCache[strID] = ( arepa.geneid( strID, strTaxID ) or strID )
 			else:
 				strID = strTmp
-	print( "\t".join( [strID] + astrData ) )
+	print(( "\t".join( [strID] + astrData ) ))
 	if fFirst:
 		fFirst = False
-		print( "EWEIGHT		" + ( "	1" * ( len( astrData ) - 2 ) ) )
+		print(( "EWEIGHT		" + ( "	1" * ( len( astrData ) - 2 ) ) ))

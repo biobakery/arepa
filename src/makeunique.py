@@ -28,6 +28,7 @@ import sys
 import csv 
 import os
 import metadata 
+from functools import reduce
 
 def makeunique( istm, ostm, strSplit, iCols, iSkip, ostmLog ):
 	'''
@@ -35,7 +36,7 @@ def makeunique( istm, ostm, strSplit, iCols, iSkip, ostmLog ):
 	then, gets rid of duplicate elements in the set of unordered tuples (equivalence under permutation).
 	User can specify how many lines to skip beforehand, and how many columns are to be considered 
 	'''
-	aastrMatIn = [x for x in csv.reader( istm,csv.excel_tab )]
+	aastrMatIn = [x for x in csv.reader( istm, csv.excel_tab )]
 	aastrHeaders, aastrDataIn = aastrMatIn[:iSkip], aastrMatIn[iSkip:]
 	
 	#open a blank metadata object 
@@ -45,9 +46,9 @@ def makeunique( istm, ostm, strSplit, iCols, iSkip, ostmLog ):
 		for astrRow in aastrDataIn:
 			astrNames, astrVals = astrRow[:iCols], astrRow[iCols:]
 			#Choice: keep rows without values  
-			if any(astrNames) and reduce(lambda y,z: y or z, map(lambda x: x.find(strSplit)!=-1,astrNames)):
-				astrSplit = map(lambda x: map(lambda y: y.strip(), x.split(strSplit)),astrNames)
-				aastrSplit += map(lambda v: list(v) + astrVals,[x for x in itertools.product(*astrSplit)]) 	
+			if any(astrNames) and reduce(lambda y, z: y or z, [x.find(strSplit)!=-1 for x in astrNames]):
+				astrSplit = [[y.strip() for y in x.split(strSplit)] for x in astrNames]
+				aastrSplit += [list(v) + astrVals for v in [x for x in itertools.product(*astrSplit)]] 	
 			else:
 				aastrSplit.append(astrRow)
 	else:
@@ -59,7 +60,7 @@ def makeunique( istm, ostm, strSplit, iCols, iSkip, ostmLog ):
 		astrNames, astrVals = astrRow[:iCols], astrRow[iCols:]
 		lenNames = len(astrNames)
 		if (len(frozenset(astrNames)) == lenNames and not(frozenset(astrNames) in pNames)):
-			pNames |= set([frozenset(astrNames)])
+			pNames |= {frozenset(astrNames)}
 			aastrUnique.append(astrRow)
 	
 	pMeta.set( "mapped", any( aastrUnique ) )

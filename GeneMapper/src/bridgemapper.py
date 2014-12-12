@@ -54,7 +54,7 @@ c_strDefaultGeneIDFrom	= "KEGG Genes"
 #########################################################
 
 def convertGeneIds( setstrGenes, strMap, strFrom, strTo ):
-	pFrom, pTo = [tempfile.NamedTemporaryFile( delete=False ) for i in xrange( 2 )]
+	pFrom, pTo = [tempfile.NamedTemporaryFile( delete=False ) for i in range( 2 )]
 
 	pFrom.write( "\n".join( setstrGenes ) + "\n" )
 	pFrom.flush()
@@ -62,8 +62,8 @@ def convertGeneIds( setstrGenes, strMap, strFrom, strTo ):
 	strBatchmapperSH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "trunk/batchmapper.sh")
 	strMapFlag = "-g" if strMap.endswith( ".bridge" ) else "-t"
 
-	subprocess.check_call( ("sh",strBatchmapperSH, "-i", pFrom.name, "-is", strFrom,\
-		"-os", strTo, "-o", pTo.name, strMapFlag, strMap,"-mm") )
+	subprocess.check_call( ("sh", strBatchmapperSH, "-i", pFrom.name, "-is", strFrom,\
+		"-os", strTo, "-o", pTo.name, strMapFlag, strMap, "-mm") )
 
 	hashMap = {a[1]:a[0] for a in csv.reader( pTo, csv.excel_tab )}
 	pTo.flush()
@@ -104,7 +104,7 @@ def bridgemapper( istm, ostm, strMap, strCols, strFrom, strTo, ostmLog, iSkip ):
 	if hashMap:
 		if any(hashMap.values()):
 			pMeta.set( "mapped", True )
-			for iRow in xrange( iSkip, len( aastrData ) ):
+			for iRow in range( iSkip, len( aastrData ) ):
 				astrRow = aastrData[iRow]
 				for iCol in aiCols:
 					if iCol < len( astrRow ):
@@ -137,7 +137,7 @@ def gene_sniffer( istm, strCols, pGeneNameHash = c_hashGeneNames, default_standa
 		Output: name of gene identifier convention; e.g. "HGNC"
 		'''
 		# Define Standards Here 
-		astrUniRef	= ["UniRef" + str(n) for n in [50,90,100]]
+		astrUniRef	= ["UniRef" + str(n) for n in [50, 90, 100]]
 		strEnsembl = "EN"
 		fUniProt	= 0.5 
 		astrKeggCompound = ["K0", "K1"]
@@ -145,15 +145,15 @@ def gene_sniffer( istm, strCols, pGeneNameHash = c_hashGeneNames, default_standa
 		len_name_list = len(name_list)
 		strHead = name_list[0]
 		#UniRef --> "UniGene"
-		if any(map( lambda x: strHead.startswith(x), astrUniRef )):
+		if any([strHead.startswith(x) for x in astrUniRef]):
 			return "UniGene"
 		elif strHead.startswith( strEnsembl ):
 			return "Ensembl"
-		elif any(map( lambda x: strHead.startswith(x), astrKeggCompound)):
+		elif any([strHead.startswith(x) for x in astrKeggCompound]):
 			return "Kegg Compound"
 		else: 
 			#Uniprot 
-			filter_list = filter( lambda x: len(x) == 6 and (x.startswith("Q") or x.startswith("P")), name_list)
+			filter_list = [x for x in name_list if len(x) == 6 and (x.startswith("Q") or x.startswith("P"))]
 			if float(len(filter_list))/float(len_name_list) >= fUniProt:
 				return "Uniprot/TrEMBL"
 			else:
@@ -201,7 +201,7 @@ argp.add_argument( "-s",		dest = "iSkip",		metavar = "skip_rows",
 argp.add_argument( "-l",		dest = "ostmLog",	metavar = "log.txt",
 	type = argparse.FileType( "w" ),
 	help = "Optional log file containing output mapping status" )
-argp.add_argument('-x', 		dest = "fSniffer" ,	action="store_true", default=False, 
+argp.add_argument('-x', 		dest = "fSniffer",	action="store_true", default=False, 
 	help = "Optional flag turning on/off gene identifier sniffer (automatically decide geneid_from)" )
 
 def _main( ):
@@ -212,7 +212,7 @@ def _main( ):
 		#if the two gene identifier types are the same, or if the line count exceeds iMaxLines, 
 		#return the input file 
 		
-		pAastrData = csv.reader(args.istm,csv.excel_tab)
+		pAastrData = csv.reader(args.istm, csv.excel_tab)
 		csvw = csv.writer( args.ostm, csv.excel_tab )
 		for astrLine in pAastrData:
 			csvw.writerow( astrLine )	
@@ -222,13 +222,13 @@ def _main( ):
 			pMeta.save_text( args.ostmLog )
 	elif not(args.strMap) or not(os.stat(str(args.strMap))[6]):
 		#if there is no map file specified 
-		pAastrData = csv.reader(args.istm,csv.excel_tab)
+		pAastrData = csv.reader(args.istm, csv.excel_tab)
 		csvw = csv.writer( args.ostm, csv.excel_tab )
 		for astrLine in pAastrData:
 			csvw.writerow( astrLine )	
 		if args.ostmLog:
 			pMeta = metadata.open()
-			pMeta.set("mapped",False)
+			pMeta.set("mapped", False)
 			pMeta.save_text( args.ostmLog )
 	else:
 		#if gene sniffer flag is on, try to guess the best possible gene identifier 

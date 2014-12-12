@@ -45,4 +45,4 @@ for astrLine in csv.reader( sys.stdin, csv.excel_tab ):
 	if strTaxon in setTaxa:
 		iHit = iLevel
 	if iHit != None:
-		print( "\t".join( (strID, strTaxon) ) )
+		print(( "\t".join( (strID, strTaxon) ) ))

@@ -48,5 +48,5 @@ def read( fileC, iColumns, strTarget, funcCallback, pArgs = None ):
 			astrLine = strLine.strip( ).split( "\t" )
 			if len( astrLine ) < iColumns:
 				continue
-			aArgs = [pArgs] + map( lambda s: astrSymbols[int(s)], astrLine[:iColumns] )
+			aArgs = [pArgs] + [astrSymbols[int(s)] for s in astrLine[:iColumns]]
 			funcCallback( *aArgs )

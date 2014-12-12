@@ -60,8 +60,8 @@ for astrLine in csv.reader( sys.stdin, csv.excel_tab ):
 	strA, strB = (re.sub( r'^.*?\.', "", s ) for s in (strA, strB))
 	hashTaxa.setdefault(strMode, {}).setdefault( strTax1, [] ).append( [symbol( hashSymbols, s ) for s in (strA, strB, strMode, strAction, strActor, strScore)] )
 
-aaSymbols = sorted( hashSymbols.items( ), cmp = lambda aOne, aTwo: cmp( aOne[1], aTwo[1] ) )
-print( "\n".join( aCur[0] for aCur in aaSymbols ) )
+aaSymbols = sorted( list(hashSymbols.items( )), cmp = lambda aOne, aTwo: cmp( aOne[1], aTwo[1] ) )
+print(( "\n".join( aCur[0] for aCur in aaSymbols ) ))
 
 #for strTaxon, aaiLines in hashTaxa.items( ):
 #	print( ">" + c_strTaxid + strTaxon )
@@ -69,14 +69,14 @@ print( "\n".join( aCur[0] for aCur in aaSymbols ) )
 #		print( "\t".join( str(i) for i in aiLine ) )
 
 hashBins = {}
-for strMode, hashTaxa in hashTaxa.items( ):
-	for strTaxon, aaiLines in hashTaxa.items( ):
+for strMode, hashTaxa in list(hashTaxa.items( )):
+	for strTaxon, aaiLines in list(hashTaxa.items( )):
 		strTaxid = c_strTaxid + strTaxon
 		strBin = strTaxid + ( "" if ( ( not strMode ) or ( len( aaiLines ) < iMin ) ) else \
 			 ( "_" + c_strMode + strMode ) )
 		hashBins.setdefault( strBin, [] ).extend( aaiLines )
 
-for strBin, aaiLines in hashBins.items( ):
-	print( ">" + strBin )
+for strBin, aaiLines in list(hashBins.items( )):
+	print(( ">" + strBin ))
 	for aiLine in aaiLines:
-		print( "\t".join( str(i) for i in aiLine ) )
+		print(( "\t".join( str(i) for i in aiLine ) ))

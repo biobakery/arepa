@@ -29,7 +29,7 @@ import sys
 c_iColumns	= 16
 
 
-def callback( aArgs, strInterID, strAltAs , strAltBs , strSynAs , strSynBs , strSynAs2, strSynBs2, strAs, strBs, strSynAs3, strSynBs3, strMethods, strTypes, strAuthors, strPMIDs, strTaxAs):
+def callback( aArgs, strInterID, strAltAs, strAltBs, strSynAs, strSynBs, strSynAs2, strSynBs2, strAs, strBs, strSynAs3, strSynBs3, strMethods, strTypes, strAuthors, strPMIDs, strTaxAs):
 	setPairs, strTaxID, hashCache = aArgs
 	astrAB = []
 	for astrCur in ([strAs, strAltAs, strSynAs], [strBs, strAltBs, strSynBs]):
@@ -60,6 +60,6 @@ strTaxID = mtch.group( 1 )
 setPairs = set()
 cfile.read( sys.stdin, c_iColumns, strTarget, callback, [setPairs, strTaxID, {}] )
 for astrGenes in setPairs:
-	print( "\t".join( list(astrGenes) + ["1"] ) )
+	print(( "\t".join( list(astrGenes) + ["1"] ) ))
 
 

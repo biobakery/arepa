@@ -45,14 +45,14 @@ c_strSufMap 			= ".map"
 c_strMapped				= "_mapped" 
 c_strDirData			= sfle.d( arepa.path_repo( ), sfle.c_strDirData )
 c_strDirManMap			= sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, "manual_mapping" )
-c_astrGeneTo			= sfle.readcomment( sfle.d( arepa.path_arepa(),sfle.c_strDirEtc,"geneid" ) 
+c_astrGeneTo			= sfle.readcomment( sfle.d( arepa.path_arepa(), sfle.c_strDirEtc, "geneid" ) 
 							or [arepa.genemap_genename( )] ) 
 c_strPathGeneMapper		= sfle.d( arepa.path_arepa(), "GeneMapper" )
 c_strFileUnzipLog		= sfle.d( c_strPathGeneMapper, sfle.c_strDirTmp, "unzip.log" )
 c_strFileCompileLog		= sfle.d( c_strPathGeneMapper, sfle.c_strDirTmp, "compile.log" )
 c_strPathTopMapping		= sfle.d( c_strPathGeneMapper, sfle.c_strDirEtc, "manual_mapping" )
 c_strPathUniprotKO		= sfle.d( c_strPathGeneMapper, sfle.c_strDirEtc, "uniprotko" )
-c_fileProgMakeUnique	= sfle.d( arepa.path_arepa(), sfle.c_strDirSrc,"makeunique.py")
+c_fileProgMakeUnique	= sfle.d( arepa.path_arepa(), sfle.c_strDirSrc, "makeunique.py")
 c_funcGeneMapper		= sfle.d( c_strPathGeneMapper, sfle.c_strDirSrc, "bridgemapper.py" )
 
 c_strManualGeneIDs		= sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, "manual_geneid")
@@ -64,14 +64,13 @@ c_pHashBridgeDB 		= dict((strName, sfle.d( arepa.path_arepa( ), "GeneMapper", sf
 							("Saccharomyces cerevisiae",	"Sc_Derby_20120602.bridge"),
 								))
 
-pHashBridgeDBTaxIDs 	= { k:arepa.org2taxid( k, True ) for k in c_pHashBridgeDB.keys()}
-m_hashGeneIDs			= { k:v for k,v in map( lambda x: x.split("\t"), 
-							sfle.readcomment(open(c_strManualGeneIDs)) ) } if os.path.exists( c_strManualGeneIDs ) else None 
+pHashBridgeDBTaxIDs 	= { k:arepa.org2taxid( k, True ) for k in list(c_pHashBridgeDB.keys())}
+m_hashGeneIDs			= { k:v for k, v in [x.split("\t") for x in sfle.readcomment(open(c_strManualGeneIDs))] } if os.path.exists( c_strManualGeneIDs ) else None 
 
 def funcCounter( iter ):
 	return ( "%02d" % next( iter ) )
 
-def funcGeneIDMapping( pE, fileDATin, strGeneFrom = None, fileLOGout = None, strMAPin = None, aiCOL = [0,1], 
+def funcGeneIDMapping( pE, fileDATin, strGeneFrom = None, fileLOGout = None, strMAPin = None, aiCOL = [0, 1], 
 	iSkip = 0, iLevel = 2 ):
 	try:
 		int(strMAPin)
@@ -110,7 +109,7 @@ def funcGeneIDMapping( pE, fileDATin, strGeneFrom = None, fileLOGout = None, str
 			strMAPin = arepa.get_mappingfile( strTaxID )
 		# Else use BridgeDB files
 		if not(strMAPin) and strTaxID:
-			for strSpeciesName in c_pHashBridgeDB.keys():
+			for strSpeciesName in list(c_pHashBridgeDB.keys()):
 				if strSpeciesName in arepa.taxid2org( strTaxID ):
 					strMAPin = c_pHashBridgeDB[strSpeciesName]
 					break 
@@ -137,4 +136,4 @@ def funcMakeUnique( pE, fileDATin, iSkip = 0, iCol = 2 ):
 	strBase, strExt = os.path.splitext(str(fileDATin))
 	iCount = funcCounter( g_iterCounter )
 	strT = re.sub( r'_mapped[0-9]+', c_strMapped + iCount, str(fileDATin))
-	return sfle.op(pE, c_fileProgMakeUnique, [[fileDATin], [True,strT],"-s", iSkip, "-c", iCol])
+	return sfle.op(pE, c_fileProgMakeUnique, [[fileDATin], [True, strT], "-s", iSkip, "-c", iCol])

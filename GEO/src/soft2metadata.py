@@ -45,7 +45,7 @@ for strGPLGZ in astrGPLGZs:
 pSOFT.open( sys.stdin )
 
 pMetadata = metadata.open( )
-for pDS in pSOFT.get( "DATASET" ).values( ):
+for pDS in list(pSOFT.get( "DATASET" ).values( )):
 	pMetadata.pmid( pDS.get_attribute( "dataset_pubmed_id" ) )
 	pMetadata.title( pDS.get_attribute( "dataset_title" ) )
 	pMetadata.gloss( pDS.get_attribute( "dataset_description" ) )
@@ -67,6 +67,6 @@ if strMetadata:
 			astrHeaders = astrLine
 
 # Add Mapping Status and Save
-k,v = sfle.readcomment( open( strStatus ) )[0].split("\t")
+k, v = sfle.readcomment( open( strStatus ) )[0].split("\t")
 pMetadata.update({k:v})
 pMetadata.save( sys.stdout )
