@@ -36,7 +36,7 @@ import sys
 import threading
 import urllib
 import hashlib
-import gzip
+#import gzip
 
 c_strDirData			= "data/"
 c_strDirDoc				= "doc/"
@@ -267,25 +267,26 @@ def ex( pCmd, strOut = None, strErr = None ):
 	
 	# Check for version 
 	## Check if it is a file 
-	if strCmd.partition(' ')[0] == "gunzip" or strCmd.partition(' ')[0] == "unzip":
-		print "A file is found***********************", strOut,"   ",strCmd.split(' ')[len(strCmd.partition(' '))-1]
-		print "Checksum ", hashlib.md5(gzip.open(strCmd.split(' ')[len(strCmd.split(' '))-1]), 'rb').read().hexdigest()
-		with open( strOut, "a" ) as fileOut:
-			fileOut.write( strCmd.split(' ')[len(strCmd.partition(' '))-1],'\t checksum\t',\
-						hashlib.md5(gzip.open(strCmd.split(' ')[len(strCmd.split(' '))-1]), 'rb').read().hexdigest())
+	#if strCmd.partition(' ')[0] == "gunzip" or strCmd.partition(' ')[0] == "unzip":
+	#	print "A file is found***********************", strOut,"   ",strCmd.split(' ')[len(strCmd.partition(' '))-1]
+		#print "Checksum ", hashlib.md5(gzip.open(strCmd.split(' ')[len(strCmd.split(' '))-1]), 'rb').read().hexdigest()
+		#with open( strOut, "a" ) as fileOut:
+		#	fileOut.write( strCmd.split(' ')[len(strCmd.partition(' '))-1],'\t checksum\t',\
+		#				hashlib.md5(gzip.open(strCmd.split(' ')[len(strCmd.split(' '))-1]), 'rb').read().hexdigest())
 	
 	# check for the version of the running module 
-	else:
-		print("check for the version of the running module", strCmd)
+	#else:
+	#print("check for the version of the running module", strCmd)
+	try:
+		pProc = subprocess.Popen( strCmd.partition(' ')[0]+' -V', shell = True)
+		(stdout, stderr) = pProc.communicate( )
+		if stdout:
+			with open( strOut, "a" ) as fileOut:
+				for strLine in pProc.stdout:
+					fileOut.write( strLine )
+		retval = pProc.wait( )
+	except subprocess.CalledProcessError:
 		try:
-			pProc = subprocess.Popen( strCmd.partition(' ')[0]+' -V', shell = True)
-			(stdout, stderr) = pProc.communicate( )
-			if stdout:
-				with open( strOut, "a" ) as fileOut:
-					for strLine in pProc.stdout:
-						fileOut.write( strLine )
-			retval = pProc.wait( )
-		except subprocess.CalledProcessError:
 			pProc = subprocess.Popen( strCmd.partition(' ')[0]+' -version', shell = True,
 				stdout = ( subprocess.PIPE if strOut else None ),
 				stderr = ( open( strErr, "a" ) if strErr else None ) )
@@ -300,8 +301,8 @@ def ex( pCmd, strOut = None, strErr = None ):
 					fileOut.write( strLine )
 		except subprocess.CalledProcessError:
 			with open( strOut, "a" ) as fileOut:
-				fileOut.write( strCmd )
-			print ("An exception occurred***************")
+				fileOut.write(strCmd, "\tchecksum\t", strCmd.split(' ')[len(strCmd.partition(' '))-1],'\t checksum\t',\
+					hashlib.md5(open(strCmd.split(' ')[0]).read().hexdigest()))
 			pass
 		retval = pProc.wait( )
 	
