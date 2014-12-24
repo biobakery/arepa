@@ -293,11 +293,13 @@ def ex( pCmd, strOut = None, strErr = None ):
 				for strLine in pProc.stdout:
 					fileOut.write( strLine )
 		except subprocess.CalledProcessError:
+			try:
 			#We should create a checksum for files!!!!
-			#with open( strOut, "a" ) as fileOut:
-			#	fileOut.write(strCmd, "\tchecksum\t", strCmd.split(' ')[len(strCmd.partition(' '))-1],'\t checksum\t',\
-			#		hashlib.md5(open(strCmd.split(' ')[0]).read().hexdigest()))
-			pass
+				with open( strOut, "a" ) as fileOut:
+					fileOut.write(strCmd, "\tchecksum\t", strCmd.split(' ')[len(strCmd.partition(' '))-1],'\t checksum\t',\
+						hashlib.md5(open(strCmd.split(' ')[0]).read().hexdigest()))
+			except IOError:
+				pass
 		#retval = pProc.wait( )
 	
 	# execute the command
