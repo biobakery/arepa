@@ -265,6 +265,29 @@ def ex( pCmd, strOut = None, strErr = None ):
 	sys.stdout.write( ( ( " > %s" % quote( strOut ) ) if strOut else "" ) )
 	sys.stdout.write( ( ( " 2> %s" % quote( strErr ) ) if strErr else "" ) + "\n" )
 	
+	
+	
+	# execute the command
+	if not ( strOut or strErr ):
+		return subprocess.call( strCmd, shell = True )
+	pProc = subprocess.Popen( strCmd, shell = True,
+		stdout = ( subprocess.PIPE if strOut else None ),
+		stderr = ( open( strErr, "w" ) if strErr else None ) )
+	if not pProc:
+		return 1
+	if strOut:
+		strLine = pProc.stdout.readline( )
+		if not strLine:
+			pProc.communicate( )
+			retval = pProc.wait( )
+		else:
+			with open( strOut, "w" ) as fileOut:
+				fileOut.write( strLine )
+				for strLine in pProc.stdout:
+					fileOut.write( strLine )
+	retval = pProc.wait( )
+	
+	
 	# check for the version of the running module 
 	#else:
 	#print("check for the version of the running module", strCmd)
@@ -274,7 +297,7 @@ def ex( pCmd, strOut = None, strErr = None ):
 			(stdout, stderr) = pProc.communicate( )
 			retval = pProc.wait( )
 			if stdout:
-				with open( strOut, "w" ) as fileOut:
+				with open( strOut, "a" ) as fileOut:
 					for strLine in pProc.stdout:
 						fileOut.write( strLine )
 		except subprocess.CalledProcessError:
@@ -282,18 +305,18 @@ def ex( pCmd, strOut = None, strErr = None ):
 				pProc = subprocess.Popen( strCmd.partition(' ')[0]+' -version', shell = True)
 				(stdout, stderr) = pProc.communicate( )
 				retval = pProc.wait( )
-				with open( strOut, "w" ) as fileOut:
+				with open( strOut, "a" ) as fileOut:
 					fileOut.write( strLine )
 					for strLine in pProc.stdout:
 						fileOut.write( strLine )
 			except subprocess.CalledProcessError:
 				try:
 				#We should create a checksum for files!!!!
-					with open( strOut, "w" ) as fileOut:
+					with open( strOut, "a" ) as fileOut:
 						fileOut.write(strCmd, "\tchecksum\t", strCmd.partition(' ')[0],'\t checksum\t',\
 							hashlib.md5(open(strCmd.split(' ')[0]).read().hexdigest()))
 				except IOError:
-					with open( strOut, "w" ) as fileOut:
+					with open( strOut, "a" ) as fileOut:
 						fileOut.write(strCmd, "is a command.")
 					pass
 			#retval = pProc.wait( )
@@ -303,25 +326,6 @@ def ex( pCmd, strOut = None, strErr = None ):
 				pass
 		finally:
 			pass
-	
-	# execute the command
-	if not ( strOut or strErr ):
-		return subprocess.call( strCmd, shell = True )
-	pProc = subprocess.Popen( strCmd, shell = True,
-		stdout = ( subprocess.PIPE if strOut else None ),
-		stderr = ( open( strErr, "a" ) if strErr else None ) )
-	if not pProc:
-		return 1
-	if strOut:
-		strLine = pProc.stdout.readline( )
-		if not strLine:
-			pProc.communicate( )
-			return pProc.wait( )
-		with open( strOut, "a" ) as fileOut:
-			fileOut.write( strLine )
-			for strLine in pProc.stdout:
-				fileOut.write( strLine )
-	retval = pProc.wait( )
 	
 	return retval
 
