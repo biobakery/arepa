@@ -35,6 +35,8 @@ import subprocess
 import sys
 import threading
 import urllib
+import hashlib
+#import gzip
 
 c_strDirData			= "data/"
 c_strDirDoc				= "doc/"
@@ -257,11 +259,15 @@ def in_directory( strFile, strDir ):
 #===============================================================================
 
 def ex( pCmd, strOut = None, strErr = None ):
-	
+	# print execution cmd
 	strCmd = pCmd if isinstance( pCmd, str ) else " ".join( str(p) for p in pCmd )
 	sys.stdout.write( "%s" % strCmd )
 	sys.stdout.write( ( ( " > %s" % quote( strOut ) ) if strOut else "" ) )
 	sys.stdout.write( ( ( " 2> %s" % quote( strErr ) ) if strErr else "" ) + "\n" )
+	
+	
+	
+	# execute the command
 	if not ( strOut or strErr ):
 		return subprocess.call( strCmd, shell = True )
 	pProc = subprocess.Popen( strCmd, shell = True,
@@ -273,12 +279,55 @@ def ex( pCmd, strOut = None, strErr = None ):
 		strLine = pProc.stdout.readline( )
 		if not strLine:
 			pProc.communicate( )
-			return pProc.wait( )
-		with open( strOut, "w" ) as fileOut:
-			fileOut.write( strLine )
-			for strLine in pProc.stdout:
+			retval = pProc.wait( )
+		else:
+			with open( strOut, "w" ) as fileOut:
 				fileOut.write( strLine )
-	return pProc.wait( )
+				for strLine in pProc.stdout:
+					fileOut.write( strLine )
+	retval = pProc.wait( )
+	
+	
+	# check for the version of the running module 
+	#else:
+	#print("check for the version of the running module", strCmd)
+	if not(strCmd.partition(' ')[0] in {"rm", "unzip","cat", "tar"}): # it should be checked if the command is a system command or not.
+		try:
+			pProc = subprocess.Popen( strCmd.partition(' ')[0]+' -V', shell = True)
+			(stdout, stderr) = pProc.communicate( )
+			retval = pProc.wait( )
+			if stdout:
+				with open( strOut, "a" ) as fileOut:
+					for strLine in pProc.stdout:
+						fileOut.write( strLine )
+		except subprocess.CalledProcessError:
+			try:
+				pProc = subprocess.Popen( strCmd.partition(' ')[0]+' -version', shell = True)
+				(stdout, stderr) = pProc.communicate( )
+				retval = pProc.wait( )
+				with open( strOut, "a" ) as fileOut:
+					fileOut.write( strLine )
+					for strLine in pProc.stdout:
+						fileOut.write( strLine )
+			except subprocess.CalledProcessError:
+				try:
+				#We should create a checksum for files!!!!
+					with open( strOut, "a" ) as fileOut:
+						fileOut.write(strCmd, "\tchecksum\t", strCmd.partition(' ')[0],'\t checksum\t',\
+							hashlib.md5(open(strCmd.split(' ')[0]).read().hexdigest()))
+				except IOError:
+					with open( strOut, "a" ) as fileOut:
+						fileOut.write(strCmd, "is a command.")
+					pass
+			#retval = pProc.wait( )
+				finally:
+					pass
+			finally:
+				pass
+		finally:
+			pass
+	
+	return retval
 
 def ts( afileTargets, afileSources ):
 

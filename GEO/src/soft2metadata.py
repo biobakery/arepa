@@ -29,6 +29,7 @@ import re
 import soft
 import sys
 import csv
+import hashlib
 
 strStatus 	= sys.argv[1]
 strMetadata = sys.argv[2] or None 
@@ -54,6 +55,9 @@ for pDS in pSOFT.get( "DATASET" ).values( ):
 	pMetadata.conditions( pDS.get_attribute( "dataset_sample_count" ) )
 	pMetadata.platform( pDS.get_attribute( "dataset_platform" ) )
 	pMetadata.taxid( arepa.org2taxid( pDS.get_attribute( "dataset_sample_organism" ) ) )
+	#pMetadata.checksum(hashlib.md5(open(pDS, 'rb').read()).hexdigest())
+	pMetadata.checksum(hashlib.md5.new(pDS).digest())
+	# pMetadata.checksum(md5.new(pSOFT.open( gzip.open( strGPLGZ ) )).digest())
 
 # Auxillary Metadata 
 if strMetadata:
