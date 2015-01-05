@@ -45,7 +45,7 @@ Requirements for R package building:
 	Description: Automatically generated R package by arepa 
 	Depends: R (>= 2.10.0), affy
 	Suggests: survival
-	License: MIT license 
+	License: MIT
 	URL: http://huttenhower.sph.harvard.edu/arepa
 """
 
@@ -54,7 +54,7 @@ import arepa
 import sys  
 import pickle
 
-c_strNAMESPACE		= r"'exportPattern(\\'^[[:alpha:]]+\\')'"
+c_strNAMESPACE		= r"'exportPattern("'"^[[:alpha:]]+"'")'"
 
 c_fileProgUnpickle	= sfle.d( pE, arepa.path_arepa(), sfle.c_strDirSrc, "unpickle.py" )
 

@@ -141,15 +141,14 @@ if( "pmid" %in% colnames(dfExperiment) & require(annotate)){
 }
 
 if( require( GEOmetadb )){
-    if (file.exists("../../../tmp/GEOmetadb.sqlite")){
-        sqlfile <- "../../../tmp/GEOmetadb.sqlite"
+    if (file.exists("/tmp/GEOmetadb.sqlite")){
+        sqlfile <- "/tmp/GEOmetadb.sqlite"
     }else{
-        dir.create("../../../tmp", showWarnings=FALSE)
-        sqlfile = getSQLiteFile(destdir="../../../tmp")
+        sqlfile = getSQLiteFile(destdir="/tmp")
     }
-    con = dbConnect("SQLite",sqlfile)
-    bioc.platform <- dbGetQuery(con,paste("select bioc_package from gpl where gpl='",dfExperiment$platform,"'", sep="") )[,1]
-    if(is.na(bioc.platform))
+    con = try(dbConnect(RSQLite::SQLite(), sqlfile))
+    bioc.platform <- try(dbGetQuery(con,paste("select bioc_package from gpl where gpl='",dfExperiment$platform,"'", sep="") )[,1])
+    if(is(bioc.platform, "try-error") | is.na(bioc.platform))
         bioc.platform <- dfExperiment$platform
 }else{
     bioc.platform <- dfExperiment$platform
@@ -162,4 +161,10 @@ experiment.miame@other <- dfExperiment
 experimentData(eset) <- experiment.miame
 eset@annotation <- bioc.platform
 
-save(eset,file=strOutputData,compress="bzip2")
+eset.name <- basename(inputargs[1])
+eset.name <- strsplit(eset.name, "_")[[1]][1]
+eset.name <- sub("\\.pcl$", "", eset.name)
+eset.name <- make.names(paste(eset.name, "_eset", sep=""))
+assign(x=eset.name, value=eset)
+
+save(list=eset.name,file=strOutputData,compress="bzip2")

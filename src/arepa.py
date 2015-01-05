@@ -36,7 +36,7 @@ import argparse
 c_strVersion		= "0.9.6"
 c_strDate			= "2013-03-22"
 c_strURL			= "http://huttenhower.sph.harvard.edu/arepa"
-c_strLicense		= "MIT license"
+c_strLicense		= "MIT"
 c_astrAuthors		= ["Yo Sup Moon", "Daniela Boernigen", "Levi Waldron", "Eric Franzosa", "Curtis Huttenhower"]
 c_strMaintainer		= r"Yo Sup Moon <moon@college.harvard.edu>"
 
