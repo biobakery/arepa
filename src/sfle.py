@@ -291,13 +291,16 @@ def ex( pCmd, strOut = None, strErr = None ):
 	# check for the version of the running module 
 	#else:
 	#print("check for the version of the running module", strCmd)
-	if not(strCmd.partition(' ')[0] in {"rm", "unzip","cat", "tar"}): # it should be checked if the command is a system command or not.
+	
+	filename = "tmp/Log_versions.txt"
+	#open(filename, 'a')
+	if strCmd.partition(' ')[0] in ["python","svn","wget", "java", "scons","ant", "curl", "R"]: # it should be checked if the command is a system command or not.
 		try:
 			pProc = subprocess.Popen( strCmd.partition(' ')[0]+' -V', shell = True)
 			(stdout, stderr) = pProc.communicate( )
 			retval = pProc.wait( )
 			if stdout:
-				with open( strOut, "a" ) as fileOut:
+				with open( filename, "a" ) as fileOut:
 					for strLine in pProc.stdout:
 						fileOut.write( strLine )
 		except subprocess.CalledProcessError:
@@ -305,28 +308,41 @@ def ex( pCmd, strOut = None, strErr = None ):
 				pProc = subprocess.Popen( strCmd.partition(' ')[0]+' -version', shell = True)
 				(stdout, stderr) = pProc.communicate( )
 				retval = pProc.wait( )
-				with open( strOut, "a" ) as fileOut:
+				with open( filename, "a" ) as fileOut:
 					fileOut.write( strLine )
 					for strLine in pProc.stdout:
 						fileOut.write( strLine )
 			except subprocess.CalledProcessError:
 				try:
-				#We should create a checksum for files!!!!
-					with open( strOut, "a" ) as fileOut:
-						fileOut.write(strCmd, "\tchecksum\t", strCmd.partition(' ')[0],'\t checksum\t',\
-							hashlib.md5(open(strCmd.split(' ')[0]).read().hexdigest()))
-				except IOError:
-					with open( strOut, "a" ) as fileOut:
-						fileOut.write(strCmd, "is a command.")
-					pass
-			#retval = pProc.wait( )
+					pProc = subprocess.Popen( strCmd.partition(' ')[0]+' --version', shell = True)
+					(stdout, stderr) = pProc.communicate( )
+					retval = pProc.wait( )
+					with open( filename, "a" ) as fileOut:
+						fileOut.write( strLine )
+						for strLine in pProc.stdout:
+							fileOut.write( strLine )
+				except subprocess.CalledProcessError:
+					
+					try:
+						with open( filename, "a" ) as fileOut:
+							fileOut.write(strCmd, "is a command.")
+					#retval = pProc.wait( )
+					except:
+						pass
+					'''	
+					#We should create a checksum for files!!!!
+						with open( filename, "a" ) as fileOut:
+							fileOut.write(strCmd, "\tchecksum\t", strCmd.partition(' ')[0],'\t checksum\t',\
+								hashlib.md5(open(strCmd.split(' ')[0]).read().hexdigest()))
+					except IOError:
+						pass
+					'''
 				finally:
 					pass
 			finally:
 				pass
 		finally:
 			pass
-	
 	return retval
 
 def ts( afileTargets, afileSources ):
