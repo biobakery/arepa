@@ -292,8 +292,8 @@ def ex( pCmd, strOut = None, strErr = None ):
 	#else:
 	#print("check for the version of the running module", strCmd)
 	
-	filename = "tmp/Log_versions.txt"
-	#open(filename, 'a')
+	filename = "Log_versions.txt"
+	open(filename, 'a')
 	if strCmd.partition(' ')[0] in ["python","svn","wget", "java", "scons","ant", "curl", "R"]: # it should be checked if the command is a system command or not.
 		try:
 			pProc = subprocess.Popen( strCmd.partition(' ')[0]+' -V', shell = True)
@@ -302,7 +302,7 @@ def ex( pCmd, strOut = None, strErr = None ):
 			if stdout:
 				with open( filename, "a" ) as fileOut:
 					for strLine in pProc.stdout:
-						fileOut.write( strLine )
+						fileOut.write( str(strLine) )
 		except subprocess.CalledProcessError:
 			try:
 				pProc = subprocess.Popen( strCmd.partition(' ')[0]+' -version', shell = True)
@@ -311,21 +311,21 @@ def ex( pCmd, strOut = None, strErr = None ):
 				with open( filename, "a" ) as fileOut:
 					fileOut.write( strLine )
 					for strLine in pProc.stdout:
-						fileOut.write( strLine )
+						fileOut.write( str(strLine) )
 			except subprocess.CalledProcessError:
 				try:
 					pProc = subprocess.Popen( strCmd.partition(' ')[0]+' --version', shell = True)
 					(stdout, stderr) = pProc.communicate( )
 					retval = pProc.wait( )
 					with open( filename, "a" ) as fileOut:
-						fileOut.write( strLine )
+						fileOut.write( str(strLine) )
 						for strLine in pProc.stdout:
 							fileOut.write( strLine )
 				except subprocess.CalledProcessError:
 					
 					try:
 						with open( filename, "a" ) as fileOut:
-							fileOut.write(strCmd, "is a command.")
+							fileOut.write(str(strCmd), "is a command.")
 					#retval = pProc.wait( )
 					except:
 						pass
