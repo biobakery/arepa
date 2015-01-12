@@ -34,7 +34,7 @@ import re
 import subprocess
 import sys
 import threading
-import urllib.request, urllib.parse, urllib.error
+from urllib import *
 
 c_strDirData			= "data/"
 c_strDirDoc				= "doc/"

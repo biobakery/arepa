@@ -22,11 +22,11 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import argparse
-import sets
+#import sets
 import itertools 
 import sys 
 import csv 
-import os
+#import os
 import metadata 
 from functools import reduce
 

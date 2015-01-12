@@ -57,7 +57,7 @@ def merge( strFile1, strFile2 ):
 	sstrHeaderUnion = sstrHeader1 | sstrHeader2 
 	astrHeaderIntersect = list(sstrHeaderIntersect)
 
-	pTemp =  [set([x[strHeader] for x in adstrDataIn1]) & set([x[strHeader] for x in adstrDataIn2]) for strHeader in astrHeaderIntersect]
+	pTemp =  [set([x[strHeader] for x in adstrDataIn1]) & {x[strHeader] for x in adstrDataIn2} for strHeader in astrHeaderIntersect]
 
 	if adstrDataIn1 and not(adstrDataIn2):
 		for dct in adstrDataIn1:
@@ -84,7 +84,7 @@ def merge( strFile1, strFile2 ):
                         dummyOut.append(dct)
                 return dummyOut	
 	else:
-		pMaxHeader = max( [(set([x[strHeader] for x in adstrDataIn1]) & set([x[strHeader] for x in adstrDataIn2]), 
+		pMaxHeader = max( [({x[strHeader] for x in adstrDataIn1} & {x[strHeader] for x in adstrDataIn2}, 
 			strHeader) for strHeader in astrHeaderIntersect], key=lambda x: len(x[0]) )
 
 		sstrMaxGeneIDs = pMaxHeader[0]
