@@ -38,19 +38,19 @@ def _unpickle( istm, ostm, strSplit, iCols, iSkip, istmLog, strManKey, fRMeta ):
 	if strManKey: 
 		csvw.writerow( [hashData[strManKey]] )			
 	else:
-		for strKey, pValue in hashData.items( ):
+		for strKey, pValue in list(hashData.items( )):
 			csvw.writerow( (strKey, "%s" % pValue) )
 
 def _pickle( istm, ostm, strSplit, iCols, iSkip, istmLog, strManKey ):
 	pMeta = {}
 	csvr1 = csv.reader( istm, csv.excel_tab )
 	for line in csvr1:
-		if line: key,value = line 
+		if line: key, value = line 
 		pMeta[key] = value 
 	if istmLog:
 		csvr2 = csv.reader( istmLog, csv.excel_tab )
 		for line in csvr2:
-			if line: key,value = line 
+			if line: key, value = line 
 			pMeta[key] = value 
 	return pickle.dump( pMeta, ostm )
 

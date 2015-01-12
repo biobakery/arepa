@@ -29,7 +29,7 @@ import sys
 c_afileSConscripts	= sorted( Glob( sfle.d( arepa.path_repo( ), sfle.c_strDirSrc, "SConscript*" ) ) )
 
 if os.path.isfile( "SConscript" ):
-	execfile( "SConscript" )
+	exec(compile(open( "SConscript" ).read(), "SConscript", 'exec'))
 else:
 	hashArgs = {}
 
@@ -39,8 +39,8 @@ for fileSConscript in c_afileSConscripts:
 	strSConscript = fileSConscript.get_abspath( )
 	hashEnv = {"test" : lambda *a: False, "testing" : True}
 	try:
-		execfile( strSConscript, hashEnv )
+		exec(compile(open( strSConscript ).read(), strSConscript, 'exec'), hashEnv)
 	except SystemExit:
 		pass
 	if hashEnv["test"]( arepa.level( ), arepa.cwd( ), hashArgs ):
-		execfile( strSConscript )
+		exec(compile(open( strSConscript ).read(), strSConscript, 'exec'))

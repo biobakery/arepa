@@ -44,7 +44,7 @@ class CSOFT:
 			
 		def get_attributes( self ):
 			
-			return self.m_hashAttrs.keys( )
+			return list(self.m_hashAttrs.keys( ))
 		
 		def get_attribute( self, strKey ):
 			

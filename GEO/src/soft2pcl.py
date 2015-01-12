@@ -62,14 +62,14 @@ def transform( pDS, iSkip = c_iSkip ):
 	'''Criteria for log-transforming data :
 	 >= c_iMaximumCount data points with values >= c_dMaximumValue
 	'''
-	f = lambda x: str(math.log(x,2))
+	f = lambda x: str(math.log(x, 2))
 	for iRow in range( pDS.rows( ) ):
 		dummyRow = [] 
 		astrRowTmp = pDS.row( iRow )
 		for strVal in astrRowTmp[iSkip:]:
 			try:
 				tmpVal = f(float(strVal))
-			except ValueError, TypeError:
+			except ValueError as TypeError:
 				tmpVal = strVal 
 			dummyRow.append(tmpVal)
 		astrRow = astrRowTmp[:iSkip] + dummyRow 
@@ -86,13 +86,13 @@ for strGPLGZ in astrGPLGZs:
 
 pSOFT.open( sys.stdin )
 
-pDS 		= pSOFT.get( "DATASET" ).values( )[0]
-apAnnos 	= pSOFT.get( "Annotation" ).values( )
+pDS 		= list(pSOFT.get( "DATASET" ).values( ))[0]
+apAnnos 	= list(pSOFT.get( "Annotation" ).values( ))
 aiAnnos 	= [p.column( "Gene ID" ) for p in apAnnos]
-aiColumns 	= filter( lambda i: pDS.column( i )[0].startswith( "GSM" ), range( pDS.columns( ) ) )
+aiColumns 	= [i for i in range( pDS.columns( ) ) if pDS.column( i )[0].startswith( "GSM" )]
 
-print( "GID	NAME	GWEIGHT	" + "\t".join( pDS.column( i )[1] for i in aiColumns ) )
-print( "EWEIGHT		" + ( "	1" * len( aiColumns ) ) )
+print(( "GID	NAME	GWEIGHT	" + "\t".join( pDS.column( i )[1] for i in aiColumns ) ))
+print(( "EWEIGHT		" + ( "	1" * len( aiColumns ) ) ))
 
 fTransform = parse( pDS )
 if fTransform: 
@@ -101,5 +101,5 @@ if fTransform:
 for iRow in range( pDS.rows( ) ):
 	astrRow = pDS.row( iRow )
 	for strID in astrRow[0].split( "///" ):
-		print( "\t".join( [strID, astrRow[1]] + ["1"] + [astrRow[i] for i in aiColumns] ) )
+		print(( "\t".join( [strID, astrRow[1]] + ["1"] + [astrRow[i] for i in aiColumns] ) ))
 

@@ -7,7 +7,7 @@ import sys
 
 def test( iLevel, strID, hashArgs ):
 	return ( iLevel == 1 )
-if locals( ).has_key( "testing" ):
+if "testing" in locals( ):
 	sys.exit( )
 
 c_strID				= arepa.cwd( )
@@ -40,7 +40,7 @@ def funcADFsTXT( target, source, env ):
 	with open( strT, "w" ) as fileOut:
 		aastrSDRF = sfle.entable( open( strIDSDRF ), [lambda s: s == "Array Design REF"] )
 		setArrays = set(astrLine[0] for astrLine in aastrSDRF)
-		fileOut.write( "\n".join( filter( lambda s: s, setArrays ) ) )
+		fileOut.write( "\n".join( [s for s in setArrays if s] ) )
 	return None
 afileADFsTXT = Command( c_fileADFsTXT, c_fileIDSDRF, funcADFsTXT )
 
@@ -74,9 +74,9 @@ def funcIDsTXT( target, source, env ):
 afileIDsTXT = Command( c_strID + c_strSufTXT, c_fileIDZIP, funcIDsTXT )
 
 hashArgs = {
-	"strFileZIP"	: c_fileIDZIP.get_abspath( ),
-	"strFileIDSDRF"	: c_fileIDSDRF.get_abspath( ),
-	"strFileIDIDF"	: c_fileIDIDF.get_abspath( ),
+	"strFileZIP": c_fileIDZIP.get_abspath( ),
+	"strFileIDSDRF": c_fileIDSDRF.get_abspath( ),
+	"strFileIDIDF": c_fileIDIDF.get_abspath( ),
 }
 def funcScannerIDs( target, source, env, hashArgs = hashArgs ):
 	afileADFs = pE.Dictionary( ).get( "adfs", [] )

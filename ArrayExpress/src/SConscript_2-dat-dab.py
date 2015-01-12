@@ -15,7 +15,7 @@ def test( iLevel, strID, hashArgs ):
 		if strName.find( "processed-data" ) >= 0:
 			return True
 	return False
-if locals( ).has_key( "testing" ):
+if "testing" in locals( ):
 	sys.exit( )
 
 #Import( "pE" )
@@ -39,4 +39,4 @@ c_fileInputData				= Glob( "../" + c_strPrefix + "*processed-data*" + c_strSuffi
 arepa.pipe( pE, c_fileInputData, c_strProgSamples2PCL, c_strFileIDRawPCL,
 	[[True, s] for s in ( [c_strInputIDSDRF] + c_astrInputADFs )] )
 
-execfile( c_strInputSConscript )
+exec(compile(open( c_strInputSConscript ).read(), c_strInputSConscript, 'exec'))

@@ -49,7 +49,7 @@ class CMetadata:
 		self.set( strKey, pValue )
 
 	def keys(self):
-		return self.m_hashData.keys()
+		return list(self.m_hashData.keys())
 	
 	def remove( self, strKey ):
 		return self.m_hashData.pop( strKey )  
@@ -75,7 +75,7 @@ class CMetadata:
 	
 	def update( self, hashData, fCollapse = c_fCollapse ):
 		
-		for strKey, pValue in hashData.items( ):
+		for strKey, pValue in list(hashData.items( )):
 			self.set( strKey, pValue, fCollapse )
 		
 	def open( self, fileIn ):
@@ -89,7 +89,7 @@ class CMetadata:
 	def save_text( self, fileOut = sys.stdout ):
 
 		csvw = csv.writer( fileOut, csv.excel_tab )
-		for strKey, pValue in self.m_hashData.items( ):
+		for strKey, pValue in list(self.m_hashData.items( )):
 			csvw.writerow( (strKey, "%s" % pValue) )
 
 for strKey in CMetadata.c_astrStandards:

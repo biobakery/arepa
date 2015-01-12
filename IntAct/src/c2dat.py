@@ -63,6 +63,6 @@ if not mtch:
 strTaxID = mtch.group( 1 )
 
 setPairs = set()
-cfile.read( sys.stdin,c_iColumns,strTarget, callback, [setPairs, strTaxID, {}] )
+cfile.read( sys.stdin, c_iColumns, strTarget, callback, [setPairs, strTaxID, {}] )
 for astrGenes in setPairs:
-	print( "\t".join( list(astrGenes) ) )
+	print(( "\t".join( list(astrGenes) ) ))

@@ -15,7 +15,7 @@ def test( iLevel, strID, hashArgs ):
 		if strName.find( "sample_table" ) >= 0:
 			return True
 	return False
-if locals( ).has_key( "testing" ):
+if "testing" in locals( ):
 	sys.exit( )
 
 #Import( "pE" )
@@ -61,4 +61,4 @@ arepa.cmd( pE, c_strProgMergeTables, c_strFileIDRawTXT,
 arepa.pipe( pE, c_strFileIDRawTXT, c_strProgSamples2PCL, c_strFileIDRawPCL,
 	[[True, s] for s in ( [c_strInputIDSDRF] + c_astrInputADFs )] )
 
-execfile( c_strInputSConscript )
+exec(compile(open( c_strInputSConscript ).read(), c_strInputSConscript, 'exec'))

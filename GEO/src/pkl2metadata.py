@@ -47,25 +47,22 @@ def writeTable( hMeta, astrKeys, outputf, bIter = False ):
 	csvw = csv.writer( open( outputf, "w" ), csv.excel_tab )
 	if bIter:	
 		astrHeader = hMeta.get("sample_name") or hMeta.get("")
-		_astrKeys = filter(lambda x: hMeta.get(x) != astrHeader,astrKeys)
+		_astrKeys = [x for x in astrKeys if hMeta.get(x) != astrHeader]
 		csvw.writerow( ["sample_name"] + _astrKeys )
 		for iSample, strSample in enumerate(astrHeader):
-			csvw.writerow( map( lambda x: str(x).replace("\n"," "), \
-			[ strSample ] + [hMeta.get(s)[iSample] for s in \
-			_astrKeys] )) 
+			csvw.writerow( [str(x).replace("\n", " ") for x in [ strSample ] + [hMeta.get(s)[iSample] for s in \
+			_astrKeys]]) 
 	else:
 		csvw.writerow( astrKeys )
-		csvw.writerow( map(lambda x: str(x).replace("\n"," "), \
-		[hMeta[k] for k in astrKeys]) )
+		csvw.writerow( [str(x).replace("\n", " ") for x in [hMeta[k] for k in astrKeys]] )
 
 #write per-experiment table 
-astrExp = filter( lambda k: isinstance(hashMeta.get(k),str or int or float), \
-	hashMeta.keys() ) 
+astrExp = [k for k in list(hashMeta.keys()) if isinstance(hashMeta.get(k), str or int or float)] 
 writeTable( hashMeta, astrExp, c_fileExpTable, False )
 
 #write per-condition table
 if c_fileCondTable:
-	astrCond = filter( lambda k: isinstance(hashMeta.get(k),list) and \
-        k != c_strCurated, hashMeta.keys() )
+	astrCond = [k for k in list(hashMeta.keys()) if isinstance(hashMeta.get(k), list) and \
+        k != c_strCurated]
 	writeTable( hashMeta, astrCond, c_fileCondTable, True )
 

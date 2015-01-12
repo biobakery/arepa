@@ -38,7 +38,7 @@ if len( sys.argv[1:] ) !=2:
 	raise Exception("Usage: xmlmerge.py <metadata> <id>" )	
 
 inputf, geo_id  = sys.argv[1:]
-hashRet = {k:v for k,v in map( lambda s: s.split("\t"), sfle.readcomment( open( inputf ) ))}
+hashRet = {k:v for k, v in [s.split("\t") for s in sfle.readcomment( open( inputf ) )]}
 id_count, query_key, web_env =  [hashRet.get(i) for i in [ c_strCount, c_strQuery, c_strWebEnv]]
 
 #===========================================================================
@@ -50,15 +50,15 @@ def discrete_list( num, increment ):
     return [str( 1 + ( a * increment ) ) for a in range( iTries )]
 
 count_list =  discrete_list( int(id_count), c_iIncrement )
-astrOutput = [sfle.d(sfle.c_strDirTmp,geo_id + str(i) + c_strSufXML) for i in range(1,len(count_list)+1)] 
-query_list = zip( astrOutput, count_list, [query_key] * len(count_list), [web_env] * len(count_list) ) 
+astrOutput = [sfle.d(sfle.c_strDirTmp, geo_id + str(i) + c_strSufXML) for i in range(1, len(count_list)+1)] 
+query_list = list(zip( astrOutput, count_list, [query_key] * len(count_list), [web_env] * len(count_list) )) 
 
 # Download 
 for astr in query_list:
 	strT, strCount, strQuery, strWeb = astr 
-	sfle.ex( ["curl", "-g", "-f", "-z", '"' + strT +  '"', '"' + c_strURLSum % (strCount,strQuery,strWeb) + '"', ">", strT] )
+	sfle.ex( ["curl", "-g", "-f", "-z", '"' + strT +  '"', '"' + c_strURLSum % (strCount, strQuery, strWeb) + '"', ">", strT] )
 
 #Save 
-with open( sfle.d(sfle.c_strDirTmp,geo_id + c_strSufXML), "w" ) as idXML:
+with open( sfle.d(sfle.c_strDirTmp, geo_id + c_strSufXML), "w" ) as idXML:
 	idXML.write( "\n".join( [open( f ).read() for f in zip(*query_list)[0]] ) )
 	

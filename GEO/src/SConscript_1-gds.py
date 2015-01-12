@@ -30,7 +30,7 @@ import sys
 
 def test( iLevel, strID, hashArgs ):
 	return ( iLevel == 1 ) and ( strID.find( "GDS" ) == 0 )
-if locals( ).has_key( "testing" ):
+if "testing" in locals( ):
 	sys.exit( )
 
 pE = DefaultEnvironment( )

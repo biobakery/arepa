@@ -56,7 +56,7 @@ c_fileIDMappedPCL2 = sfle.d( pE, c_strID + "_01mapped.pcl" )
 c_fileFlagSleipnir = sfle.d( pE, arepa.path_repo( ), sfle.c_strDirEtc, "sleipnir" )
 
 #Load GeneMapper SConscript 
-execfile( arepa.genemapper( ) )
+exec(compile(open( arepa.genemapper( ) ).read(), arepa.genemapper( ), 'exec'))
 
 #- Normalize
 def funcIDNormPCL( target, source, env, iMaxLines = 100000 ):
@@ -110,7 +110,7 @@ def funcPCL2DAB( pE, fileIDRawPCL, fileGPLTXTGZ, fileProgAnnot2Map, fileProgGPL2
 	astrSleipnir = sfle.readcomment(c_fileFlagSleipnir)
 	bSleipnir = astrSleipnir[0]=="True" if astrSleipnir else False   
 
-	print "sleipnir", ("On" if bSleipnir else "Off")
+	print("sleipnir", ("On" if bSleipnir else "Off"))
 	
 	#Produce raw mapping file for gene mapping 
 	astrMapRaw = pE.Command( c_fileIDMapRaw, [fileGPLTXTGZ, filePlatform, fileProgAnnot2Map, fileProgGPL2TXT], funcRawMap )

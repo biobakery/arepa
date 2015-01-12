@@ -29,7 +29,7 @@ import gzip
 
 def test( iLevel, strID, hashArgs ):
 	return ( iLevel == 2 ) and ( strID.find( "GDS" ) == 0 ) 
-if locals( ).has_key( "testing" ):
+if "testing" in locals( ):
 	sys.exit( )
 
 pE = DefaultEnvironment( )
@@ -100,7 +100,7 @@ sfle.pipe( pE, c_fileInputSOFTGZ, c_fileProgSOFT2PCL, c_fileIDRawPCL,
 
 #Clean microarray data -- Impute, Normalize, Gene Mapping 
 
-execfile( str(c_fileInputSConscript) )
+exec(compile(open( str(c_fileInputSConscript) ).read(), str(c_fileInputSConscript), 'exec'))
 funcPCL2DAB( pE, c_fileIDRawPCL, c_fileGPLTXTGZ, c_fileProgAnnot2Map, c_fileProgGPL2TXT, 
 	c_fileProgMergeMapping, c_fileTaxa, c_filePlatform )
 
@@ -111,14 +111,14 @@ sfle.pipe( pE, c_fileInputSOFTGZ, c_fileProgSOFT2Metadata, c_fileIDPKL,
 	[[c_fileGPLTXTGZ]] )
 
 #Create Tables 
-sfle.sop( pE, "python", [[c_fileProgPkl2Metadata],[c_fileIDPKL],[True,c_fileExpTable]] )
+sfle.sop( pE, "python", [[c_fileProgPkl2Metadata], [c_fileIDPKL], [True, c_fileExpTable]] )
 
 if m_boolRPackage:
 	#Produce expression set file
-	sfle.ssink( pE, str(c_fileProgProcessRaw), "R --no-save --args", [[c_fileIDRawPCL],[True,c_fileEset], c_strPPfun, [c_fileExpTable]])
+	sfle.ssink( pE, str(c_fileProgProcessRaw), "R --no-save --args", [[c_fileIDRawPCL], [True, c_fileEset], c_strPPfun, [c_fileExpTable]])
 	#Make Rd Help Page 
 	sfle.ssink( pE, str(c_fileProgEset2Help), "R --no-save --args", [[c_fileEset], [True, c_fileHelp]] )
-	execfile( str(c_fileRSConscript) )
+	exec(compile(open( str(c_fileRSConscript) ).read(), str(c_fileRSConscript), 'exec'))
 	funcCheckRStructure( pE, c_strID, c_fileIDPKL, c_fileRNAMESPACE, c_fileRDESCRIPTION, c_fileRMaster )
 	funcMakeRPackage( pE, str(c_dirR), c_fileLogPackage )
 	

@@ -32,7 +32,7 @@ import re
 
 def test( iLevel, strID, hashArgs ):
 	return ( iLevel == 2 ) and ( strID.find( "GSE" ) == 0 ) 
-if locals( ).has_key( "testing" ):
+if "testing" in locals( ):
 	sys.exit( )
 
 pE = DefaultEnvironment( )
@@ -133,19 +133,19 @@ if m_boolRPackage:
 	[c_fileExpTable], [c_fileCondTable]] )
 	#Make Rd Help Page 
 	sfle.ssink( pE, str(c_fileProgEset2Help), "R --no-save --args", [[c_fileEset], [True, c_fileHelp]] )	
-	execfile( str(c_fileRSConscript) )
+	exec(compile(open( str(c_fileRSConscript) ).read(), str(c_fileRSConscript), 'exec'))
 	funcCheckRStructure( pE, c_strID, c_fileIDPKL, c_fileRNAMESPACE, c_fileRDESCRIPTION, c_fileRMaster )
 	funcMakeRPackage( pE, str(c_dirR), c_fileLogPackage )
 	
 
 # Download annotation files for specific platform, if they exist 
 def getGPL( target, source, env ):
-	astrTs, astrSs = ([f.get_abspath( ) for f in a] for a in (target,source))
+	astrTs, astrSs = ([f.get_abspath( ) for f in a] for a in (target, source))
 	strAnnot, strPlatform	= astrTs[:2]
 	strRMeta				= astrSs[0]
 	pid = [row for row in csv.DictReader(open( strRMeta ))][0]["platform_id"] 
 	strGPLID = c_strID.split("-")[1] if len( c_strID.split("-") ) == 2 else pid
-	listGPL = map( lambda v: v.replace(".annot.gz",""), sfle.readcomment( c_fileAnnot ) )
+	listGPL = [v.replace(".annot.gz", "") for v in sfle.readcomment( c_fileAnnot )]
 	if strGPLID in listGPL:
 		#Annotation file exist, download
 		sfle.ex( ["wget", sfle.d( c_strURLGPL, strGPLID + ".annot.gz" ), "-O", strAnnot ] )	
@@ -165,7 +165,7 @@ sfle.pipe( pE, c_fileIDSeriesTXTGZ, c_fileProgGetInfo, c_fileTaxa )
 
 # Clean Microarray Data -- Imputation, Normalization, Gene Mapping
 # This only executes if the sleipnir configuration file in the etc directory is set to "True"
-execfile( str( c_fileInputSConscript ) )
+exec(compile(open( str( c_fileInputSConscript ) ).read(), str( c_fileInputSConscript ), 'exec'))
 funcPCL2DAB( pE, c_fileIDRawPCL, c_fileIDAnnot, c_fileProgAnnot2Map, c_fileProgGPL2TXT, 
 	c_fileProgMergeMapping, c_fileTaxa, c_filePlatform )
 
@@ -189,4 +189,4 @@ def scanner( fileExclude = None, fileInclude = None ):
 if m_boolRunRaw:
 	#Get list of GSM ids for processing raw files in the next step 
 	afileIDsTXT = sfle.pipe( pE, c_fileIDSeriesTXTGZ, c_fileProgSeries2GSM, c_fileTXTGSM ) 
-	afileIDsRaw = sfle.sconscript_children( pE, afileIDsTXT , scanner( ), 3, arepa.c_strProgSConstruct, hashArgs )
+	afileIDsRaw = sfle.sconscript_children( pE, afileIDsTXT, scanner( ), 3, arepa.c_strProgSConstruct, hashArgs )

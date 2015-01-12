@@ -71,13 +71,13 @@ def funcCheckRStructure( pE, strDatasetName, filePKL, fileNAMESPACE, fileDESCRIP
 	def _makeDescription( target, source, env ):
 		strT, astrSs = sfle.ts( target, source )
 		pHash = pickle.load(open(astrSs[0]))
-		pHashDescription	= { "Package": strDatasetName.replace("-","."), "Type": "Package", "Title": pHash.get("title"), 
+		pHashDescription	= { "Package": strDatasetName.replace("-", "."), "Type": "Package", "Title": pHash.get("title"), 
 		  						"Version": arepa.c_strVersion, "Author": ", ".join(arepa.c_astrAuthors), 
 		 						"Date": arepa.c_strDate, "Maintainer": arepa.c_strMaintainer, 
 								"Depends": "R (>= 2.10.0), affy", "Suggests": "survival", "URL": arepa.c_strURL,
 								"License": arepa.c_strLicense, "Description": "ARepA generated package" }
 		with open(strT, "w") as outputf:
-			for k,v in pHashDescription.items():
+			for k, v in list(pHashDescription.items()):
 				outputf.write( k + ": " + v + "\n" )
 				
 	def _makeMasterMan( target, source, env ):
@@ -90,7 +90,7 @@ def funcCheckRStructure( pE, strDatasetName, filePKL, fileNAMESPACE, fileDESCRIP
 		strDataTitle = pHash.get( "title" ) or ""
 		strDataGloss = pHash.get( "gloss" ) or ""
 	
-		aastrOut = [("name", strDataAccession),("title", strDataTitle),("description", strDataGloss)]
+		aastrOut = [("name", strDataAccession), ("title", strDataTitle), ("description", strDataGloss)]
 		
 		with open( strT, "w" ) as outputf:
 			for strDescription, strContent in aastrOut:
@@ -117,7 +117,7 @@ def funcMakeRPackage( pE, strDirectory, filePackageLog ):
 	def _compileR( target, source, env ):
 		strT, astrSs = sfle.ts( target, source )
 		sfle.ex( ["chmod", "755", strDirectory] )
-		sfle.ex( ["R","CMD","build", strDirectory] )
+		sfle.ex( ["R", "CMD", "build", strDirectory] )
 		with open( strT, "w" ) as outputf:
 			outputf.write( "R package compiled OK")
 	
