@@ -49,7 +49,7 @@ if len(sys.argv[1:]) > 0:
 else:
 	f_scons = False 
 
-print __doc__
+print(__doc__)
 
 #=====================================================#
 #		ARepA Submodules		      			
@@ -67,7 +67,7 @@ c_strBioGrid	= "BioGrid"
 #=====================================================#
 
 def _readstr( instr ):
-	return map(lambda x: x.split("\t"),instr.strip().split("\n"))
+	return [x.split("\t") for x in instr.strip().split("\n")]
 
 def _read( infile, iRange = None, strDelim = None ):
 	if not strDelim:
@@ -79,10 +79,10 @@ def _test( infile, aFixed, parse_function = None ):
 	pTest = parse_function( infile ) if parse_function else _read( infile, len( aFixed ) )
 	
 	if pTest == aFixed:
-		print "test passed for", infile 
+		print("test passed for", infile) 
 	else:
-		print "pTest is", pTest
-		print "aFixed is", aFixed 
+		print("pTest is", pTest)
+		print("aFixed is", aFixed) 
 		raise Exception("!test failed", infile)
 	
 
@@ -117,7 +117,7 @@ c_strGDS2250		=	"GDS2250-GPL570"
 c_strGSE12831		= 	"GSE12831"
 c_strGSE30000		= 	"GSE30000"
 
-c_astrMetaKeys		= 	["taxid","pmid","platform","gloss","channels","conditions"]
+c_astrMetaKeys		= 	["taxid", "pmid", "platform", "gloss", "channels", "conditions"]
 
 c_dirGEO			=	sfle.d( arepa.path_arepa( ), "GEO")
 c_dirGEOData		= 	sfle.d( c_dirGEO, sfle.c_strDirData )
@@ -445,7 +445,7 @@ c_GDS2250PCL		= 	[['GID',
 
 ###GSE12831###
 
-c_dirGSE12831base	=	sfle.d( c_dirGEOData,c_strGSE12831 )
+c_dirGSE12831base	=	sfle.d( c_dirGEOData, c_strGSE12831 )
 c_dirGSE12831		= 	sfle.d( c_dirGSE12831base, c_strGSE12831 )
 c_fileGSE12831PKL	= 	sfle.d( c_dirGSE12831, c_strGSE12831 + ".pkl" )
 c_fileGSE12831PCL	=	sfle.d( c_dirGSE12831, c_strGSE12831 + ".pcl" ) 
@@ -1172,14 +1172,14 @@ c_GSE30000PCL = [['GID',
 
 # test data 
 
-exec_test( c_dirGEO, None, [c_fileGDS2250PCL,c_GDS2250PCL] )
-exec_test( c_dirGEO, None, [c_fileGSE12831PCL,c_GSE12831PCL] )
-exec_test( c_dirGEO, None, [c_fileGSE30000PCL,c_GSE30000PCL] )
+exec_test( c_dirGEO, None, [c_fileGDS2250PCL, c_GDS2250PCL] )
+exec_test( c_dirGEO, None, [c_fileGSE12831PCL, c_GSE12831PCL] )
+exec_test( c_dirGEO, None, [c_fileGSE30000PCL, c_GSE30000PCL] )
 
 # test metadata 
 exec_test( c_dirGEO, lambda f: pickle.load(open(f)), [c_fileGDS2250PKL, c_GDS2250PKL] ) 
-exec_test( c_dirGEO, lambda f: pickle.load(open(f)), [c_fileGSE12831PKL,c_GSE12831PKL] )
-exec_test( c_dirGEO, lambda f: pickle.load(open(f)), [c_fileGSE30000PKL,c_GSE30000PKL] )
+exec_test( c_dirGEO, lambda f: pickle.load(open(f)), [c_fileGSE12831PKL, c_GSE12831PKL] )
+exec_test( c_dirGEO, lambda f: pickle.load(open(f)), [c_fileGSE30000PKL, c_GSE30000PKL] )
 
 
 #=====================================================#
@@ -1278,11 +1278,11 @@ c_IntActData2DAT	=	[["UniRef100_P53148", "UniRef100_Q12143", "1"],
 						["UniRef100_P33895", "UniRef100_P40568", "1"]]
 
 c_IntActData2PKL	=	{'mapped': True,
-						 'platform': set(['anti tag coimmunoprecipitation',
-						      'tandem affinity purification']),
+						 'platform': {'anti tag coimmunoprecipitation',
+						      'tandem affinity purification'},
 						 'pmid': '14565975',
 						 'taxid': '559292',
-						 'type': set(['physical association', 'association'])}
+						 'type': {'physical association', 'association'}}
 
 c_IntActData3DAT	=  [["UniRef90_A8A779", "UniRef90_P0AA27", "1"],
 						["UniRef90_P0AA27", "UniRef90_P69784", "1"],
@@ -1317,17 +1317,17 @@ c_astrMPIDBIDs		= ["MPIDB_" + s for s in ["taxid_1423", "taxid_287", "taxid_562"
 c_dirMPIDB		= sfle.d( arepa.path_arepa( ), c_strMPIDB )
 c_dirMPIDBData		= sfle.d( c_dirMPIDB, sfle.c_strDirData )
 
-c_fileMPIDBData1DAT	= sfle.d( c_dirMPIDBData,c_astrMPIDBIDs[0],c_astrMPIDBIDs[0] + ".dat" )
-c_fileMPIDBData1QUANT	= sfle.d( c_dirMPIDBData,c_astrMPIDBIDs[0],c_astrMPIDBIDs[0] + ".quant" )
-c_fileMPIDBData1PKL	= sfle.d( c_dirMPIDBData,c_astrMPIDBIDs[0],c_astrMPIDBIDs[0] + ".pkl" )
+c_fileMPIDBData1DAT	= sfle.d( c_dirMPIDBData, c_astrMPIDBIDs[0], c_astrMPIDBIDs[0] + ".dat" )
+c_fileMPIDBData1QUANT	= sfle.d( c_dirMPIDBData, c_astrMPIDBIDs[0], c_astrMPIDBIDs[0] + ".quant" )
+c_fileMPIDBData1PKL	= sfle.d( c_dirMPIDBData, c_astrMPIDBIDs[0], c_astrMPIDBIDs[0] + ".pkl" )
 
-c_fileMPIDBData2DAT	= sfle.d( c_dirMPIDBData,c_astrMPIDBIDs[1],c_astrMPIDBIDs[1] + ".dat" )
-c_fileMPIDBData2QUANT	= sfle.d( c_dirMPIDBData,c_astrMPIDBIDs[1],c_astrMPIDBIDs[1] + ".quant" )
-c_fileMPIDBData2PKL	= sfle.d( c_dirMPIDBData,c_astrMPIDBIDs[1],c_astrMPIDBIDs[1] + ".pkl" )
+c_fileMPIDBData2DAT	= sfle.d( c_dirMPIDBData, c_astrMPIDBIDs[1], c_astrMPIDBIDs[1] + ".dat" )
+c_fileMPIDBData2QUANT	= sfle.d( c_dirMPIDBData, c_astrMPIDBIDs[1], c_astrMPIDBIDs[1] + ".quant" )
+c_fileMPIDBData2PKL	= sfle.d( c_dirMPIDBData, c_astrMPIDBIDs[1], c_astrMPIDBIDs[1] + ".pkl" )
 
-c_fileMPIDBData3DAT	= sfle.d( c_dirMPIDBData,c_astrMPIDBIDs[2],c_astrMPIDBIDs[2] + ".dat" )
-c_fileMPIDBData3QUANT	= sfle.d( c_dirMPIDBData,c_astrMPIDBIDs[2],c_astrMPIDBIDs[2] + ".quant" )
-c_fileMPIDBData3PKL	= sfle.d( c_dirMPIDBData,c_astrMPIDBIDs[2],c_astrMPIDBIDs[2] + ".pkl" )
+c_fileMPIDBData3DAT	= sfle.d( c_dirMPIDBData, c_astrMPIDBIDs[2], c_astrMPIDBIDs[2] + ".dat" )
+c_fileMPIDBData3QUANT	= sfle.d( c_dirMPIDBData, c_astrMPIDBIDs[2], c_astrMPIDBIDs[2] + ".quant" )
+c_fileMPIDBData3PKL	= sfle.d( c_dirMPIDBData, c_astrMPIDBIDs[2], c_astrMPIDBIDs[2] + ".pkl" )
 
 c_MPIDBData1DAT		= [["UniRef90_A7Z7A9", "UniRef90_A7Z0Q3", "1"],
 						["UniRef90_O34894", "UniRef90_P54166", "1"],
@@ -1361,7 +1361,7 @@ c_MPIDBData3DAT		= [["P10484",  "P10486",  "1"],
 
 c_MPIDBData3PKL		= {'mapped': False,
 					 'platform': 'x-ray crystallography',
-					 'pmid': set(['1992160', '10446231', '8491171', '9367757']),
+					 'pmid': {'1992160', '10446231', '8491171', '9367757'},
 					 'taxid': '562',
 					 'type': 'physical association'}
 
@@ -1373,7 +1373,7 @@ exec_test( c_dirMPIDB, None, [c_fileMPIDBData1DAT, c_MPIDBData1DAT],
 		[c_fileMPIDBData3DAT, c_MPIDBData3DAT] )
 
 #test metadata 
-exec_test( c_dirMPIDB, lambda f: pickle.load( open(f,"r") ), 
+exec_test( c_dirMPIDB, lambda f: pickle.load( open(f, "r") ), 
 		[c_fileMPIDBData1PKL, c_MPIDBData1PKL],\
 		[c_fileMPIDBData2PKL, c_MPIDBData2PKL],\
 		[c_fileMPIDBData3PKL, c_MPIDBData3PKL] )

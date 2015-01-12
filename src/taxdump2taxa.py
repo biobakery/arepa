@@ -40,9 +40,10 @@ for astrLine in csv.reader( sys.stdin, csv.excel_tab ):
 	strTmp, strID = astrLine[:2]
 	strTaxon = strTmp.strip( )
 	iLevel = len( strTmp ) - len( strTaxon )
-	if iLevel <= iHit:
-		iHit = None
+	if iHit:
+		if iLevel <= iHit:
+			iHit = None
 	if strTaxon in setTaxa:
 		iHit = iLevel
 	if iHit != None:
-		print( "\t".join( (strID, strTaxon) ) )
+		print(( "\t".join( (strID, strTaxon) ) ))

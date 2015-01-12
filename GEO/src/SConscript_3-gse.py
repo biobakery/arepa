@@ -29,12 +29,12 @@ import re
 
 def test( iLevel, strID, hashArgs ):
 	return ( iLevel == 3 ) and ( strID.find( "GSE" ) == 0 )
-if locals( ).has_key( "testing" ):
+if "testing" in locals( ):
 	sys.exit( )
 
 pE = DefaultEnvironment( )
 
-c_strID				= arepa.cwd().replace("-RAW","")
+c_strID				= arepa.cwd().replace("-RAW", "")
 c_strURLGEO			= 'ftp.ncbi.nih.gov'
 c_strURLGEOsupp			= 'pub/geo/DATA/supplementary/samples/'
 c_strURLSupp 			= 'ftp://' + c_strURLGEO + '/' + c_strURLGEOsupp 
@@ -65,7 +65,7 @@ def funcDownloadRAW( alistTs ):
 		return strNNN, strStrip 
 	for GSMCEL in alistTs:
 		GSMid = str( GSMCEL ).split(".")[0]
-		sfle.download( pE, sfle.d( c_strURLSupp, _nnnModify( GSMid )[0] ,\
+		sfle.download( pE, sfle.d( c_strURLSupp, _nnnModify( GSMid )[0],\
 			_nnnModify( GSMid )[1], str(GSMCEL) ) )
 
 #Get a single RData input file from the CEL files
@@ -88,10 +88,10 @@ def funcRawProcess( target, source, env ):
 #if RAW files exist, process
 if c_listTs:
 	funcDownloadRAW( c_listTs )
-	Command( c_strInputRData, [c_fileProgReadCel] + c_listTs , funcRawMap )
-	Command( c_strOutputRData, [c_fileProgProcessRaw,c_strInputRData, c_fileExpTable, c_fileCondTable],\
+	Command( c_strInputRData, [c_fileProgReadCel] + c_listTs, funcRawMap )
+	Command( c_strOutputRData, [c_fileProgProcessRaw, c_strInputRData, c_fileExpTable, c_fileCondTable],\
 		 funcRawProcess )
 #else use vanilla pcl
 else:
-	Command( c_strOutputRData, [c_fileProgProcessRaw,c_strFilePCL, c_fileExpTable, c_fileCondTable],\
+	Command( c_strOutputRData, [c_fileProgProcessRaw, c_strFilePCL, c_fileExpTable, c_fileCondTable],\
 		 funcRawProcess )	

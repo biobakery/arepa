@@ -36,7 +36,7 @@ def funcDAB( pE, fileOutDAB, afileInDAT ):
 
 	astrSleipnir = sfle.readcomment(c_fileFlagSleipnir)
 	bSleipnir = ( astrSleipnir[0]=="True" ) 
-	print "sleipnir", ("On" if bSleipnir else "Off")
+	print("sleipnir", ("On" if bSleipnir else "Off"))
 
 	def _funcDAB( target, source, env ):
 		strT, astrSs = sfle.ts( target, source )
@@ -49,7 +49,7 @@ def funcDAB( pE, fileOutDAB, afileInDAT ):
 
 def funcPCL( pE, fileOutPCL, fileInPCL ):
 	
-	return sfle.sop( pE, "cp", [[fileInPCL], [True,fileOutPCL]] )
+	return sfle.sop( pE, "cp", [[fileInPCL], [True, fileOutPCL]] )
 
 def funcQUANT( pE, fileQUANTin ):
 	

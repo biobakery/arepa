@@ -33,9 +33,9 @@ def funcGetGSMids( ):
 			continue
 		strFrom = astrLine[0][1:]
 		if "Sample_supplementary_file" in strFrom:
-			aRet += map (lambda x: os.path.basename(x) if \
+			aRet += [os.path.basename(x) if \
 				"CEL" in os.path.basename(x) else "#" + \
-				os.path.basename(x), astrLine[1:])
+				os.path.basename(x) for x in astrLine[1:]]
 	return aRet 
 
 #Execute

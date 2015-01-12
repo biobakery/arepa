@@ -35,7 +35,7 @@ class CParser(xml.sax.handler.ContentHandler):
 		
 	def endDocument( self ):
 
-		print( "\n".join( "\t".join( astrCur ) for astrCur in self.m_setIDs ) )
+		print(( "\n".join( "\t".join( astrCur ) for astrCur in self.m_setIDs ) ))
 
 strTaxa = None if ( len( sys.argv ) <= 1 ) else sys.argv[1]
 

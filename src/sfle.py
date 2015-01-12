@@ -34,9 +34,7 @@ import re
 import subprocess
 import sys
 import threading
-import urllib
-import hashlib
-#import gzip
+from urllib import *
 
 c_strDirData			= "data/"
 c_strDirDoc				= "doc/"
@@ -169,7 +167,7 @@ def d( *aArgs ):
 			pE = pArg
 		else:
 			astrArgs.append( str(pArg) )
-	strRet = apply( os.path.join, [str(p) for p in astrArgs] )
+	strRet = os.path.join(*[str(p) for p in astrArgs])
 	if not pE:
 		return strRet
 	try:
@@ -231,7 +229,7 @@ def redir( pPath ):
 
 def iscollection( pValue ):
 	
-	return ( ( type(pValue) != str ) and isinstance( pValue, collections.Iterable ) )
+	return ( ( not isinstance(pValue, str) ) and isinstance( pValue, collections.Iterable ) )
 
 def current_file( ):
 	
@@ -251,15 +249,15 @@ def in_directory( strFile, strDir ):
      Checks if strFile is in strDir 
      NB: os.path.realpath needed to ensure correct behavior for symbolic links
      '''
-     strDir, strFile = map( os.path.realpath, [str(strDir), str(strFile)] )
-     return ( os.path.commonprefix([strFile,strDir]) == strDir ) 
+     strDir, strFile = list(map( os.path.realpath, [str(strDir), str(strFile)] ))
+     return ( os.path.commonprefix([strFile, strDir]) == strDir ) 
 
 #===============================================================================
 # SCons utilities
 #===============================================================================
 
 def ex( pCmd, strOut = None, strErr = None ):
-	# print execution cmd
+	
 	strCmd = pCmd if isinstance( pCmd, str ) else " ".join( str(p) for p in pCmd )
 	sys.stdout.write( "%s" % strCmd )
 	sys.stdout.write( ( ( " > %s" % quote( strOut ) ) if strOut else "" ) )
@@ -636,7 +634,7 @@ def testthat( pE, fileProg, fileDir, fileOut ):
 def scons_child( pE, fileDir, hashArgs = None, fileSConstruct = None, afileDeps = None, afileOuts = None ):
 
 	def funcTmp( target, source, env, fileDir = fileDir, fileSConstruct = fileSConstruct ):
-		strDir, strSConstruct = (( ( os.path.abspath( f ) if ( type( f ) == str ) else f.get_abspath( ) ) if f else None )
+		strDir, strSConstruct = (( ( os.path.abspath( f ) if ( isinstance(f, str) ) else f.get_abspath( ) ) if f else None )
 			for f in (fileDir, fileSConstruct))
 		#if os.path.commonprefix( (pE.GetLaunchDir( ), strDir) ) not in [strDir, pE.GetLaunchDir( )]:
 		#	return
@@ -649,7 +647,7 @@ def scons_child( pE, fileDir, hashArgs = None, fileSConstruct = None, afileDeps 
 		if hashArgs:
 			with open( d( strDir, "SConscript" ), "w" ) as fileOut:
 				fileOut.write( "hashArgs = {\n" )
-				for strKey, strValue in hashArgs.items( ):
+				for strKey, strValue in list(hashArgs.items( )):
 					fileOut.write( "	\"%s\"	: %s,\n" % (strKey, repr( strValue )) )
 				fileOut.write( "}\nExport( \"hashArgs\" )\n" )
 		return subprocess.call( ["scons"] + sys.argv[1:] + ["-C", strDir] )
@@ -660,7 +658,7 @@ def scons_children( pE, strDir = ".", afileDeps = None, astrExclude = [] ):
 
 	afileRet = []
 	for fileCur in pE.Glob( d( strDir, "*" ) ):
-		if ( type( fileCur ) == type( pE.Dir( "." ) ) ) and \
+		if ( isinstance(fileCur, type( pE.Dir( "." ) )) ) and \
 			( os.path.basename( str(fileCur) ) not in astrExclude ) and \
 			os.path.exists( d( str(fileCur), "SConstruct" ) ):
 			afileRet += scons_child( pE, fileCur, None, None, afileDeps )
@@ -683,8 +681,8 @@ def scons_children( pE, strDir = ".", afileDeps = None, astrExclude = [] ):
 def sconscript_child( target, source, env, strID, fileSConstruct,
 	hashArgs = None, afileDeps = None, iLevel = 1, strDir = "." ):
 
-	fileTarget = target[0] if ( type( target ) == list ) else target
-	strDir = strDir if ( type( strDir ) == str ) else strDir.get_abspath( )
+	fileTarget = target[0] if ( isinstance(target, list) ) else target
+	strDir = strDir if ( isinstance(strDir, str) ) else strDir.get_abspath( )
 	strDir = d( strDir, c_strDirData if ( iLevel == 1 ) else "", strID )
 	return scons_child( env, strDir, hashArgs, fileSConstruct, afileDeps )
 

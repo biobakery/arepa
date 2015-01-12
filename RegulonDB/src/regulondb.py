@@ -36,7 +36,7 @@ c_resfile = sys.argv[2]
 
 
 #Constants required for downloaded file: which ids are in which columns?
-cols_genes = [0,1]
+cols_genes = [0, 1]
 cols_scores = 2
 
 
@@ -47,7 +47,7 @@ cols_scores = 2
 #Reads complete table file into a list
 def readTableWithoutHeader(table):
 	content = []
-	f = csv.reader(open(table),delimiter="\t")
+	f = csv.reader(open(table), delimiter="\t")
 	for col in f:
 		if col != []:
 			if col[0]!='' and not col[0].startswith("#"):

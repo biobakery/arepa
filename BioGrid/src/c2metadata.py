@@ -38,7 +38,7 @@ def metadatum( funcMetadata, astrTokens, iIndex ):
 		funcMetadata( setstrTokens )
 
 
-def callback( pMetadata, strAltAs , strAltBs , strSynAs , strSynBs , strSynAs2, strSynBs2, strAs, strBs, strAl, strSynAs3, strSynBs3, strMethods, strTypes,strAuthors, strPMIDs, strTaxAs, strTaxBs, strAl2): 
+def callback( pMetadata, strAltAs, strAltBs, strSynAs, strSynBs, strSynAs2, strSynBs2, strAs, strBs, strAl, strSynAs3, strSynBs3, strMethods, strTypes, strAuthors, strPMIDs, strTaxAs, strTaxBs, strAl2): 
 
 	metadatum( pMetadata.taxid, [strTaxAs], 1 )
 	metadatum( pMetadata.pmid, [strPMIDs], 1 )
@@ -52,10 +52,10 @@ strStatus = sys.argv[2] if len(sys.argv[1:]) > 1 else None
 strManual = sys.argv[3] if len(sys.argv[1:]) > 2 else None 
 
 pMetadata = metadata.open( )
-cfile.read( sys.stdin,c_iColumns, strTarget, callback, pMetadata )
+cfile.read( sys.stdin, c_iColumns, strTarget, callback, pMetadata )
 
 if strStatus:
-	strMapped, strBool = [x for x in csv.reader(open(strStatus),csv.excel_tab)][0]
+	strMapped, strBool = [x for x in csv.reader(open(strStatus), csv.excel_tab)][0]
 	fMapped = ( strBool == "True" )
 	pMetadata.set(strMapped, fMapped)
 

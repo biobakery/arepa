@@ -44,7 +44,7 @@ c_hashSingleKeys	= {
 	}
 
 c_hashMultipleKeys	= {
-	"Sample_channel_count"	: "channels",
+	"Sample_channel_count": "channels",
 	}
 
 c_hashkeyCondition		= "conditions"
@@ -111,7 +111,7 @@ else:
 			for i in range( len( astrLine )):
 				pMetadata[astrHeaders[i]].append( astrLine[i] )				
 		else:
-			astrLine = map( lambda s: "sample_" + s if s else "sample_name", astrLine[:] )
+			astrLine = ["sample_" + s if s else "sample_name" for s in astrLine[:]]
 			pMetadata[c_hashkeyCurated] = astrLine 
 			astrHeaders = astrLine
 			for item in astrHeaders:
@@ -119,6 +119,6 @@ else:
 				pMetadata.set( item, [] ) 
 
 # Add Mapping Status and Save
-k,v = sfle.readcomment( open( strStatus ) )[0].split("\t")
+k, v = sfle.readcomment( open( strStatus ) )[0].split("\t")
 pMetadata.update({k:v})
 pMetadata.save()

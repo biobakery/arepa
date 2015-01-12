@@ -53,7 +53,7 @@ class CParser(xml.sax.handler.ContentHandler):
 		
 		if ( strName == "DocSum" ) and self.m_strID and \
 			( ( not self.m_setstrTaxa ) or ( self.m_strTaxon.strip( ) in self.m_setstrTaxa ) ):
-			print( self.m_strType + self._clean( self.m_strID ) )
+			print(( self.m_strType + self._clean( self.m_strID ) ))
 		
 	def characters( self, strText ):
 
