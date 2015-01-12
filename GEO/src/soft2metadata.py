@@ -56,7 +56,7 @@ for pDS in pSOFT.get( "DATASET" ).values( ):
 	pMetadata.platform( pDS.get_attribute( "dataset_platform" ) )
 	pMetadata.taxid( arepa.org2taxid( pDS.get_attribute( "dataset_sample_organism" ) ) )
 	#pMetadata.checksum(hashlib.md5(open(pDS, 'rb').read()).hexdigest())
-	pMetadata.checksum(hashlib.md5.new(pDS.get_attribute( "dataset_sample_organism" )).digest())
+	pMetadata.checksum(hashlib.md5.new(pDS.get_attribute( "dataset" )).digest())
 	# pMetadata.checksum(md5.new(pSOFT.open( gzip.open( strGPLGZ ) )).digest())
 
 # Auxillary Metadata 
