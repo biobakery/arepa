@@ -35,6 +35,7 @@ import subprocess
 import sys
 import threading
 from urllib import *
+import hashlib
 
 c_strDirData			= "data/"
 c_strDirDoc				= "doc/"
@@ -252,6 +253,73 @@ def in_directory( strFile, strDir ):
      strDir, strFile = list(map( os.path.realpath, [str(strDir), str(strFile)] ))
      return ( os.path.commonprefix([strFile, strDir]) == strDir ) 
 
+
+
+
+
+#===============================================================================
+# version of tools utilities
+#===============================================================================
+def return_exe_path(exe):
+    """
+    Return the location of the exe in $PATH
+    """
+    paths = os.environ["PATH"].split(os.pathsep)
+    full_path=""
+    for path in paths:
+        fullexe = os.path.join(path,exe)
+        if os.path.exists(fullexe):
+            if os.access(fullexe,os.X_OK):
+                full_path=path
+    return full_path
+
+def get_md5sum(file):
+    """ Get the md5sum of a file
+    """
+    
+    block_size=128
+    md5=hashlib.md5()
+    md5sum=""
+    try:
+        file_handle=open(file)
+        data=file_handle.read(block_size)
+        while data:
+            md5.update(data.encode('utf-8'))
+            data=file_handle.read(block_size)
+        md5sum=md5.hexdigest()
+    except EnvironmentError:
+        md5sum=""
+
+    return md5sum
+            
+
+def get_software_version(software):
+    """ Determine the version of the software
+        or return md5sum of software if no option
+        for version is found
+    """
+    
+    version=""
+    # Place --version first as python/R start interpreters with other options
+    version_flags=["--version","-V","-version"]
+    for flag in version_flags:
+        try:
+            version=subprocess.check_output([software,flag],stderr=subprocess.STDOUT)
+            break
+        except (subprocess.CalledProcessError,EnvironmentError):
+            continue
+        
+    # Find the md5sum of the file if unable to determine the version
+    if not version:
+        full_path_to_software=os.path.join(return_exe_path(software),software)
+        version=get_md5sum(full_path_to_software)
+        
+    # Set version if still unset
+    if not version:
+        version="Unable to identify version"
+        
+    return(version)
+
 #===============================================================================
 # SCons utilities
 #===============================================================================
@@ -259,11 +327,13 @@ def in_directory( strFile, strDir ):
 def ex( pCmd, strOut = None, strErr = None ):
 	
 	strCmd = pCmd if isinstance( pCmd, str ) else " ".join( str(p) for p in pCmd )
-	sys.stdout.write( "%s" % strCmd )
+	sys.stdout.write( "command : %s" % strCmd )
 	sys.stdout.write( ( ( " > %s" % quote( strOut ) ) if strOut else "" ) )
 	sys.stdout.write( ( ( " 2> %s" % quote( strErr ) ) if strErr else "" ) + "\n" )
 	
-	
+	# get the version of running command 
+	version = get_software_version(strCmd.partition(' ')[0])
+	sys.stdout.write(strCmd.partition(' ')[0] + " version: " + version +"\n")
 	
 	# execute the command
 	if not ( strOut or strErr ):
@@ -277,71 +347,13 @@ def ex( pCmd, strOut = None, strErr = None ):
 		strLine = pProc.stdout.readline( )
 		if not strLine:
 			pProc.communicate( )
-			retval = pProc.wait( )
-		else:
-			with open( strOut, "w" ) as fileOut:
+			return pProc.wait( )
+		
+		with open( strOut, "w" ) as fileOut:
+			fileOut.write( strLine )
+			for strLine in pProc.stdout:
 				fileOut.write( strLine )
-				for strLine in pProc.stdout:
-					fileOut.write( strLine )
-	retval = pProc.wait( )
-	
-	
-	# check for the version of the running module 
-	#else:
-	#print("check for the version of the running module", strCmd)
-	
-	filename = "Log_versions.txt"
-	open(filename, 'a')
-	if strCmd.partition(' ')[0] in ["python","svn","wget", "java", "scons","ant", "curl", "R"]: # it should be checked if the command is a system command or not.
-		try:
-			pProc = subprocess.Popen( strCmd.partition(' ')[0]+' -V', shell = True)
-			(stdout, stderr) = pProc.communicate( )
-			retval = pProc.wait( )
-			if stdout:
-				with open( filename, "a" ) as fileOut:
-					for strLine in pProc.stdout:
-						fileOut.write( str(strLine) )
-		except subprocess.CalledProcessError:
-			try:
-				pProc = subprocess.Popen( strCmd.partition(' ')[0]+' -version', shell = True)
-				(stdout, stderr) = pProc.communicate( )
-				retval = pProc.wait( )
-				with open( filename, "a" ) as fileOut:
-					fileOut.write( strLine )
-					for strLine in pProc.stdout:
-						fileOut.write( str(strLine) )
-			except subprocess.CalledProcessError:
-				try:
-					pProc = subprocess.Popen( strCmd.partition(' ')[0]+' --version', shell = True)
-					(stdout, stderr) = pProc.communicate( )
-					retval = pProc.wait( )
-					with open( filename, "a" ) as fileOut:
-						fileOut.write( str(strLine) )
-						for strLine in pProc.stdout:
-							fileOut.write( strLine )
-				except subprocess.CalledProcessError:
-					
-					try:
-						with open( filename, "a" ) as fileOut:
-							fileOut.write(str(strCmd), "is a command.")
-					#retval = pProc.wait( )
-					except:
-						pass
-					'''	
-					#We should create a checksum for files!!!!
-						with open( filename, "a" ) as fileOut:
-							fileOut.write(strCmd, "\tchecksum\t", strCmd.partition(' ')[0],'\t checksum\t',\
-								hashlib.md5(open(strCmd.split(' ')[0]).read().hexdigest()))
-					except IOError:
-						pass
-					'''
-				finally:
-					pass
-			finally:
-				pass
-		finally:
-			pass
-	return retval
+	return pProc.wait( )
 
 def ts( afileTargets, afileSources ):
 
