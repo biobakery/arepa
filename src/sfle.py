@@ -36,6 +36,7 @@ import sys
 import threading
 from urllib import *
 import hashlib
+import gzip
 
 c_strDirData			= "data/"
 c_strDirDoc				= "doc/"
@@ -273,7 +274,7 @@ def return_exe_path(exe):
                 full_path=path
     return full_path
 
-def get_md5sum(file):
+def get_md5sum(file, gzipped=None):
     """ Get the md5sum of a file
     """
     
@@ -281,17 +282,20 @@ def get_md5sum(file):
     md5=hashlib.md5()
     md5sum=""
     try:
-        file_handle=open(file)
+        if gzipped:
+            file_handle=gzip.open(file)
+        else:
+            file_handle=open(file)
         data=file_handle.read(block_size)
         while data:
             md5.update(data.encode('utf-8'))
             data=file_handle.read(block_size)
         md5sum=md5.hexdigest()
-    except EnvironmentError:
+        file_handle.close()
+    except (EnvironmentError,UnicodeDecodeError):
         md5sum=""
 
     return md5sum
-            
 
 def get_software_version(software):
     """ Determine the version of the software

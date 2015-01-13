@@ -25,6 +25,7 @@ import collections
 import pickle
 import sys
 import csv
+import gzip
 
 class CMetadata:
 	c_astrStandards	= ["curated", "taxid", "type", "pmid", "platform", "title", "gloss", "channels", "conditions", "mode", "technique", "checksum"]
@@ -103,7 +104,29 @@ def open( fileIn = None ):
 	if fileIn:
 		pRet.open( fileIn )
 	return pRet
+def get_md5sum(file, gzipped=None):
+    """ Get the md5sum of a file
+    """
+    
+    block_size=128
+    md5=hashlib.md5()
+    md5sum=""
+    try:
+        if gzipped:
+            file_handle=gzip.open(file)
+        else:
+            file_handle=open(file)
+        data=file_handle.read(block_size)
+        while data:
+            md5.update(data.encode('utf-8'))
+            data=file_handle.read(block_size)
+        md5sum=md5.hexdigest()
+        file_handle.close()
+    except (EnvironmentError,UnicodeDecodeError):
+        md5sum=""
 
+    return md5sum
+            
 if __name__ == "__main__":
 	pTest = open( )
 	sys.stderr.write( "%s\n" % dir( pTest ) )

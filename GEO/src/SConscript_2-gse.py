@@ -81,6 +81,7 @@ c_fileIDRawPCL     	 	= sfle.d( pE, c_strID + "_00raw.pcl" )
 c_fileIDMappedPCL   	= sfle.d( pE, c_strID + "_00mapped.pcl")
 c_fileIDPCL         	= sfle.d( pE, c_strID + ".pcl" )
 c_fileEset          	= sfle.d( pE, c_strDirR, c_strDirRdata, c_strID + ".RData" )
+c_fileQC            	= sfle.d( pE, c_strDirR, c_strDirRdata, c_strID + "_QC", "QMreport.html" )
 c_fileHelp          	= sfle.d( pE, c_strDirR, c_strDirRman, c_strID + ".Rd" )
 c_fileLogPackage    	= sfle.d( pE, "package" )
 c_fileConfigPacakge 	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirEtc, "rpackage" )
@@ -97,6 +98,7 @@ c_fileProgGPL2TXT			= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "gpl2txt
 c_fileProgMergeMapping    	= sfle.d( pE, arepa.path_arepa( ), sfle.c_strDirSrc, "merge_genemapping.py" )
 c_fileProgGetInfo         	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "getinfo.py" )
 c_fileProgEset2Help       	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "eset2help.R" )
+c_fileProgArrayQualMetrics 	= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "ArrayQualityMetrics.R" )
 
 m_strGPLID		= None 
 m_strPPfun   	= (sfle.readcomment( c_filePPfun ) or ["affy::rma"])[0]
@@ -131,6 +133,8 @@ if m_boolRPackage:
 	#Make Eset containing all pertinent data
 	sfle.ssink( pE, str(c_fileProgProcessRaw), "R --no-save --args", [[c_fileIDPCL], [True, c_fileEset], m_strPPfun, 
 	[c_fileExpTable], [c_fileCondTable]] )
+	#Make QC report
+	sfle.ssink( pE, str(c_fileProgArrayQualMetrics), "R --no-save --args", [[c_fileEset], [True, c_fileQC]] )
 	#Make Rd Help Page 
 	sfle.ssink( pE, str(c_fileProgEset2Help), "R --no-save --args", [[c_fileEset], [True, c_fileHelp]] )	
 	exec(compile(open( str(c_fileRSConscript) ).read(), str(c_fileRSConscript), 'exec'))

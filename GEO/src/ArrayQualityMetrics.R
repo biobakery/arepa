@@ -48,7 +48,7 @@ sessionInfo()
 ## as delimiter type.
 
 file.in <- inputargs[1]  ## .RData file containing an AffyBatch object or ExpressionSet object, or a text file.
-dir.out <- inputargs[2]  ## Directory path where output QC report will be put
+dir.out <- dirname(inputargs[2])  ## Directory path where output QC report will be put
 
 origobj <- c(ls(), "origobj")
 
