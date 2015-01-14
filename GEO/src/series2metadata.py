@@ -40,7 +40,7 @@ c_hashSingleKeys	= {
 	"Series_platform_id"		: "platform",
 	"Series_title"			: "title",
 	"Series_summary"		: "gloss",
-	"Series_pubmed_id"		: "pmid" 
+	"Series_pubmed_id"		: "pmid"
 	}
 
 c_hashMultipleKeys	= {
