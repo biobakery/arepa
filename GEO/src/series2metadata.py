@@ -68,6 +68,8 @@ strMetadata 	= sys.argv[3] if ( len( sys.argv ) > 3 ) else None
 pMetadata = metadata.open( )
 
 for astrLine in csv.reader( sys.stdin, csv.excel_tab ):
+	# Update the md5sum
+	pMetadata.update_md5sum("\t".join(astrLine))
 	if not ( astrLine and astrLine[0] and ( astrLine[0][0] == "!" ) ):
 		continue
 	strFrom = astrLine[0][1:]	
@@ -92,6 +94,8 @@ for astrLine in csv.reader( sys.stdin, csv.excel_tab ):
 			pMetadata[strTo] = int( astrCur[0] )
 		if not pMetadata[c_hashkeyCondition]:
 			pMetadata[c_hashkeyCondition] = len( astrCur ) 
+# Store the checksum
+pMetadata.store_checksum()
 
 # Auxillary Metadata
 

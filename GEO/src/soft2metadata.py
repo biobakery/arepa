@@ -40,13 +40,11 @@ c_hashkeyCurated		= "curated"
 def metadatum( funcMetadata, strValue ):
 	hashOut.setdefault( strID, set() ).add( strValue )
 
-#sys.stdout.write ("checksum:"+ checksum)
-
 pMetadata = metadata.open( )
 pSOFT = soft.CSOFT( )
 checksum = []
 for strGPLGZ in astrGPLGZs:
-	checksum.append(metadata.get_md5sum(strGPLGZ))
+	checksum.append(metadata.get_md5sum_file(strGPLGZ,gzipped=True))
 	pSOFT.open( gzip.open( strGPLGZ ) )
 pMetadata.checksum(' '.join(checksum))
 pSOFT.open( sys.stdin )
@@ -59,8 +57,7 @@ for pDS in list(pSOFT.get( "DATASET" ).values( )):
 	pMetadata.channels( pDS.get_attribute( "dataset_channel_count" ) )
 	pMetadata.conditions( pDS.get_attribute( "dataset_sample_count" ) )
 	pMetadata.platform( pDS.get_attribute( "dataset_platform" ) )
-	pMetadata.taxid( arepa.org2taxid( pDS.get_attribute( "dataset_sample_organism" ) ) )
-	#break 
+	pMetadata.taxid( arepa.org2taxid( pDS.get_attribute( "dataset_sample_organism" ) ) ) 
 
 # Auxillary Metadata 
 if strMetadata:

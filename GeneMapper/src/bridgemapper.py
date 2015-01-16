@@ -84,6 +84,7 @@ def bridgemapper( istm, ostm, strMap, strCols, strFrom, strTo, ostmLog, iSkip ):
 	csvr = csv.reader( istm, csv.excel_tab )
 	for astrLine in csvr:
 		aastrData.append( astrLine )
+		pMeta.update_md5sum("\t".join(astrLine))
 		if csvr.line_num < iSkip:
 			continue
 		for iCol in aiCols:
@@ -92,7 +93,7 @@ def bridgemapper( istm, ostm, strMap, strCols, strFrom, strTo, ostmLog, iSkip ):
 			else:
 				sys.stderr.write(" +++ ERROR in GeneMapper +++ Number of requested columns to \
 					map is larger than the number of columns in the input data file.\n")
-	
+	pMeta.store_checksum()
 	hashMap = None
 	# Make sure mapping file exists and has nonzero file size
 	if strMap and os.path.exists( strMap ) and ( os.stat( strMap )[6] > 0 ):
@@ -214,8 +215,11 @@ def _main( ):
 		
 		pAastrData = csv.reader(args.istm, csv.excel_tab)
 		csvw = csv.writer( args.ostm, csv.excel_tab )
+		pMeta = metadata.open()
 		for astrLine in pAastrData:
-			csvw.writerow( astrLine )	
+			csvw.writerow( astrLine )
+			pMeta.update_md5sum("\t".join(astrLine))
+		pMeta.store_checksum()
 		if args.ostmLog:
 			pMeta = metadata.open()
 			pMeta.set("mapped", True)			
@@ -224,10 +228,12 @@ def _main( ):
 		#if there is no map file specified 
 		pAastrData = csv.reader(args.istm, csv.excel_tab)
 		csvw = csv.writer( args.ostm, csv.excel_tab )
+		pMeta = metadata.open()
 		for astrLine in pAastrData:
-			csvw.writerow( astrLine )	
+			csvw.writerow( astrLine )
+			pMeta.update_md5sum("\t".join(astrLine))
+		pMeta.store_checksum()	
 		if args.ostmLog:
-			pMeta = metadata.open()
 			pMeta.set("mapped", False)
 			pMeta.save_text( args.ostmLog )
 	else:

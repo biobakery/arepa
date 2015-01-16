@@ -35,8 +35,7 @@ import subprocess
 import sys
 import threading
 from urllib import *
-import hashlib
-import gzip
+import metadata
 
 c_strDirData			= "data/"
 c_strDirDoc				= "doc/"
@@ -254,10 +253,6 @@ def in_directory( strFile, strDir ):
      strDir, strFile = list(map( os.path.realpath, [str(strDir), str(strFile)] ))
      return ( os.path.commonprefix([strFile, strDir]) == strDir ) 
 
-
-
-
-
 #===============================================================================
 # version of tools utilities
 #===============================================================================
@@ -273,29 +268,6 @@ def return_exe_path(exe):
             if os.access(fullexe,os.X_OK):
                 full_path=path
     return full_path
-
-def get_md5sum(file, gzipped=None):
-    """ Get the md5sum of a file
-    """
-    
-    block_size=128
-    md5=hashlib.md5()
-    md5sum=""
-    try:
-        if gzipped:
-            file_handle=gzip.open(file)
-        else:
-            file_handle=open(file)
-        data=file_handle.read(block_size)
-        while data:
-            md5.update(data.encode('utf-8'))
-            data=file_handle.read(block_size)
-        md5sum=md5.hexdigest()
-        file_handle.close()
-    except (EnvironmentError,UnicodeDecodeError):
-        md5sum=""
-
-    return md5sum
 
 def get_software_version(software):
     """ Determine the version of the software
@@ -315,8 +287,8 @@ def get_software_version(software):
         
     # Find the md5sum of the file if unable to determine the version
     if not version:
-        full_path_to_software=os.path.join(return_exe_path(software),software)
-        version=get_md5sum(full_path_to_software)
+        full_path_to_software=os.path.join(return_exe_path(software), software)
+        version=metadata.get_md5sum_file(full_path_to_software)
         
     # Set version if still unset
     if not version:

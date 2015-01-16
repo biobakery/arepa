@@ -26,6 +26,7 @@ import pickle
 import sys
 import csv
 import gzip
+import hashlib
 
 class CMetadata:
 	c_astrStandards	= ["curated", "taxid", "type", "pmid", "platform", "title", "gloss", "channels", "conditions", "mode", "technique", "checksum"]
@@ -34,6 +35,7 @@ class CMetadata:
 	def __init__( self ):
 		
 		self.m_hashData = {}
+		self.m_md5sum = hashlib.md5()
 	
 	def _accessor( self, strKey, strValue = None ):
 		
@@ -78,10 +80,20 @@ class CMetadata:
 		
 		for strKey, pValue in list(hashData.items( )):
 			self.set( strKey, pValue, fCollapse )
+	def update_md5sum(self, string):
+		""" Update the value of the md5 stored with the new string 
+		"""
+		self.m_md5sum.update(string)
+		
+	def store_checksum(self):
+		""" Store the checksum using the current md5 value
+		"""
+		self.m_hashData['checksum']=self.m_md5sum.hexdigest()
+
 		
 	def open( self, fileIn ):
 		
-		self.m_hashData = pickle.load( fileIn )
+		self.m_hashData = pickle.load(fileIn)
 			
 	def save( self, fileOut = sys.stdout ):
 
@@ -104,10 +116,11 @@ def open( fileIn = None ):
 	if fileIn:
 		pRet.open( fileIn )
 	return pRet
-def get_md5sum(file, gzipped=None):
+
+def get_md5sum_file(file, gzipped=None):
+	
     """ Get the md5sum of a file
     """
-    
     block_size=128
     md5=hashlib.md5()
     md5sum=""
@@ -122,7 +135,7 @@ def get_md5sum(file, gzipped=None):
             data=file_handle.read(block_size)
         md5sum=md5.hexdigest()
         file_handle.close()
-    except (EnvironmentError,UnicodeDecodeError):
+    except (EnvironmentError, UnicodeDecodeError, TypeError, pickle.UnpicklingError ):
         md5sum=""
 
     return md5sum
