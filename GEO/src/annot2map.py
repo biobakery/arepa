@@ -37,8 +37,7 @@ import arepa
 import gzip 
 
 c_fileMapping	= sfle.d( arepa.path_repo( ), sfle.c_strDirEtc, "mapping" )
-c_hashHead 	= { k:v for (k,v) in map( lambda x: map(lambda y: y.strip(), x.split("%")),\
-		sfle.readcomment( open( c_fileMapping)) ) } if sfle.readcomment(open(c_fileMapping))\
+c_hashHead 	= { k:v for (k, v) in [[y.strip() for y in x.split("%")] for x in sfle.readcomment( open( c_fileMapping))] } if sfle.readcomment(open(c_fileMapping))\
 		else {	
 		"^ID .*? platform"             	: "Affy",
 		"Entrez Gene Symbol"       		: "HGNC",
@@ -59,10 +58,10 @@ fileOut		= open( strFileOut, "w" ) if strFileOut else sys.stdout
 
 if strAnnotGZ:
 	aHead = re.findall(r"^#(.+?)\n", strAnnotGZ, re.MULTILINE )
-	aKeys, aDesc = zip(*map( lambda v: map(lambda w: w.strip(), v.split("=")), aHead )) 
+	aKeys, aDesc = list(zip(*[[w.strip() for w in v.split("=")] for v in aHead])) 
 	aOutKeys = [] 
 	hOutDict = {}
-	for item in c_hashHead.keys():
+	for item in list(c_hashHead.keys()):
 		for desc in aDesc:
 			reLine = re.findall(item, desc, re.M|re.I)
 			if reLine:

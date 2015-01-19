@@ -31,8 +31,13 @@ Usage: gpl2txt.py [hmtl|url] <fileout.map>
 import sys 
 import csv 
 import re 
-from cStringIO import StringIO
-from urllib2 import urlopen
+from io import StringIO
+try:
+    # For Python 3.0 and later
+    from urllib.request import urlopen
+except ImportError:
+    # Fall back to Python 2's urllib2
+    from urllib2 import urlopen
 
 c_strREmatch		= r'<pre>(.*)<br>.*</pre>'
 c_strHeadermatch	= r'<strong>([\w ]+)</strong>'		
@@ -61,14 +66,14 @@ astrMatch = re.findall( c_strREmatch, strInput, re.S )
 strMatch = astrMatch[0] if astrMatch else None 
 
 if strMatch:
-	csvr = csv.reader( StringIO(strMatch) , csv.excel_tab)
+	csvr = csv.reader( StringIO(strMatch), csv.excel_tab)
 	astrOut = []
 	astrHeaders = None 
 	for line in csvr:
 		if (not line) or any([col.startswith("#") for col in line]): 
 			continue	
 		elif not(astrHeaders):
-			astrHeaders = map( lambda s: s.strip() ,re.findall( c_strHeadermatch, "".join(line) ))
+			astrHeaders = [s.strip() for s in re.findall( c_strHeadermatch, "".join(line) )]
 			astrHeadersMapped = [pHash.get(s) or s for s in astrHeaders]
 			astrOut.append( astrHeadersMapped )
 		else:

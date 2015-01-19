@@ -29,6 +29,7 @@ import re
 import soft
 import sys
 import csv
+import hashlib
 
 strStatus 	= sys.argv[1]
 strMetadata = sys.argv[2] or None 
@@ -39,13 +40,16 @@ c_hashkeyCurated		= "curated"
 def metadatum( funcMetadata, strValue ):
 	hashOut.setdefault( strID, set() ).add( strValue )
 
+pMetadata = metadata.open( )
 pSOFT = soft.CSOFT( )
+checksum = []
 for strGPLGZ in astrGPLGZs:
+	checksum.append(metadata.get_md5sum_file(strGPLGZ,gzipped=True))
 	pSOFT.open( gzip.open( strGPLGZ ) )
+pMetadata.checksum(' '.join(checksum))
 pSOFT.open( sys.stdin )
 
-pMetadata = metadata.open( )
-for pDS in pSOFT.get( "DATASET" ).values( ):
+for pDS in list(pSOFT.get( "DATASET" ).values( )):
 	pMetadata.pmid( pDS.get_attribute( "dataset_pubmed_id" ) )
 	pMetadata.title( pDS.get_attribute( "dataset_title" ) )
 	pMetadata.gloss( pDS.get_attribute( "dataset_description" ) )
@@ -53,7 +57,7 @@ for pDS in pSOFT.get( "DATASET" ).values( ):
 	pMetadata.channels( pDS.get_attribute( "dataset_channel_count" ) )
 	pMetadata.conditions( pDS.get_attribute( "dataset_sample_count" ) )
 	pMetadata.platform( pDS.get_attribute( "dataset_platform" ) )
-	pMetadata.taxid( arepa.org2taxid( pDS.get_attribute( "dataset_sample_organism" ) ) )
+	pMetadata.taxid( arepa.org2taxid( pDS.get_attribute( "dataset_sample_organism" ) ) ) 
 
 # Auxillary Metadata 
 if strMetadata:
@@ -67,6 +71,6 @@ if strMetadata:
 			astrHeaders = astrLine
 
 # Add Mapping Status and Save
-k,v = sfle.readcomment( open( strStatus ) )[0].split("\t")
+k, v = sfle.readcomment( open( strStatus ) )[0].split("\t")
 pMetadata.update({k:v})
 pMetadata.save( sys.stdout )

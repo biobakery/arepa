@@ -35,7 +35,7 @@ c_inputfile = sys.argv[1]
 c_resfile = sys.argv[2]
 
 #Constants required for downloaded file: which ids are in which columns?
-cols_keggnames = [0,2]
+cols_keggnames = [0, 2]
 cols_score	 = 4
 
 #======================================================
@@ -45,7 +45,7 @@ cols_score	 = 4
 #Reads complete table file into a list
 def readTable(table):
 	content = []
-	f = csv.reader(open(table),delimiter="\t")
+	f = csv.reader(open(table), delimiter="\t")
 	[content.append(col) for col in f]
 	return content
 

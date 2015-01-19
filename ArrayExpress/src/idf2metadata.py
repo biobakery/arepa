@@ -17,6 +17,7 @@ if strSDRF in ("-h", "-help", "--help"):
 
 pMetadata = metadata.CMetadata( )
 for strLine in sys.stdin:
+	pMetadata.update_md5sum(strLine)
 	astrLine = strLine.strip( ).split( "\t" )
 	if astrLine[0] == "PubMed ID":
 		metadatum( pMetadata.pmid, astrLine[1:] )
@@ -26,6 +27,7 @@ for strLine in sys.stdin:
 		metadatum( pMetadata.gloss, astrLine[1:] )
 	elif astrLine[0] == "Experimental Design":
 		metadatum( pMetadata.type, [re.sub( r' by .+$', "", s.lower( ) ) for s in astrLine[1:]] )
+pMetadata.store_checksum()
 
 if strSDRF:
 	aastrSDRF = arepa.entable( open( strSDRF ), [

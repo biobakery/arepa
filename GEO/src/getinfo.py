@@ -34,10 +34,10 @@ pHashRE = {"gse": r'Series_platform_taxid\t"([0-9]*)"', "gds": r'dataset_sample_
 
 strf = sys.stdin.read() 
 
-for strKey,strVal in pHashRE.items():
+for strKey, strVal in list(pHashRE.items()):
 	astrMatch = re.findall( strVal, strf )
 	if astrMatch:
 		if strKey == "gse":
-			print astrMatch[0]
+			print(astrMatch[0])
 		elif strKey == "gds":
-			print arepa.org2taxid( astrMatch[0] )
+			print(arepa.org2taxid( astrMatch[0] ))

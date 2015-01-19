@@ -37,6 +37,9 @@ def read( fileC, iColumns, strTarget, funcCallback, pArgs = None ):
 	astrSymbols = []
 	strID = fHit = None
 	for strLine in fileC:
+		# update the md5sum if pArgs are provided
+		if pArgs:
+			pArgs.update_md5sum(strLine)
 		if strLine.startswith( ">" ):
 			if fHit:
 				break
@@ -48,5 +51,8 @@ def read( fileC, iColumns, strTarget, funcCallback, pArgs = None ):
 			astrLine = strLine.strip( ).split( "\t" )
 			if len( astrLine ) < iColumns:
 				continue
-			aArgs = [pArgs] + map( lambda s: astrSymbols[int(s)], astrLine[:iColumns] )
+			aArgs = [pArgs] + [astrSymbols[int(s)] for s in astrLine[:iColumns]]
 			funcCallback( *aArgs )
+	# store the checksum if pArgs are provided
+	if pArgs:
+		pArgs.store_checksum()

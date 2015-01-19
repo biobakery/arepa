@@ -39,7 +39,7 @@ if len( sys.argv ) != 2:
 strTaxid = sys.argv[1]
 
 hashScores = {}
-cfile.read( sys.stdin,c_iColumns, strTaxid, callback, hashScores )
+cfile.read( sys.stdin, c_iColumns, strTaxid, callback, hashScores )
 csvw = csv.writer( sys.stdout, csv.excel_tab )
-for astrAB, dScore in hashScores.items( ):
+for astrAB, dScore in list(hashScores.items( )):
 	csvw.writerow( list(astrAB) + [dScore] )

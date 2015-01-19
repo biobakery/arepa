@@ -28,7 +28,7 @@ import sys
 
 def test( iLevel, strID, hashArgs ):
 	return ( iLevel == 1 ) and ( strID.find( "GSE" ) == 0 )
-if locals( ).has_key( "testing" ):
+if "testing" in locals( ):
 	sys.exit( )
 pE = DefaultEnvironment( )
 
@@ -48,7 +48,7 @@ def funcIDsTXT( target, source, env ):
 	strT, astrSs = sfle.ts( target, source )
 	astrFiles = sfle.ftpls( c_strHost, sfle.d( c_strPath, c_strID ) )
 	astrFiles = [mtch.group( 1 ) for mtch in 
-		filter( None, (re.search( r'(GSE\d+(?:-GPL\d+)?)', s ) for s in astrFiles) )]
+		[_f for _f in (re.search( r'(GSE\d+(?:-GPL\d+)?)', s ) for s in astrFiles) if _f]]
 	with open( strT, "w" ) as fileOut:
 		fileOut.write( "%s\n" % "\n".join( astrFiles ) )
 	return None

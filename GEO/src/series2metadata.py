@@ -40,11 +40,11 @@ c_hashSingleKeys	= {
 	"Series_platform_id"		: "platform",
 	"Series_title"			: "title",
 	"Series_summary"		: "gloss",
-	"Series_pubmed_id"		: "pmid" 
+	"Series_pubmed_id"		: "pmid"
 	}
 
 c_hashMultipleKeys	= {
-	"Sample_channel_count"	: "channels",
+	"Sample_channel_count": "channels",
 	}
 
 c_hashkeyCondition		= "conditions"
@@ -68,6 +68,8 @@ strMetadata 	= sys.argv[3] if ( len( sys.argv ) > 3 ) else None
 pMetadata = metadata.open( )
 
 for astrLine in csv.reader( sys.stdin, csv.excel_tab ):
+	# Update the md5sum
+	pMetadata.update_md5sum("\t".join(astrLine))
 	if not ( astrLine and astrLine[0] and ( astrLine[0][0] == "!" ) ):
 		continue
 	strFrom = astrLine[0][1:]	
@@ -92,6 +94,8 @@ for astrLine in csv.reader( sys.stdin, csv.excel_tab ):
 			pMetadata[strTo] = int( astrCur[0] )
 		if not pMetadata[c_hashkeyCondition]:
 			pMetadata[c_hashkeyCondition] = len( astrCur ) 
+# Store the checksum
+pMetadata.store_checksum()
 
 # Auxillary Metadata
 
@@ -111,7 +115,7 @@ else:
 			for i in range( len( astrLine )):
 				pMetadata[astrHeaders[i]].append( astrLine[i] )				
 		else:
-			astrLine = map( lambda s: "sample_" + s if s else "sample_name", astrLine[:] )
+			astrLine = ["sample_" + s if s else "sample_name" for s in astrLine[:]]
 			pMetadata[c_hashkeyCurated] = astrLine 
 			astrHeaders = astrLine
 			for item in astrHeaders:
@@ -119,6 +123,6 @@ else:
 				pMetadata.set( item, [] ) 
 
 # Add Mapping Status and Save
-k,v = sfle.readcomment( open( strStatus ) )[0].split("\t")
+k, v = sfle.readcomment( open( strStatus ) )[0].split("\t")
 pMetadata.update({k:v})
 pMetadata.save()

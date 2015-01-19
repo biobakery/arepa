@@ -183,7 +183,7 @@ def merge( aaastrIn, astrLabels, fLabel, iCol, fRows, fHeaders, ostm ):
 						strHeader = strID
 					aastrHeaders[iIn] = astrData
 		# Batch merge every new ID key set
-		setstrIDs.update( hashIDs.keys( ) )
+		setstrIDs.update( list(hashIDs.keys( )) )
 		
 	csvw = csv.writer( ostm, csv.excel_tab )
 	"""

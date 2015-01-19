@@ -38,11 +38,12 @@ file.out <- inputargs[2]
 
 library(affy)
 
-##file.in <- "GSE29221.RData"
-##file.out <- "GSE29221.Rd"
+##file.in <- "GDS104-GPL67.RData"
+##file.out <- "GDS104-GPL67.Rd"
 
-object.name <- sub("_eset", "", file.out, fixed=TRUE)
 object.name <- sub(".Rd", "", file.out, fixed=TRUE)
+object.name <- make.names(basename(object.name))
+object.name <- paste(object.name, "_eset", sep="")
 
 getEset <- function(file.in=file.in){
     library(affy)
@@ -59,35 +60,35 @@ pdata.nonblank <- pData(eset)
 pdata.nonblank <- pdata.nonblank[,apply(pdata.nonblank,2,function(x) sum(!is.na(x)) > 0)]
 
 sink(file=file.out)
+writeLines( paste("\\title{", object.name, "}", sep="") )
 writeLines( paste("\\name{", object.name, "}", sep="") )
 writeLines( paste("\\alias{", object.name, "}", sep="") )
 writeLines( "\\docType{data}")
-writeLines( paste("") )
+writeLines( "" )
 
 accessionID <- sub(".RData", "", file.in)
 
+writeLines("\\description{")
 writeLines(paste("assayData:", nrow(eset),"features,",ncol(eset),"samples"))
 writeLines("")
-print(eset@annotation)
+writeLines(paste("First 6 feature names:", paste(head(featureNames(eset)), collapse=" ")))
+writeLines("")
+writeLines(paste("First 6 sample names:", paste(head(sampleNames(eset)), collapse=" ")))
+writeLines("")
+writeLines(paste("Annotation:", eset@annotation))
 writeLines("")
 
-## if(!all(is.na(eset$vital_status))){
-##     time <- eset$days_to_death / 365
-##     cens <- ifelse(eset$vital_status=="deceased",1,0)
-##     library(survival)
-##     writeLines("Overall survival time-to-event summary (in years):")
-##     writeLines(" ")
-##     print(survfit(Surv(time,cens)~-1))
-##     writeLines("")
-## }
-## if(!all(is.na(eset$os_binary))){
-##     writeLines("Binary overall survival summary (definitions of long and short provided by study authors): ")
-##     writeLines("")
-##     print(summary(factor(eset$os_binary)))
-##     writeLines("")
-## }
 writeLines( "--------------------------- ")
-writeLines( "Available sample meta-data: ")
+writeLines( "Study-level meta-data: ")
+writeLines( "--------------------------- ")
+writeLines("")
+
+print( experimentData(eset) )
+
+writeLines("")
+
+writeLines( "--------------------------- ")
+writeLines( "Sample-level meta-data: ")
 writeLines( "--------------------------- ")
 writeLines( "")
 if (class(pdata.nonblank) == "data.frame"){
@@ -99,5 +100,10 @@ if (class(pdata.nonblank) == "data.frame"){
         writeLines("")
     }
 }
+
+writeLines("")
+writeLines("}")
+writeLines("")
+
 sink(NULL)
 

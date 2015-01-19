@@ -6,7 +6,7 @@ import sys
 
 def test( iLevel, strID, hashArgs ):
 	return ( iLevel == 2 ) and ( strID.find( "E-GEOD-11810" ) >= 0 )
-if locals( ).has_key( "testing" ):
+if "testing" in locals( ):
 	sys.exit( )
 
 #Import( "pE" )

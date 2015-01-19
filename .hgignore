@@ -4,8 +4,11 @@ syntax: glob
 .sconsign.dblite
 *.pyc
 *.pyo
+*~
 
 SConstruct.py
 SConscript.py
 *data/
 *tmp/
+GeneMapper/etc/
+GeneMapper/trunk/

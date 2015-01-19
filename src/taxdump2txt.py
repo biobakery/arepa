@@ -29,7 +29,7 @@ def print_tree( iID, aaiChildren, astrNames, iDepth ):
 
 	if not astrNames[iID]:
 		return
-	print( ( " " * iDepth ) + astrNames[iID] + ( "\t%d" % iID ) )
+	print(( ( " " * iDepth ) + astrNames[iID] + ( "\t%d" % iID ) ))
 	iDepth += 1
 	aiChildren = aaiChildren[iID] if ( iID < len( aaiChildren ) ) else None
 	for iChild in ( aiChildren or [] ):

@@ -38,7 +38,7 @@ def getColumnFromHeaderline (colnames, headerline):
 	strLine = [strCur.strip( ) for strCur in headerline.split( "\t" )]
 	colnumbers = []
 	for col in colnames:
-		l = [i for i,x in enumerate(strLine) if x==col]
+		l = [i for i, x in enumerate(strLine) if x==col]
 		colnumbers.append(l[0])
 	if colnumbers!=[]:
 		return colnumbers
@@ -59,7 +59,7 @@ hashSymbols = {}
 hashhashPMTaxa = {}
 for strLine in sys.stdin:
 	if strLine and strLine[0].startswith( "#" ):
-		cols = getColumnFromHeaderline([c_colPMID, c_colTaxA, c_colTaxB, c_colGeneA,c_colGeneB], strLine)
+		cols = getColumnFromHeaderline([c_colPMID, c_colTaxA, c_colTaxB, c_colGeneA, c_colGeneB], strLine)
 		continue
 	strLine = [strCur.strip( ) for strCur in strLine.split( "\t" )]
 	strPMID = strLine[int(cols[0])]
@@ -74,18 +74,18 @@ for strLine in sys.stdin:
 	 [symbol( hashSymbols, strCur ) for strCur in strLine] )
 
 
-aaSymbols = sorted( hashSymbols.items( ), cmp = lambda aOne, aTwo: cmp( aOne[1], aTwo[1] ) )
-print( "\n".join( aCur[0] for aCur in aaSymbols ) )
+aaSymbols = sorted( list(hashSymbols.items( )), cmp = lambda aOne, aTwo: cmp( aOne[1], aTwo[1] ) )
+print(( "\n".join( aCur[0] for aCur in aaSymbols ) ))
 
 hashBins = {}
-for strPMID, hashTaxa in hashhashPMTaxa.items( ):
-	for strTaxon, aaiLines in hashTaxa.items( ):
+for strPMID, hashTaxa in list(hashhashPMTaxa.items( )):
+	for strTaxon, aaiLines in list(hashTaxa.items( )):
 		strTaxid = c_strTaxid + strTaxon
 		strBin = strTaxid + ( "" if ( ( not strPMID ) or ( len( aaiLines ) < iMin ) ) else \
 				( "_" + c_strPMID + strPMID ) )
 		hashBins.setdefault( strBin, [] ).extend( aaiLines )
 
-for strBin, aaiLines in hashBins.items( ):
-	print( ">" + strBin )
+for strBin, aaiLines in list(hashBins.items( )):
+	print(( ">" + strBin ))
 	for aiLine in aaiLines:
-		print( "\t".join( str(i) for i in aiLine ) )
+		print(( "\t".join( str(i) for i in aiLine ) ))

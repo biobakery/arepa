@@ -31,7 +31,7 @@ import glob
 
 def test( iLevel, strID, hashArgs ):
 	return ( iLevel == 1 )
-if locals( ).has_key( "testing" ):
+if "testing" in locals( ):
 	sys.exit( )
 
 pE = DefaultEnvironment( )
@@ -51,7 +51,7 @@ c_fileProgC2Metadata		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "c2met
 c_fileProgC2DAT				= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirSrc, "c2dat.py" )
 c_fileInputManCurTXT		= sfle.d( pE, arepa.path_repo( ), sfle.c_strDirEtc, "manual_curation/", c_strID + sfle.c_strSufTXT )
 
-c_fileInputSConscriptGM		= sfle.d( pE, arepa.path_arepa(),sfle.c_strDirSrc,"SConscript_genemapping.py")
+c_fileInputSConscriptGM		= sfle.d( pE, arepa.path_arepa(), sfle.c_strDirSrc, "SConscript_genemapping.py")
 c_fileInputSConscriptDAB	= sfle.d( pE, arepa.path_arepa(), sfle.c_strDirSrc, "SConscript_dat-dab.py" )
 
 c_fileStatus	    		= sfle.d( pE, "status.txt" )
@@ -60,7 +60,7 @@ c_strGeneFrom				= None # we do not know a priori what the gene identifiers are 
 afileIDDAT = sfle.pipe( pE, c_fileInputC, c_fileProgC2DAT, c_fileIDRawDAT, [c_strID] )
 
 #Launch gene mapping 
-execfile(str(c_fileInputSConscriptGM))
+exec(compile(open(str(c_fileInputSConscriptGM)).read(), str(c_fileInputSConscriptGM), 'exec'))
 
 astrMapped = funcGeneIDMapping( pE, c_fileIDRawDAT, c_strGeneFrom, c_fileStatus )
 
@@ -70,7 +70,7 @@ astrUnique = funcMakeUnique( pE, astrMapped[0] )
 #Make metadata
 afileIDTXT = sfle.pipe( pE, c_fileInputC, c_fileProgC2Metadata, c_fileIDPKL, [c_strID, [c_fileStatus]] + ([[c_fileInputManCurTXT]] if os.path.exists(str(c_fileInputManCurTXT)) else []) )
 
-execfile(str(c_fileInputSConscriptDAB))
+exec(compile(open(str(c_fileInputSConscriptDAB)).read(), str(c_fileInputSConscriptDAB), 'exec'))
 
 #DAT to DAB
 astrDAB = funcDAB( pE, c_fileIDDAB, [c_fileIDRawDAT, astrUnique[0]] )

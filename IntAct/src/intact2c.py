@@ -62,18 +62,18 @@ for astrLine in csv.reader( sys.stdin, csv.excel_tab ):
 	hashhashPMTaxa.setdefault( strPMID, {} ).setdefault( strTax1, [] ).append(
 		[symbol( hashSymbols, strCur ) for strCur in astrLine] )
 
-aaSymbols = sorted( hashSymbols.items( ), cmp = lambda aOne, aTwo: cmp( aOne[1], aTwo[1] ) )
-print( "\n".join( aCur[0] for aCur in aaSymbols ) )
+aaSymbols = sorted( list(hashSymbols.items( )), cmp = lambda aOne, aTwo: cmp( aOne[1], aTwo[1] ) )
+print(( "\n".join( aCur[0] for aCur in aaSymbols ) ))
 
 hashBins = {}
-for strPMID, hashTaxa in hashhashPMTaxa.items( ):
-	for strTaxon, aaiLines in hashTaxa.items( ):
+for strPMID, hashTaxa in list(hashhashPMTaxa.items( )):
+	for strTaxon, aaiLines in list(hashTaxa.items( )):
 		strTaxid = c_strTaxid + strTaxon
 		strBin = strTaxid + ( "" if ( ( not strPMID ) or ( len( aaiLines ) < iMin ) ) else \
 			( "_" + c_strPMID + strPMID ) )
 		hashBins.setdefault( strBin, [] ).extend( aaiLines )
 
-for strBin, aaiLines in hashBins.items( ):
-	print( ">" + strBin )
+for strBin, aaiLines in list(hashBins.items( )):
+	print(( ">" + strBin ))
 	for aiLine in aaiLines:
-		print( "\t".join( str(i) for i in aiLine ) )
+		print(( "\t".join( str(i) for i in aiLine ) ))
