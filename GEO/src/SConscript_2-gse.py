@@ -134,9 +134,9 @@ if m_boolRPackage:
 	sfle.ssink( pE, str(c_fileProgProcessRaw), "R --no-save --args", [[c_fileIDPCL], [True, c_fileEset], m_strPPfun, 
 	[c_fileExpTable], [c_fileCondTable]] )
 	#Make QC report
-	sfle.ssink( pE, str(c_fileProgArrayQualMetrics), "R --no-save --args", [[c_fileEset], [True, c_fileQC]] )
+	sfle.ssink( pE, str(c_fileProgArrayQualMetrics), "R --no-save --args", [[c_fileEset], [True, c_folderQC]] )
 	#Make Rd Help Page 
-	sfle.ssink( pE, str(c_fileProgArrayQualMetrics), "R --no-save --args", [[c_fileEset], [True, c_folderQC]] )	
+	sfle.ssink( pE, str(c_fileProgEset2Help), "R --no-save --args", [[c_fileEset], [True, c_fileHelp]] )
 	exec(compile(open( str(c_fileRSConscript) ).read(), str(c_fileRSConscript), 'exec'))
 	funcCheckRStructure( pE, c_strID, c_fileIDPKL, c_fileRNAMESPACE, c_fileRDESCRIPTION, c_fileRMaster )
 	funcMakeRPackage( pE, str(c_dirR), c_fileLogPackage )
