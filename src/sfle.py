@@ -277,8 +277,10 @@ def get_software_version(software):
     
     version=""
     # Place --version first as python/R start interpreters with other options
-    version_flags=["--version","-V","-version"]
+    version_flags=["--version","-V","-version", "-v"]
     for flag in version_flags:
+    	if flag =="-v" and software == "cat":
+ 	   		continue
         try:
             version=subprocess.check_output([software,flag],stderr=subprocess.STDOUT)
             break
