@@ -90,6 +90,7 @@ Before downloading ARepA, you should have the following software on your machine
 	* Subversion Source Control Management (ver >= 1.7): for automated acquisition of BridgeDB
 	* curl
 	* wget
+        * GEOquery (from bioconductor)
 
 * Recommended
 	* Sleipnir Library for Computational Functional Genomics (Optional, but necessary for some normalization steps)
