@@ -12,7 +12,9 @@ User Manual, Version 0.9.8
 -------------------------------------------------------
 
 Authors
- Yo Sup Moon, Daniela Boernigen, Levi Waldron, Eric Franzosa, Xochitl Morgan, and Curtis Huttenhower
+ Daniela Börnigen, Yo Sup Moon, Gholamali Rahnavard, Levi Waldron, Lauren
+ McIver, Afrah Shafquat, Eric A. Franzosa, Larissa Miropolsky, Christopher Sweeney,
+ Xochitl C. Morgan, Wendy S. Garrett, Curtis Huttenhower
 
 Google Group
  arepa-users: https://groups.google.com/forum/?fromgroups#!forum/arepa-users
@@ -24,8 +26,7 @@ URL
  http://huttenhower.sph.harvard.edu/arepa
 
 Citation
- Daniela Boernigen*, Yo Sup Moon*, Levi Waldron, Eric Franzosa, Xochitl Morgan, and Curtis Huttenhower. "ARepA: Automated Repository Acquisition" (In Submission)
- (* contributed equally)
+  Daniela Börnigen*, Yo Sup Moon*, Gholamali Rahnavard, Levi Waldron, Lauren McIver, Afrah Shafquat, Eric A. Franzosa, Larissa Miropolsky, Christopher Sweeney, Xochitl C. Morgan, Wendy S. Garrett, Curtis Huttenhower. "ARepA: Automated Repository Acquisition" (accepted) (*contributed equally)
 
 .. contents ::
 
