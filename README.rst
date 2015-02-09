@@ -26,7 +26,7 @@ URL
  http://huttenhower.sph.harvard.edu/arepa
 
 Citation
-  Daniela Börnigen*, Yo Sup Moon*, Gholamali Rahnavard, Levi Waldron, Lauren McIver, Afrah Shafquat, Eric A. Franzosa, Larissa Miropolsky, Christopher Sweeney, Xochitl C. Morgan, Wendy S. Garrett, Curtis Huttenhower. "ARepA: Automated Repository Acquisition" (accepted) (*contributed equally)
+  Daniela Börnigen*, Yo Sup Moon*, Gholamali Rahnavard, Levi Waldron, Lauren McIver, Afrah Shafquat, Eric A. Franzosa, Larissa Miropolsky, Christopher Sweeney, Xochitl C. Morgan, Wendy S. Garrett, Curtis Huttenhower. "ARepA: Automated Repository Acquisition", PeerJ (forthcoming)  (*contributed equally)
 
 .. contents ::
 
