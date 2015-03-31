@@ -26,7 +26,7 @@ URL
  http://huttenhower.sph.harvard.edu/arepa
 
 Citation
-  Daniela Börnigen*, Yo Sup Moon*, Gholamali Rahnavard, Levi Waldron, Lauren McIver, Afrah Shafquat, Eric A. Franzosa, Larissa Miropolsky, Christopher Sweeney, Xochitl C. Morgan, Wendy S. Garrett, Curtis Huttenhower. "ARepA: Automated Repository Acquisition", PeerJ (forthcoming)  (*contributed equally)
+  Börnigen D, Moon YS, Rahnavard G, Waldron L, McIver L, Shafquat A, Franzosa EA, Miropolsky L, Sweeney C, Morgan XC, Garrett WS, Huttenhower C. (2015) A reproducible approach to high-throughput biological data acquisition and integration. PeerJ 3:e791
 
 .. contents ::
 
