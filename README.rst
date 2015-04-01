@@ -26,7 +26,7 @@ URL
  http://huttenhower.sph.harvard.edu/arepa
 
 Citation
-  Börnigen D, Moon YS, Rahnavard G, Waldron L, McIver L, Shafquat A, Franzosa EA, Miropolsky L, Sweeney C, Morgan XC, Garrett WS, Huttenhower C. (2015) A reproducible approach to high-throughput biological data acquisition and integration. PeerJ 3:e791
+  Börnigen D, Moon YS, Rahnavard G, Waldron L, McIver L, Shafquat A, Franzosa EA, Miropolsky L, Sweeney C, Morgan XC, Garrett WS, Huttenhower C. (2015) A reproducible approach to high-throughput biological data acquisition and integration. PeerJ 3:e791 https://dx.doi.org/10.7717/peerj.791
 
 .. contents ::
 
