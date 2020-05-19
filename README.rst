@@ -17,7 +17,7 @@ Authors
  Xochitl C. Morgan, Wendy S. Garrett, Curtis Huttenhower
 
 Google Group
- arepa-users: https://groups.google.com/forum/?fromgroups#!forum/arepa-users
+ arepa-users: https://forum.biobakery.org/c/Downstream-analysis-and-statistics/ARepA/31
 
 License
  MIT License
